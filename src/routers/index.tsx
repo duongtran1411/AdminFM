@@ -7,8 +7,12 @@ import SignupForm from "../components/auth/SignupForm";
 import PageWithTitle from "../components/shared/PageWithTitle"; // Import component wrapper
 import PrivateRoute from "../components/shared/PrivateRoute";
 import ScheduleList from "../pages/schedule";
+import CalendarPages from "../pages/calendar/CalendarPages";
+import Settings from "../components/users/Settings";
+import CoursesFamilyPage from "../pages/courses/coursefamily";
 import AttendancePage from "../pages/attendance";
-
+import ModulePage from "../pages/module";
+import CoursePage from "../pages/courses/course";
 
 // Loading Components
 const LoadingIndicator = () => (
@@ -41,7 +45,7 @@ const ClassPage = lazy(() => import("../pages/classes"));
 const MainPage = lazy(() => import("../pages"));
 const StudentPage = lazy(() => import("../pages/student"));
 const TeacherPage = lazy(() => import("../pages/teacher"));
-const UserPage = lazy(() => import("../pages/user/user"))
+const UserPage = lazy(() => import("../pages/users"));
 
 const getTitleFromLocation = (pathname: string) => {
   if (
@@ -66,8 +70,6 @@ const getTitleFromLocation = (pathname: string) => {
       return "Quản lý giáo viên";
     case "/classes":
       return "Quản lý lớp học ";
-    case "/schedule/class":
-      return "Quản lý lịch học ";
     default:
       return "404 - Không Tìm Thấy Trang";
   }
@@ -129,7 +131,27 @@ function MainRoutes() {
           element: (
             <PageWithTitle title={title}>
               <Suspense fallback={<LoadingSkeleton />}>
-              <UserPage />
+                <UserPage />
+              </Suspense>
+            </PageWithTitle>
+          ),
+        },
+        {
+          path: "settings",
+          element: (
+            <PageWithTitle title={title}>
+              <Suspense fallback={<LoadingSkeleton />}>
+                <Settings />
+              </Suspense>
+            </PageWithTitle>
+          ),
+        },
+        {
+          path: "schedule",
+          element: (
+            <PageWithTitle title={title}>
+              <Suspense fallback={<LoadingSkeleton />}>
+                <CalendarPages />
               </Suspense>
             </PageWithTitle>
           ),
@@ -164,9 +186,36 @@ function MainRoutes() {
             </PageWithTitle>
           ),
         },
-
-        
-
+        {
+          path: "courses",
+          element: (
+            <PageWithTitle title={title}>
+              <Suspense fallback={<LoadingSkeleton />}>
+                <CoursePage />
+              </Suspense>
+            </PageWithTitle>
+          ),
+        },
+        {
+          path: "module",
+          element: (
+            <PageWithTitle title={title}>
+              <Suspense fallback={<LoadingSkeleton />}>
+                <ModulePage />
+              </Suspense>
+            </PageWithTitle>
+          ),
+        },
+        {
+          path: "coursefamily",
+          element: (
+            <PageWithTitle title={title}>
+              <Suspense fallback={<LoadingSkeleton />}>
+                <CoursesFamilyPage />
+              </Suspense>
+            </PageWithTitle>
+          ),
+        },
         {
           path: "schedule/class/:classId",
           element: (

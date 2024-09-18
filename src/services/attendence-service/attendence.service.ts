@@ -29,7 +29,7 @@ export const getAttendanceStatus = async (
     //    acc[attendance.studentId] = attendance.status === 1;
     //    return acc;
     //  }, {});
-   //  console.log(response.data);
+    //  console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching attendance status:", error);

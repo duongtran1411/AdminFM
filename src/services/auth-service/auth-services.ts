@@ -15,6 +15,8 @@ export const loginUser = async (
 ): Promise<AxiosResponse<LoginResponse>> => {
   try {
     const respone = await axiosInstance.post("/auth/login", payload);
+    const token = respone.data.access_token;
+    localStorage.setItem("token", token);
     return respone;
   } catch (error: any) {
     if (error.response && error.response.data && error.response.data.error) {

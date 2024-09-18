@@ -1,19 +1,29 @@
-// src/services/userService.ts
-
+import { AxiosResponse } from "axios";
+import { Users } from "../../models/users.model";
 import axiosInstance from "../../utils/axiosInstance";
 
-export interface UserData {
-   id: number;
-   username: string;
-   email: string;
-   role: string; 
- }
+export interface UsersData {
+  user_id: number;
+  username: string;
+  password: string;
+  email: string;
+  role: string;
+}
 
 class UserService {
-  // Lấy danh sách người dùng
-  async findAll(): Promise<UserData[]> {
+  async create(usersList: Users): Promise<Users> {
     try {
-      const response = await axiosInstance.get<UserData[]>("/user");
+      return await axiosInstance.post("/user/addUser", usersList);
+    } catch (error: any) {
+      if (error.response && error.response.status === 409) {
+        throw new Error("Username or email already exists!");
+      }
+      throw new Error("Error creating user: " + error.message);
+    }
+  }
+  async getAllUser(): Promise<UsersData[]> {
+    try {
+      const response = await axiosInstance.get<UsersData[]>("/user");
       return response.data;
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -21,41 +31,7 @@ class UserService {
     }
   }
 
-  // Lấy thông tin chi tiết một người dùng
-  async findOne(username: string): Promise<UserData> {
-    try {
-      const response = await axiosInstance.get<UserData>(`/user/${username}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Error fetching user with username ${username}:`, error);
-      throw error;
-    }
-  }
-
-  // Thêm người dùng mới
-  async create(user: UserData): Promise<UserData> {
-    try {
-      const response = await axiosInstance.post<UserData>("/user/createTeacher", user);
-      return response.data;
-    } catch (error) {
-      console.error("Error creating user:", error);
-      throw error;
-    }
-  }
-
-  // Cập nhật thông tin người dùng
-  async update(id: number, user: Partial<UserData>): Promise<UserData> {
-    try {
-      const response = await axiosInstance.put<UserData>(`/user/${id}`, user);
-      return response.data;
-    } catch (error) {
-      console.error(`Error updating user with id ${id}:`, error);
-      throw error;
-    }
-  }
-
-  // Xóa người dùng
-  async delete(id: number): Promise<void> {
+  async deleteUser(id: number): Promise<void> {
     try {
       await axiosInstance.delete(`/user/${id}`);
     } catch (error) {
@@ -63,6 +39,35 @@ class UserService {
       throw error;
     }
   }
-}
 
+  async getUserById(id: number): Promise<UsersData> {
+    try {
+      const response = await axiosInstance.get<UsersData>(`/user/id/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching user with id ${id}:`, error);
+      throw error;
+    }
+  }
+
+  async updateUser(id: number, user: UsersData): Promise<UsersData> {
+    try {
+      const response: AxiosResponse<UsersData> = await axiosInstance.put(
+        `/user/${id}`,
+        user,
+      );
+      return response.data;
+    } catch (error: any) {
+      throw new Error("Error updating user: " + error.message);
+    }
+  }
+
+  async changePassword(id: number, newPassword: string) {
+    const response: AxiosResponse<UsersData> = await axiosInstance.put(
+      `/user/${id}`,
+      { password: newPassword },
+    );
+    return response.data;
+  }
+}
 export const userService = new UserService();

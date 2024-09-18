@@ -1,16 +1,16 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Table } from "antd";
+import { Table, Dropdown, Button } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { CiMenuKebab } from "react-icons/ci";
 
-interface DataTableProps {
+interface DataUserProps {
   data: any[];
   columns: any[];
-  onEdit: (id: any) => void; // Update to receive studentId
-  onDelete: (studentId: any) => void; // Update to receive studentId
+  onEdit: (id: any) => void;
+  onDelete: (user_id: any) => void;
 }
 
-const StudentTable = ({ data, columns, onEdit, onDelete }: DataTableProps) => {
+const UsersTable = ({ data, columns, onEdit, onDelete }: DataUserProps) => {
   const tableRef = useRef<HTMLDivElement>(null);
   const [canScroll, setCanScroll] = useState(false);
 
@@ -36,13 +36,13 @@ const StudentTable = ({ data, columns, onEdit, onDelete }: DataTableProps) => {
         key: "edit",
         label: "Edit",
         icon: <EditOutlined />,
-        onClick: () => onEdit(record.id), // Pass studentId
+        onClick: () => onEdit(record.user_id),
       },
       {
         key: "delete",
         label: <span style={{ color: "red" }}>Delete</span>,
         icon: <DeleteOutlined style={{ color: "red" }} />,
-        onClick: () => onDelete(record.studentId), // Pass studentId
+        onClick: () => onDelete(record.user_id),
       },
     ],
   });
@@ -50,7 +50,7 @@ const StudentTable = ({ data, columns, onEdit, onDelete }: DataTableProps) => {
   const extendedColumns = [
     ...columns,
     {
-      title: "Action",
+      title: "",
       key: "action",
       render: (record) => (
         <Dropdown menu={actionMenu(record)} trigger={["click"]}>
@@ -60,10 +60,9 @@ const StudentTable = ({ data, columns, onEdit, onDelete }: DataTableProps) => {
     },
   ];
 
-  // Ensure each item has a unique key
   const dataSource = data.map((item) => ({
     ...item,
-    key: item.id, // Use a unique identifier from your data
+    key: item.id,
   }));
 
   return (
@@ -74,12 +73,12 @@ const StudentTable = ({ data, columns, onEdit, onDelete }: DataTableProps) => {
       } overflow-x-auto`}
     >
       <Table
-        columns={extendedColumns}
         dataSource={dataSource}
         pagination={false}
+        columns={extendedColumns}
       />
     </div>
   );
 };
 
-export default StudentTable;
+export default UsersTable;

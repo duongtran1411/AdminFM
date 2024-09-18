@@ -1,7 +1,6 @@
 import React from "react";
-import { Breadcrumb} from 'antd';
+import { Breadcrumb } from "antd";
 import { useLocation, Link } from "react-router-dom";
-
 
 const BreadcrumbComponent: React.FC = () => {
   const location = useLocation();
