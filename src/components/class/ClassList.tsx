@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 import ClassItem from "./ClassItem";
 import { studentService } from "../../services/student-service/student.service"; // Import StudentService
 
-const ClassList = ({ classes }) => {
-  const [studentCounts, setStudentCounts] = useState<{ [key: string]: number }>({});
+const ClassList = ({ classes, onSuccess }) => {
+  const [studentCounts, setStudentCounts] = useState<{ [key: string]: number }>(
+    {},
+  );
 
   // Fetch total students for each class
   const fetchTotalStudents = async (classId: string) => {
@@ -12,23 +14,26 @@ const ClassList = ({ classes }) => {
       const total = await studentService.getTotalStudents(classId);
       return total;
     } catch (error) {
-      console.error(`Error fetching total students for class ${classId}:`, error);
+      console.error(
+        `Error fetching total students for class ${classId}:`,
+        error,
+      );
       return 0;
     }
   };
 
-  useEffect(() => {
-    const fetchAllStudents = async () => {
-      const updatedStudentCounts = {};
-      for (const classItem of classes) {
-        const total = await fetchTotalStudents(classItem.id);
-        updatedStudentCounts[classItem.id] = total;
-      }
-      setStudentCounts(updatedStudentCounts);
-    };
+  // useEffect(() => {
+  //   const fetchAllStudents = async () => {
+  //     // const updatedStudentCounts = {};
+  //     // for (const classItem of classes) {
+  //     //   const total = await fetchTotalStudents(classItem.id);
+  //     //   updatedStudentCounts[classItem.id] = total;
+  //     // }
+  //     // setStudentCounts(updatedStudentCounts);
+  //   };
 
-    fetchAllStudents();
-  }, [classes]);
+  //   fetchAllStudents();
+  // }, [classes]);
 
   return (
     <Row gutter={[16, 16]}>
@@ -43,6 +48,7 @@ const ClassList = ({ classes }) => {
           xxl={5} // One-sixth width on extra-extra-large screens
         >
           <ClassItem
+            onSucess={onSuccess}
             classId={classItem.id}
             name={classItem.name}
             position={

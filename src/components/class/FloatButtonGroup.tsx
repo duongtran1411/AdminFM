@@ -1,24 +1,33 @@
 import { FileExcelOutlined, FormOutlined } from "@ant-design/icons";
-import { FloatButton, notification, Tooltip } from "antd";
+import { FloatButton, message, Tooltip } from "antd";
+import { RcFile } from "antd/es/upload";
 import { FaPlus } from "react-icons/fa";
 import useModals from "../../hooks/useModal";
+import { Class } from "../../models/class.model";
+import classService from "../../services/class-service/class.service";
+import { uploadFile } from "../../services/upload-service/upload.service";
 import ImportForm from "../shared/ImportForm";
 import AddClassForm from "./AddClassForm";
-import { uploadFile } from "../../services/upload-service/upload.service";
-import { RcFile } from "antd/es/upload";
-
-const FloatButtonGroup = () => {
+const FloatButtonGroup = ({ onSuccess }: { onSuccess: () => void }) => {
   const handleUpload = async (file: RcFile) => {
     console.log(file.name);
-    await uploadFile(file); // Đảm bảo `uploadFile` có thể nhận `RcFile`
-    hideModal("importClassExcel"); // Đóng modal sau khi upload thành công
+    await uploadFile(file);
+    hideModal("importClassExcel");
   };
 
-  const handleAddClass = () => {
-    notification.success({ message: "Add class successfully!" });
-    hideModal("addClassModal");
+  const handleAddClass = async (classData: Class) => {
+    try {
+      await classService.addClass(classData);
+      message.success("Class added successfully!");
+      hideModal("addClassModal");
+      await onSuccess();
+    } catch (error) {
+      console.error("Error adding class:", error);
+      message.error("Failed to add class. Please try again.");
+    }
   };
-  const { showModal, hideModal, isVisible } = useModals(); // Sử dụng hook useModals
+
+  const { showModal, hideModal, isVisible } = useModals();
   return (
     <>
       <FloatButton.Group
@@ -41,7 +50,6 @@ const FloatButtonGroup = () => {
         </Tooltip>
       </FloatButton.Group>
 
-      {/* Sử dụng ImportForm component */}
       <ImportForm
         isModalVisible={isVisible("importClassExcel")}
         hideModal={() => hideModal("importClassExcel")}

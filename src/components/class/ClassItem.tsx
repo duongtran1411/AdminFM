@@ -1,18 +1,19 @@
 // components/class/ClassItem.tsx
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Card, Dropdown, MenuProps, message } from "antd";
+import { useState } from "react";
 import { CiMenuKebab } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import EditClassForm from "./EditClassForm";
 import useModals from "../../hooks/useModal"; // Adjust the path as needed
 import ClassService from "../../services/class-service/class.service"; // Import ClassService
+import EditClassForm from "./EditClassForm";
 
 interface ClassItemProps {
   name: string;
   position: string;
   totalStudent: number;
   classId: string;
+  onSucess: () => void;
 }
 
 const ClassItem = ({
@@ -20,6 +21,7 @@ const ClassItem = ({
   position,
   totalStudent,
   classId,
+  onSucess,
 }: ClassItemProps) => {
   // Colors array for random background
   const colors = ["#FF4D4F", "#FFEC3D", "#52C41A"];
@@ -35,7 +37,7 @@ const ClassItem = ({
 
   // Edit action
   const handleEdit = () => {
-    setEditingClass({ name, position, totalStudent, classId });
+    // setEditingClass({ name, position, totalStudent, classId });
     showModal("editClassModal");
   };
 
@@ -44,7 +46,8 @@ const ClassItem = ({
     try {
       await ClassService.deleteClass(classId);
       // Refresh the class list or handle UI update
-      
+      message.success("Delete successfully");
+      onSucess();
     } catch (error) {
       message.error("Failed to delete class");
     }
@@ -73,7 +76,7 @@ const ClassItem = ({
       await ClassService.updateClass(classId, updatedClass); // Call update function
       message.success("Class updated successfully");
       hideModal("editClassModal");
-      
+
       // Refresh the class list or handle UI update
     } catch (error) {
       message.error("Failed to update class");

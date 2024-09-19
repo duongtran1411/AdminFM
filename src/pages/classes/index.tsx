@@ -5,24 +5,23 @@ import FloatButtonGroup from "../../components/class/FloatButtonGroup";
 import ClassService, {
   ClassData,
 } from "../../services/class-service/class.service";
-
 const ClassPage = () => {
   const [classesData, setClassesData] = useState<ClassData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchClasses = async () => {
-      try {
-        const data = await ClassService.getClasses();
-        setClassesData(data);
-      } catch (error) {
-        setError("Error loading classes");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchClasses = async () => {
+    try {
+      const data = await ClassService.getClasses();
+      setClassesData(data);
+    } catch (error) {
+      setError("Error loading classes");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchClasses();
   }, []);
 
@@ -36,8 +35,8 @@ const ClassPage = () => {
 
   return (
     <>
-      <ClassList classes={classesData} />
-      <FloatButtonGroup />
+      <ClassList classes={classesData} onSuccess={fetchClasses} />
+      <FloatButtonGroup onSuccess={fetchClasses} />
     </>
   );
 };

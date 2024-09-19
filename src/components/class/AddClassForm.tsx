@@ -29,21 +29,12 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
     >
       <Form form={form} layout="vertical" onFinish={handleFinish}>
         <Form.Item
-          name="className"
+          name="name"
           label="Tên Lớp"
           rules={[{ required: true, message: "Vui lòng nhập tên lớp" }]}
         >
           <Input placeholder="Nhập tên lớp" />
         </Form.Item>
-
-        <Form.Item
-          name="classDescription"
-          label="Mô Tả"
-          rules={[{ required: true, message: "Vui lòng nhập mô tả" }]}
-        >
-          <Input.TextArea placeholder="Nhập mô tả lớp" />
-        </Form.Item>
-
         <Form.Item>
           <Button type="primary" htmlType="submit">
             Thêm

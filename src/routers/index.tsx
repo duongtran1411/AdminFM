@@ -12,7 +12,7 @@ import Settings from "../components/users/Settings";
 import CoursesFamilyPage from "../pages/courses/coursefamily";
 import AttendancePage from "../pages/attendance";
 import ModulePage from "../pages/module";
-import CoursePage from "../pages/courses/course";
+// import CoursePage from "../pages/courses/course";
 
 // Loading Components
 const LoadingIndicator = () => (
@@ -191,7 +191,7 @@ function MainRoutes() {
           element: (
             <PageWithTitle title={title}>
               <Suspense fallback={<LoadingSkeleton />}>
-                <CoursePage />
+                {/* <CoursePage /> */}
               </Suspense>
             </PageWithTitle>
           ),

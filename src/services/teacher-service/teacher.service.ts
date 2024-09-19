@@ -5,7 +5,7 @@ class TeacherService {
   // Lấy danh sách giáo viên
   async findAll(): Promise<Teachers[]> {
     try {
-      const response = await axiosInstance.get<Teachers[]>("/teacher");
+      const response = await axiosInstance.get<Teachers[]>("/teachers");
       return response.data;
     } catch (error) {
       console.error("Error fetching teachers:", error);
@@ -16,7 +16,7 @@ class TeacherService {
   // Lấy thông tin chi tiết một giáo viên
   async findOne(id: number): Promise<Teachers> {
     try {
-      const response = await axiosInstance.get<Teachers>(`/teacher/${id}`);
+      const response = await axiosInstance.get<Teachers>(`/teachers/${id}`);
       return response.data;
     } catch (error) {
       console.error(`Error fetching teacher with id ${id}:`, error);
@@ -27,7 +27,7 @@ class TeacherService {
   // Thêm giáo viên mới
   async create(teacher: Teachers): Promise<Teachers> {
     try {
-      const response = await axiosInstance.post<Teachers>("/teacher", teacher);
+      const response = await axiosInstance.post<Teachers>("/teachers", teacher);
       return response.data;
     } catch (error) {
       console.error("Error creating teacher:", error);

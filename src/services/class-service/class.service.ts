@@ -1,4 +1,5 @@
 // services/class/class.service.ts
+import { Class } from "../../models/class.model";
 import axiosInstance from "../../utils/axiosInstance";
 
 export interface ClassData {
@@ -12,6 +13,16 @@ class ClassService {
   async getClasses(): Promise<ClassData[]> {
     try {
       const response = await axiosInstance.get<ClassData[]>("/classes");
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+      throw error;
+    }
+  }
+
+  async addClass(classData: Class): Promise<Class[]> {
+    try {
+      const response = await axiosInstance.post<Class[]>("/classes", classData);
       return response.data;
     } catch (error) {
       console.error("Error fetching classes:", error);
