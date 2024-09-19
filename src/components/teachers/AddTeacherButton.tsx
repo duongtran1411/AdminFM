@@ -1,20 +1,18 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Button } from "antd";
-
 interface Props {
-  onUserCreated: () => void;
+  onTeacherCreated: () => void;
 }
-
-const AddUserButton = ({ onUserCreated }: Props) => {
+const AddTeacherButton = ({ onTeacherCreated }: Props) => {
   return (
     <div
       style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}
     >
-      <Button type="primary" icon={<PlusOutlined />} onClick={onUserCreated}>
-        New User
+      <Button type="primary" icon={<PlusOutlined />} onClick={onTeacherCreated}>
+        Tạo mới Giảng Viên
       </Button>
     </div>
   );
 };
 
-export default AddUserButton;
+export default AddTeacherButton;

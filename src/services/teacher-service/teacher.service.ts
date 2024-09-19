@@ -1,16 +1,11 @@
+import { Teachers } from "../../models/teacher.model";
 import axiosInstance from "../../utils/axiosInstance";
-
-// Interface cho dữ liệu giáo viên
-export interface TeacherData {
-  id: number;
-  name: string;
-}
 
 class TeacherService {
   // Lấy danh sách giáo viên
-  async findAll(): Promise<TeacherData[]> {
+  async findAll(): Promise<Teachers[]> {
     try {
-      const response = await axiosInstance.get<TeacherData[]>("/lecturer");
+      const response = await axiosInstance.get<Teachers[]>("/teacher");
       return response.data;
     } catch (error) {
       console.error("Error fetching teachers:", error);
@@ -19,9 +14,9 @@ class TeacherService {
   }
 
   // Lấy thông tin chi tiết một giáo viên
-  async findOne(id: number): Promise<TeacherData> {
+  async findOne(id: number): Promise<Teachers> {
     try {
-      const response = await axiosInstance.get<TeacherData>(`/lecturer/${id}`);
+      const response = await axiosInstance.get<Teachers>(`/teacher/${id}`);
       return response.data;
     } catch (error) {
       console.error(`Error fetching teacher with id ${id}:`, error);
@@ -30,12 +25,9 @@ class TeacherService {
   }
 
   // Thêm giáo viên mới
-  async create(teacher: TeacherData): Promise<TeacherData> {
+  async create(teacher: Teachers): Promise<Teachers> {
     try {
-      const response = await axiosInstance.post<TeacherData>(
-        "/lecturer",
-        teacher,
-      );
+      const response = await axiosInstance.post<Teachers>("/teacher", teacher);
       return response.data;
     } catch (error) {
       console.error("Error creating teacher:", error);
@@ -44,17 +36,14 @@ class TeacherService {
   }
 
   // Cập nhật thông tin giáo viên
-  async update(
-    id: number,
-    teacher: Partial<TeacherData>,
-  ): Promise<TeacherData> {
+  async update(id: number, teacher: Partial<Teachers>): Promise<Teachers> {
     try {
       // Gửi yêu cầu PUT để cập nhật giáo viên
-      const response = await axiosInstance.patch<TeacherData>(
-        `/lecturer/${id}`,
+      const response = await axiosInstance.patch<Teachers>(
+        `/teacher/${id}`,
         teacher,
       );
-  
+
       // Kiểm tra xem phản hồi có chứa dữ liệu cần thiết không
       if (response.status === 200 && response.data) {
         return response.data;
@@ -67,12 +56,11 @@ class TeacherService {
       throw error; // Ném lỗi lên để xử lý ở nơi gọi hàm
     }
   }
-  
 
   // Xóa giáo viên
   async delete(id: number): Promise<void> {
     try {
-      await axiosInstance.delete(`/lecturer/${id}`);
+      await axiosInstance.delete(`/teacher/${id}`);
     } catch (error) {
       console.error(`Error deleting teacher with id ${id}:`, error);
       throw error;

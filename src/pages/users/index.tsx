@@ -7,22 +7,15 @@ import AddUserForm from "../../components/users/AddUserForm";
 import UsersTable from "../../components/users/UsersTable";
 import { userService } from "../../services/user-service/user.service";
 import EditUserForm from "../../components/users/EditUserForm";
-
-interface UserList {
-  user_id: number;
-  username: string;
-  password: string;
-  email: string;
-  role: string;
-}
+import { Users } from "../../models/users.model";
 
 const UserPage: React.FC = () => {
   const { isVisible, showModal, hideModal } = useModals();
-  const [users, setUsers] = useState<UserList[]>([]);
-  const [searchUser, setSearchUser] = useState<UserList[]>([]);
+  const [users, setUsers] = useState<Users[]>([]);
+  const [searchUser, setSearchUser] = useState<Users[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  const [selectedUser, setSelectedUser] = useState<UserList | null>(null);
+  const [selectedUser, setSelectedUser] = useState<Users | null>(null);
   const fetchUsers = async () => {
     try {
       const data = await userService.getAllUser();
@@ -47,27 +40,6 @@ const UserPage: React.FC = () => {
     fetchUsers();
   };
 
-  // const handleEdit = async () => {
-  //   try {
-  //     const values = await editForm.validateFields();
-  //     if (editUser) {
-  //       const updatedUser: UserList = {
-  //         user_id: editUser.user_id,
-  //         username: values.username,
-  //         password: values.password,
-  //         email: values.email,
-  //         role: values.role,
-  //       };
-  //       await userService.updateUser(editUser.user_id, updatedUser);
-  //       setIsEditModalVisible(false);
-  //       form.resetFields();
-  //       fetchUsers();
-  //     }
-  //   } catch (error) {
-  //     console.error("Error updating user:", error);
-  //   }
-
-  // };
   const handleEdit = (id: number) => {
     const user = users.find((s) => s.user_id === id);
     if (user) {
@@ -84,9 +56,9 @@ const UserPage: React.FC = () => {
       onOk: async () => {
         try {
           await userService.deleteUser(userId);
-          await userRo;
           setUsers(users.filter((user) => user.user_id !== userId));
           notification.success({ message: "User deleted successfully" });
+          fetchUsers();
         } catch (error) {
           notification.error({ message: "Error deleting user" });
         }
@@ -116,30 +88,7 @@ const UserPage: React.FC = () => {
     setSearchUser(filtered);
   };
 
-  // const menu = (user: UserList) => (
-  //   <Menu>
-  //     <Menu.Item key="edit" onClick={() => showEditModal(user)}>
-  //       Edit
-  //     </Menu.Item>
-  //     <Menu.Item key="delete" onClick={() => handleDelete(user.user_id)}>
-  //       Delete
-  //     </Menu.Item>
-  //   </Menu>
-  // );
-
-  // const showEditModal = (user: UserList) => {
-  //   console.log(user);
-  //   setEditingUser(user);
-  //   editForm.setFieldsValue({
-  //     username: user.username,
-  //     password: user.password,
-  //     email: user.email,
-  //     role: user.role,
-  //   });
-  //   setIsEditModalVisible(true);
-  // };
-
-  const columns: TableProps<UserList>["columns"] = [
+  const columns: TableProps<Users>["columns"] = [
     {
       title: "Username",
       dataIndex: "username",
@@ -190,12 +139,16 @@ const UserPage: React.FC = () => {
           hideModal={() => hideModal("createUser")}
           onUserCreated={onCreateSuccess}
         />
+
+        {/* User Data Table */}
         <UsersTable
           columns={columns}
           data={searchUser}
           onDelete={handleDelete}
           onEdit={handleEdit}
         />
+
+        {/* Edit user modal */}
         <EditUserForm
           isModalVisible={isVisible("editUser")}
           hideModal={() => hideModal("editUser")}

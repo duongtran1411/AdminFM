@@ -1,0 +1,153 @@
+import { DatePicker, Form, Input, Modal, notification, Select } from "antd";
+import dayjs from "dayjs";
+import { useEffect } from "react";
+import { Teachers } from "../../models/teacher.model";
+import { teacherService } from "../../services/teacher-service/teacher.service";
+
+interface EditTeacherFormProps {
+  isModalVisible: boolean;
+  hideModal: () => void;
+  teacher: Teachers | null;
+  onUpdate: () => void;
+}
+
+const EditTeacherForm = ({
+  isModalVisible,
+  hideModal,
+  teacher,
+  onUpdate,
+}: EditTeacherFormProps) => {
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (teacher) {
+      // Đặt giá trị của form khi mở modal với dữ liệu của giang vien
+      form.setFieldsValue({
+        teacher_id: teacher.teacher_id,
+        name: teacher.name,
+        phone: teacher.phone,
+        gender: teacher.gender,
+        email: teacher.email,
+        birthdate: dayjs(teacher.birthdate),
+      });
+    }
+  }, [teacher, form]);
+
+  // Xử lý khi nhấn nút "OK"
+  const handleOk = async () => {
+    Modal.confirm({
+      title: "Are you sure you want to update this teacher?",
+      okText: "Update",
+      okType: "danger",
+      onOk: async () => {
+        try {
+          const values = await form.validateFields();
+          const birthDate = dayjs(values.birthdate).format("YYYY-MM-DD");
+          const updatedTeacher = {
+            ...teacher,
+            ...values,
+            birthdate: birthDate,
+          };
+          await teacherService.update(
+            updatedTeacher.teacher_id,
+            updatedTeacher,
+          );
+          form.resetFields();
+          hideModal();
+          onUpdate();
+          notification.success({ message: "Teacher updated successfully" });
+        } catch (error) {
+          notification.error({ message: "Error updating Teacher" });
+        }
+      },
+    });
+  };
+
+  return (
+    <Modal
+      title="Edit Teacher"
+      open={isModalVisible}
+      onOk={handleOk}
+      onCancel={() => {
+        form.resetFields(); // Reset các trường form khi đóng modal
+        hideModal();
+      }}
+      okText="Update"
+      cancelText="Cancel"
+      centered
+    >
+      <Form form={form} layout="vertical">
+        <Form.Item
+          name="name"
+          label="Tên giảng viên"
+          rules={[
+            {
+              required: true,
+              message: "Please input the name!",
+            },
+          ]}
+        >
+          <Input placeholder="Nhập tên giảng viên" />
+        </Form.Item>
+        <Form.Item
+          name="phone"
+          label="SĐT"
+          rules={[
+            {
+              required: true,
+              message: "Please input the phone number!",
+            },
+          ]}
+        >
+          <Input placeholder="Nhập SĐT" />
+        </Form.Item>
+        <Form.Item
+          name="gender"
+          label="Giới tính"
+          rules={[
+            {
+              required: true,
+              message: "Please select the gender!",
+            },
+          ]}
+        >
+          <Select placeholder="Chọn giới tính">
+            <Select.Option value="nam">Nam</Select.Option>
+            <Select.Option value="nu">Nữ</Select.Option>
+            <Select.Option value="khac">Khác</Select.Option>
+          </Select>
+        </Form.Item>
+        <Form.Item
+          name="email"
+          label="Email"
+          rules={[
+            {
+              required: true,
+              message: "Please input the email!",
+            },
+            {
+              type: "email",
+              message: "The input is not valid E-mail!",
+            },
+          ]}
+        >
+          <Input placeholder="Nhập Email" />
+        </Form.Item>
+        <Form.Item
+          name="birthdate"
+          label="Ngày Sinh"
+          rules={[
+            {
+              required: true,
+              message: "Please input the teacher's birth date!",
+            },
+          ]}
+        >
+          <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
+};
+
+export default EditTeacherForm;
