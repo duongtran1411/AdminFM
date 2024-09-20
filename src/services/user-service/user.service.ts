@@ -2,18 +2,10 @@ import { AxiosResponse } from "axios";
 import { Users } from "../../models/users.model";
 import axiosInstance from "../../utils/axiosInstance";
 
-export interface UsersData {
-  user_id: number;
-  username: string;
-  password: string;
-  email: string;
-  role: string;
-}
-
 class UserService {
   async create(usersList: Users): Promise<Users> {
     try {
-      return await axiosInstance.post("/user/addUser", usersList);
+      return await axiosInstance.post("/users/addUser", usersList);
     } catch (error: any) {
       if (error.response && error.response.status === 409) {
         throw new Error("Username or email already exists!");
@@ -21,10 +13,10 @@ class UserService {
       throw new Error("Error creating user: " + error.message);
     }
   }
-  async getAllUser(): Promise<UsersData[]> {
+  async getAllUser(): Promise<Users[]> {
     try {
-      const response = await axiosInstance.get<UsersData[]>("/user");
-      return response.data;
+      const response = await axiosInstance.get("/users");
+      return response.data.data;
     } catch (error) {
       console.error("Error fetching users:", error);
       throw error;
@@ -33,16 +25,16 @@ class UserService {
 
   async deleteUser(id: number): Promise<void> {
     try {
-      await axiosInstance.delete(`/user/${id}`);
+      await axiosInstance.delete(`/users/${id}`);
     } catch (error) {
       console.error(`Error deleting user with id ${id}:`, error);
       throw error;
     }
   }
 
-  async getUserById(id: number): Promise<UsersData> {
+  async getUserById(id: number): Promise<Users> {
     try {
-      const response = await axiosInstance.get<UsersData>(`/user/id/${id}`);
+      const response = await axiosInstance.get<Users>(`/users/id/${id}`);
       return response.data;
     } catch (error) {
       console.error(`Error fetching user with id ${id}:`, error);
@@ -50,10 +42,10 @@ class UserService {
     }
   }
 
-  async updateUser(id: number, user: UsersData): Promise<UsersData> {
+  async updateUser(id: number, user: Users): Promise<Users> {
     try {
-      const response: AxiosResponse<UsersData> = await axiosInstance.put(
-        `/user/${id}`,
+      const response: AxiosResponse<Users> = await axiosInstance.put(
+        `/users/${id}`,
         user,
       );
       return response.data;
@@ -63,8 +55,8 @@ class UserService {
   }
 
   async changePassword(id: number, newPassword: string) {
-    const response: AxiosResponse<UsersData> = await axiosInstance.put(
-      `/user/${id}`,
+    const response: AxiosResponse<Users> = await axiosInstance.put(
+      `/users/${id}`,
       { password: newPassword },
     );
     return response.data;

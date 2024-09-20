@@ -11,3 +11,10 @@ export interface Courses {
   course_family_id: number;
   modules: Module[];
 }
+
+export interface CoursesFamily {
+  course_family_id: number;
+  course_family_name: string;
+  year: string;
+  courses: Courses[];
+}

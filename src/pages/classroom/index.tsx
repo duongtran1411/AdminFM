@@ -10,6 +10,7 @@ import useModals from "../../hooks/useModal";
 import { Classroom } from "../../models/class.model";
 import classRoomService from "../../services/class-room-service/class.room.service";
 import { useParams } from "react-router-dom";
+import EditClassroomForm from "../../components/classroom/EditBuildingForm";
 
 const ClassroomPage = () => {
   const { isVisible, showModal, hideModal } = useModals();
@@ -20,9 +21,11 @@ const ClassroomPage = () => {
   const [selectedClassroom, setSelectedClassroom] = useState<Classroom | null>(
     null,
   );
+
   const fetchClassroom = async () => {
     try {
-      const data = await classRoomService.getClassrooms();
+      const data = await classRoomService.getClassroomsByBId(+buildingId!);
+      // console.log(data);
       setClassrooms(data);
     } catch (error) {
       setError("Error loading Classroom");
@@ -151,15 +154,16 @@ const ClassroomPage = () => {
           isModalVisible={isVisible("createClassroom")}
           hideModal={() => hideModal("createClassroom")}
           onClassroomCreated={onCreateSuccess}
+          buildingId={+buildingId!}
         />
         <ClassroomTable data={classrooms} columns={columns} />
       </div>
-      {/* <EditBuildingForm
+      <EditClassroomForm
         isModalVisible={isVisible("editClassroom")}
         hideModal={() => hideModal("editClassroom")}
-        building={selectedBuilding}
+        classroom={selectedClassroom}
         onUpdate={onUpdateSuccess}
-      /> */}
+      />
     </div>
   );
 };

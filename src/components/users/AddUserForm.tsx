@@ -12,7 +12,7 @@ interface Props {
 
 interface Role {
   role_id: number;
-  role_name: string;
+  name: string;
 }
 
 const AddUserForm = ({ isModalVisible, hideModal, onUserCreated }: Props) => {
@@ -119,7 +119,7 @@ const AddUserForm = ({ isModalVisible, hideModal, onUserCreated }: Props) => {
           <Select placeholder="Select Role">
             {roles.map((role) => (
               <Select.Option key={role.role_id} value={role.role_id}>
-                {role.role_name}
+                {role.name}
               </Select.Option>
             ))}
           </Select>

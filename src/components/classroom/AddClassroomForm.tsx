@@ -1,4 +1,5 @@
-import { Checkbox, Form, Input, Modal, notification } from "antd";
+import { Form, Input, Modal, notification } from "antd";
+import { useParams } from "react-router-dom";
 import { Classroom } from "../../models/class.model";
 import classRoomService from "../../services/class-room-service/class.room.service";
 
@@ -6,21 +7,23 @@ interface Props {
   isModalVisible: boolean;
   hideModal: () => void;
   onClassroomCreated: () => void;
+  buildingId: number;
 }
 
 const AddClassroomForm = ({
   isModalVisible,
   hideModal,
   onClassroomCreated,
+  buildingId,
 }: Props) => {
   const [form] = Form.useForm();
-
   // Xử lý khi nhấn nút "OK"
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
       const newClassroom: Classroom = {
         ...values,
+        buildingId,
       };
       await classRoomService.add(newClassroom);
       onClassroomCreated();
@@ -34,7 +37,7 @@ const AddClassroomForm = ({
 
   return (
     <Modal
-      title="Create New Classroom"
+      title="Tạo mới phòng học"
       open={isModalVisible}
       onOk={handleOk}
       onCancel={hideModal}
@@ -45,12 +48,12 @@ const AddClassroomForm = ({
       <Form form={form} layout="vertical">
         <Form.Item
           name="name"
-          label="Classroom Name"
+          label="Tên phòng học"
           rules={[
             { required: true, message: "Please input the Classroom's name!" },
           ]}
         >
-          <Input placeholder="Enter Classroom's name" />
+          <Input placeholder="Nhập tên phòng học" />
         </Form.Item>
         {/* <Form.Item
           name="building"

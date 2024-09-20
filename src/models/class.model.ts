@@ -1,4 +1,3 @@
-import { Building } from "./building.model";
 
 export interface Class {
   id: number;
@@ -9,5 +8,5 @@ export interface Class {
 export interface Classroom {
   id: number;
   name: string;
-  building: Building[];
+  buildingId: number;
 }

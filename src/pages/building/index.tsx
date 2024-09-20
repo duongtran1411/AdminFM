@@ -50,7 +50,7 @@ const BuildingPage = () => {
       dataIndex: "name",
       key: "name",
       render: (text: string, record: Building) => (
-        <Link to={`/building/${record.id}`}>{text}</Link>
+        <Link to={`/classroom/building/${record.id}/classrooms`}>{text}</Link>
       ),
     },
     {

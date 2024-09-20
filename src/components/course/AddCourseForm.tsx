@@ -18,19 +18,11 @@ const AddCourseForm = ({
   const [form] = Form.useForm();
   const [modules, setModules] = useState<Module[]>([]);
   const [selectedModules, setSelectedModules] = useState<number[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchModules = async () => {
-      setLoading(true);
-      try {
-        const moduleList = await moduleService.getAllModules();
-        setModules(moduleList);
-      } catch (error) {
-        console.error("Failed to fetch modules", error);
-      } finally {
-        setLoading(false);
-      }
+      const moduleList = await moduleService.getAllModules();
+      setModules(moduleList);
     };
 
     if (isModalVisible) {

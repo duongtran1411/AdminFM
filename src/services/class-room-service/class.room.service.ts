@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 import { Classroom } from "../../models/class.model";
 import axiosInstance from "../../utils/axiosInstance";
 
@@ -36,10 +37,22 @@ class ClassService {
 
   async delete(id: number): Promise<void> {
     try {
-      await axiosInstance.delete(`/classes/${id}`);
+      await axiosInstance.delete(`/classroom/${id}`);
     } catch (error) {
       console.error("Error deleting class:", error);
       throw error;
+    }
+  }
+
+  async getClassroomsByBId(buildingId: number): Promise<Classroom[]> {
+    try {
+      const response: AxiosResponse<Classroom[]> = await axiosInstance.get(
+        `classroom/building/${buildingId}/classrooms`,
+      );
+      return response.data;
+    } catch (error: any) {
+      console.error("Error fetching classrooms by building ID:", error);
+      throw new Error("Error fetching classrooms: " + error.message);
     }
   }
 }

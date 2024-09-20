@@ -241,7 +241,7 @@ function MainRoutes() {
           ),
         },
         {
-          path: "bulding/:buildingId",
+          path: "classroom/building/:buildingId/classrooms",
           element: (
             <PageWithTitle title={title}>
               <Suspense fallback={<LoadingSkeleton />}>

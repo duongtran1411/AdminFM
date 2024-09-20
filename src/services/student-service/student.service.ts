@@ -69,10 +69,15 @@ class StudentService {
 
   async getTotalStudents(classId: string): Promise<number> {
     try {
-      const response = await axiosInstance.get<StudentCountData>(`/student-list/class/${classId}/total`);
+      const response = await axiosInstance.get<StudentCountData>(
+        `/student-list/class/${classId}/total`,
+      );
       return response.data.total;
     } catch (error) {
-      console.error(`Error fetching total students for class ${classId}:`, error);
+      console.error(
+        `Error fetching total students for class ${classId}:`,
+        error,
+      );
       throw error; // Ném lỗi lên để xử lý ở nơi gọi hàm
     }
   }
