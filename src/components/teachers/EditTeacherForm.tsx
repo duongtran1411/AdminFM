@@ -23,7 +23,7 @@ const EditTeacherForm = ({
     if (teacher) {
       // Đặt giá trị của form khi mở modal với dữ liệu của giang vien
       form.setFieldsValue({
-        teacher_id: teacher.teacher_id,
+        id: teacher.id,
         name: teacher.name,
         phone: teacher.phone,
         gender: teacher.gender,
@@ -43,15 +43,15 @@ const EditTeacherForm = ({
         try {
           const values = await form.validateFields();
           const birthDate = dayjs(values.birthdate).format("YYYY-MM-DD");
+          const workingDate = dayjs().format("YYYY-MM-DD");
+
           const updatedTeacher = {
             ...teacher,
             ...values,
+            working_date: workingDate,
             birthdate: birthDate,
           };
-          await teacherService.update(
-            updatedTeacher.teacher_id,
-            updatedTeacher,
-          );
+          await teacherService.update(updatedTeacher.id, updatedTeacher);
           form.resetFields();
           hideModal();
           onUpdate();
@@ -112,9 +112,9 @@ const EditTeacherForm = ({
           ]}
         >
           <Select placeholder="Chọn giới tính">
-            <Select.Option value="nam">Nam</Select.Option>
-            <Select.Option value="nu">Nữ</Select.Option>
-            <Select.Option value="khac">Khác</Select.Option>
+            <Select.Option value="Nam">Nam</Select.Option>
+            <Select.Option value="Nữ">Nữ</Select.Option>
+            <Select.Option value="Khác">Khác</Select.Option>
           </Select>
         </Form.Item>
         <Form.Item

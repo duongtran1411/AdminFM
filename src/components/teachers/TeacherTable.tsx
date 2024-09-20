@@ -7,7 +7,7 @@ interface DataTableProps {
   data: any[];
   columns: any[];
   onEdit: (id: any) => void;
-  onDelete: (teacher_id: any) => void;
+  onDelete: (id: any) => void;
 }
 
 const TeacherTable = ({ data, columns, onEdit, onDelete }: DataTableProps) => {
@@ -36,13 +36,13 @@ const TeacherTable = ({ data, columns, onEdit, onDelete }: DataTableProps) => {
         key: "edit",
         label: "Edit",
         icon: <EditOutlined />,
-        onClick: () => onEdit(record.teacher_id),
+        onClick: () => onEdit(record.id),
       },
       {
         key: "delete",
         label: <span style={{ color: "red" }}>Delete</span>,
         icon: <DeleteOutlined style={{ color: "red" }} />,
-        onClick: () => onDelete(record.teacher_id),
+        onClick: () => onDelete(record.id),
       },
     ],
   });

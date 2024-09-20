@@ -1,5 +1,5 @@
 export interface Teachers {
-  teacher_id: number;
+  id: number;
   name: string;
   gender: string;
   birthdate: Date;

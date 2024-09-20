@@ -20,12 +20,13 @@ const AddTeacherForm = ({
     try {
       const values = await form.validateFields();
       const birthDate = dayjs(values.birthdate).format("YYYY-MM-DD");
-      const workingDate = dayjs().format("YYYY-MM-DD"); // Lấy ngày hiện tại
+      const workingDate = dayjs().format("YYYY-MM-DD");
 
       const newTeacher: Teachers = {
         ...values,
         birthdate: birthDate,
-        working_date: workingDate, // Gán ngày hiện tại cho working_date
+        working_date: workingDate,
+        userId: 2,
       };
 
       await teacherService.create(newTeacher);
@@ -36,6 +37,10 @@ const AddTeacherForm = ({
     } catch (info) {
       console.log("Validate Failed:", info);
     }
+  };
+
+  const disabledDate = (current: dayjs.Dayjs) => {
+    return current && current > dayjs().endOf("day");
   };
 
   return (
@@ -84,9 +89,9 @@ const AddTeacherForm = ({
           ]}
         >
           <Select placeholder="Chọn giới tính">
-            <Select.Option value="nam">Nam</Select.Option>
-            <Select.Option value="nu">Nữ</Select.Option>
-            <Select.Option value="khac">Khác</Select.Option>
+            <Select.Option value="Nam">Nam</Select.Option>
+            <Select.Option value="Nữ">Nữ</Select.Option>
+            <Select.Option value="Khác">Khác</Select.Option>
           </Select>
         </Form.Item>
         <Form.Item
@@ -115,7 +120,11 @@ const AddTeacherForm = ({
             },
           ]}
         >
-          <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+          <DatePicker
+            format="YYYY-MM-DD"
+            style={{ width: "100%" }}
+            disabledDate={disabledDate}
+          />
         </Form.Item>
       </Form>
     </Modal>

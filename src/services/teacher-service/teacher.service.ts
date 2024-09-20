@@ -40,7 +40,7 @@ class TeacherService {
     try {
       // Gửi yêu cầu PUT để cập nhật giáo viên
       const response = await axiosInstance.patch<Teachers>(
-        `/teacher/${id}`,
+        `/teachers/${id}`,
         teacher,
       );
 
@@ -60,7 +60,7 @@ class TeacherService {
   // Xóa giáo viên
   async delete(id: number): Promise<void> {
     try {
-      await axiosInstance.delete(`/teacher/${id}`);
+      await axiosInstance.delete(`/teachers/${id}`);
     } catch (error) {
       console.error(`Error deleting teacher with id ${id}:`, error);
       throw error;

@@ -63,11 +63,11 @@ const TeacherPage: React.FC = () => {
       title: "Ngày vào làm",
       dataIndex: "working_date",
       key: "working_date",
+      render: (date: string) => new Date(date).toLocaleDateString(),
     },
   ];
   const handleEdit = (id: number) => {
-    const teacher = teachers.find((teacher) => teacher.teacher_id === id);
-    console.log(id);
+    const teacher = teachers.find((teacher) => teacher.id === id);
     if (teacher) {
       setSelectedTeacher(teacher);
       showModal("editTeacher");
@@ -81,7 +81,7 @@ const TeacherPage: React.FC = () => {
       onOk: async () => {
         try {
           await teacherService.delete(id);
-          setTeachers(teachers.filter((teacher) => teacher.teacher_id !== id));
+          setTeachers(teachers.filter((teacher) => teacher.id !== id));
           notification.success({ message: "Teacher deleted successfully" });
           fetchTeachers();
         } catch (error) {
