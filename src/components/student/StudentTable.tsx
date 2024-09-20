@@ -7,7 +7,7 @@ interface DataTableProps {
   data: any[];
   columns: any[];
   onEdit: (id: any) => void; // Update to receive studentId
-  onDelete: (studentId: any) => void; // Update to receive studentId
+  onDelete: (id: any) => void; // Update to receive studentId
 }
 
 const StudentTable = ({ data, columns, onEdit, onDelete }: DataTableProps) => {
@@ -36,13 +36,13 @@ const StudentTable = ({ data, columns, onEdit, onDelete }: DataTableProps) => {
         key: "edit",
         label: "Edit",
         icon: <EditOutlined />,
-        onClick: () => onEdit(record.id), // Pass studentId
+        onClick: () => onEdit(record.id),
       },
       {
         key: "delete",
         label: <span style={{ color: "red" }}>Delete</span>,
         icon: <DeleteOutlined style={{ color: "red" }} />,
-        onClick: () => onDelete(record.studentId), // Pass studentId
+        onClick: () => onDelete(record.id),
       },
     ],
   });
@@ -60,10 +60,9 @@ const StudentTable = ({ data, columns, onEdit, onDelete }: DataTableProps) => {
     },
   ];
 
-  // Ensure each item has a unique key
   const dataSource = data.map((item) => ({
     ...item,
-    key: item.id, // Use a unique identifier from your data
+    key: item.id,
   }));
 
   return (

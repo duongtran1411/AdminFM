@@ -1,13 +1,13 @@
 import { DatePicker, Form, Input, Modal, notification } from "antd";
 import dayjs from "dayjs";
 import { useEffect } from "react";
-import { StudentList } from "../../models/student.model";
 import { studentService } from "../../services/student-service/student.service";
+import { Student } from "../../models/student.model";
 
 interface EditStudentFormProps {
   isModalVisible: boolean;
   hideModal: () => void;
-  student: StudentList | null; // Sinh viên cần chỉnh sửa
+  student: Student | null; // Sinh viên cần chỉnh sửa
   onUpdate: () => void; // Hàm gọi lại để cập nhật danh sách sinh viên sau khi chỉnh sửa
 }
 
@@ -21,7 +21,6 @@ const EditStudentForm = ({
 
   useEffect(() => {
     if (student) {
-      // Đặt giá trị của form khi mở modal với dữ liệu của sinh viên
       form.setFieldsValue({
         studentId: student.studentId,
         name: student.name,
