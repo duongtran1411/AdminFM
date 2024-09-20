@@ -7,26 +7,26 @@ export interface ScheduleData {
   date: string;
   class: { id: number; name: string }; // Update with actual data type
   shift: { id: number; name: string; startTime: string; endTime: string }; // Update with actual data type
-  lecturer: { id: number; name: string }; // Update with actual data type
-  subject: { id: number; name: string }; // Update with actual data type
+  teacher: { id: number; name: string }; // Update with actual data type
+  module: { module_id: number; module_name: string }; // Update with actual data type
   classroom: { id: number; name: string }; // Update with actual data type
 }
 
 export interface CreateScheduleData {
   id: number;
   date: string;
-  class: string | undefined; // Update with actual data type
-  shift: number; // Update with actual data type
-  lecturer: number; // Update with actual data type
-  subject: number; // Update with actual data type
-  classroom: number; // Update with actual data type
+  classId: string | undefined; // Update with actual data type
+  shiftId: number; // Update with actual data type
+  teacherId: number; // Update with actual data type
+  moduleId: number; // Update with actual data type
+  classroomId: number; // Update with actual data type
 }
 
 class ScheduleService {
   // Lấy danh sách lịch học
   async findAll(): Promise<ScheduleData[]> {
     try {
-      const response = await axiosInstance.get<ScheduleData[]>("/schedule");
+      const response = await axiosInstance.get<ScheduleData[]>("/schedules");
       return response.data;
     } catch (error) {
       console.error("Error fetching schedules:", error);
@@ -37,7 +37,7 @@ class ScheduleService {
   // Lấy thông tin chi tiết một lịch học
   async findOne(id: number): Promise<ScheduleData> {
     try {
-      const response = await axiosInstance.get<ScheduleData>(`/schedule/${id}`);
+      const response = await axiosInstance.get<ScheduleData>(`/schedules/${id}`);
       return response.data;
     } catch (error) {
       console.error(`Error fetching schedule with id ${id}:`, error);
@@ -49,7 +49,7 @@ class ScheduleService {
   async create(schedule: CreateScheduleData): Promise<ScheduleData> {
     try {
       const response = await axiosInstance.post<ScheduleData>(
-        "/schedule",
+        "/schedules",
         schedule,
       );
       return response.data;
@@ -62,11 +62,11 @@ class ScheduleService {
   // Cập nhật thông tin lịch học
   async update(
     id: number,
-    schedule: Partial<ScheduleData>,
+    schedule: Partial<CreateScheduleData>,
   ): Promise<ScheduleData> {
     try {
-      const response = await axiosInstance.patch<ScheduleData>(
-        `/schedule/${id}`,
+      const response = await axiosInstance.put<ScheduleData>(
+        `/schedules/${id}`,
         schedule,
       );
 
@@ -84,7 +84,7 @@ class ScheduleService {
   // Xóa lịch học
   async delete(id: number): Promise<void> {
     try {
-      await axiosInstance.delete(`/schedule/${id}`);
+      await axiosInstance.delete(`/schedules/${id}`);
     } catch (error) {
       console.error(`Error deleting schedule with id ${id}:`, error);
       throw error;
@@ -123,7 +123,7 @@ class ScheduleService {
   async getShifts(): Promise<{ id: number; name: string }[]> {
     try {
       const response = await axiosInstance.get<{ id: number; name: string }[]>(
-        "/shift",
+        "/shifts",
       );
       return response.data;
     } catch (error) {
@@ -147,7 +147,7 @@ class ScheduleService {
   async getLecturers(): Promise<{ id: number; name: string }[]> {
     try {
       const response = await axiosInstance.get<{ id: number; name: string }[]>(
-        "/lecturer",
+        "/teachers",
       );
       return response.data;
     } catch (error) {
@@ -156,10 +156,10 @@ class ScheduleService {
     }
   }
 
-  async getSubjects(): Promise<{ id: number; name: string }[]> {
+  async getModule(): Promise<any[]> {
     try {
-      const response = await axiosInstance.get<{ id: number; name: string }[]>(
-        "/subjects",
+      const response = await axiosInstance.get<any[]>(
+        "/module",
       );
       return response.data;
     } catch (error) {

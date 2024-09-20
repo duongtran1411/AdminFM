@@ -1,6 +1,5 @@
-import { AxiosResponse } from "axios";
-import axiosInstance from "../../utils/axiosInstance";
 import { CoursesFamily } from "../../models/courses.model";
+import axiosInstance from "../../utils/axiosInstance";
 
 class CoursesFamilyService {
   async getAll(): Promise<CoursesFamily[]> {
