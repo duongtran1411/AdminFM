@@ -4,11 +4,9 @@ import { useEffect, useRef, useState } from "react";
 interface DataCourseProps {
   data: any[];
   columns: any[];
-  onEdit: (id: any) => void;
-  onDelete: (course_id: any) => void;
 }
 
-const CoursesTable = ({ data, columns, onEdit, onDelete }: DataCourseProps) => {
+const CoursesTable = ({ data, columns }: DataCourseProps) => {
   const tableRef = useRef<HTMLDivElement>(null);
   const [canScroll, setCanScroll] = useState(false);
 

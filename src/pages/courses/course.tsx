@@ -1,130 +1,185 @@
-// import { useEffect, useState } from "react";
-// import { Button, Layout, Dropdown, Input } from "antd";
-// import TabsMenu from "../../components/student/TabsMenu";
-// import useModals from "../../hooks/useModal";
-// import { AiOutlineMore } from "react-icons/ai";
-// import CoursesTable from "../../components/course/CourseTable";
-// import AddCourseButton from "../../components/course/AddCourseButton";
-// import { courseService } from "../../services/courses-service/courses.service";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Button, Dropdown, Input, Menu, Modal, notification } from "antd";
+import { useEffect, useState } from "react";
+import { AiOutlineMore } from "react-icons/ai";
+import AddCourseButton from "../../components/course/AddCourseButton";
+import AddCourseForm from "../../components/course/AddCourseForm";
+import CoursesTable from "../../components/course/CourseTable";
+import EditCourseForm from "../../components/course/EditCourseForm";
+import useModals from "../../hooks/useModal";
+import { Courses } from "../../models/courses.model";
+import { courseService } from "../../services/courses-service/courses.service";
 
-// interface CoursesList {}
+const CoursePage = () => {
+  const { isVisible, showModal, hideModal } = useModals();
+  const [courses, setCourses] = useState<Courses[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [selectedCourse, setSelectedCourse] = useState<Courses | null>(null);
 
-// const CoursePage = () => {
-//   const { isVisible, showModal, hideModal } = useModals();
-//   const [courses, setCourses] = useState<CoursesList[]>([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState("");
-//   const [selectedCourse, setSelectedCourse] = useState<CoursesList | null>(
-//     null,
-//   );
+  const fetchCourses = async () => {
+    try {
+      const data = await courseService.getAllCourses();
+      setCourses(data);
+    } catch (error) {
+      setError("Error loading courses");
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchCourses();
+  }, []);
 
-//   const fetchCourses = async () => {
-//     try {
-//       const data = await courseService.getAllCourses();
-//       setCourses(data);
-//     } catch (error) {
-//       setError("Error loading courses");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-//   useEffect(() => {
-//     fetchCourses();
-//   }, []);
+  const menu = (course: Courses) => (
+    <Menu>
+      <Menu.Item
+        key="edit"
+        icon={<EditOutlined />}
+        onClick={() => handleEdit(course.course_id)}
+      >
+        Edit
+      </Menu.Item>
+      <Menu.Item
+        style={{ color: "red" }}
+        key="delete"
+        icon={<DeleteOutlined style={{ color: "red" }} />}
+        onClick={() => handleDelete(course.course_id)}
+      >
+        Delete
+      </Menu.Item>
+    </Menu>
+  );
 
-//   const columns = [
-//     {
-//       title: "Center",
-//       dataIndex: "center",
-//       key: "center",
-//     },
-//     {
-//       title: "Course Name",
-//       dataIndex: "course_name",
-//       key: "course_name",
-//     },
-//     {
-//       title: "Course Code",
-//       dataIndex: "course_code",
-//       key: "course_code",
-//     },
-//     // Thêm các column nếu cần
-//   ];
-//   const onCreateSuccess = () => {
-//     fetchCourses();
-//   };
+  const columns = [
+    {
+      title: "Course Name",
+      dataIndex: "course_name",
+      key: "course_name",
+    },
+    {
+      title: "Course Code",
+      dataIndex: "course_code",
+      key: "course_code",
+    },
+    {
+      title: "Module Name",
+      key: "module_name",
+      render: (record: Courses) => {
+        return record.modules.map((module) => module.module_name).join(", ");
+      },
+    },
+    {
+      title: "",
+      key: "actions",
+      render: (_, record) => (
+        <Dropdown overlay={menu(record)} trigger={["click"]}>
+          <Button
+            type="text"
+            icon={<AiOutlineMore style={{ fontSize: "20px" }} />}
+            style={{ float: "right" }}
+          />
+        </Dropdown>
+      ),
+    },
+    // Thêm các column nếu cần
+  ];
 
-//   const onUpdateSuccess = () => {
-//     fetchCourses();
-//   };
+  const handleDelete = async (cid: number) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this Course?",
+      okText: "Delete",
+      okType: "danger",
+      onOk: async () => {
+        try {
+          await courseService.deleteCourse(cid);
+          setCourses(courses.filter((c) => c.course_id !== cid));
+          notification.success({ message: "Course deleted successfully" });
+        } catch (error) {
+          notification.error({ message: "Error deleting Course" });
+        }
+      },
+    });
+  };
 
-//   if (loading) {
-//     return <p>Loading courses...</p>;
-//   }
+  const handleEdit = (id: number) => {
+    const course = courses.find((c) => c.course_id === id);
+    if (course) {
+      setSelectedCourse(course);
+      showModal("editCourse");
+    }
+  };
 
-//   if (error) {
-//     return <p>{error}</p>;
-//   }
+  const onCreateSuccess = () => {
+    fetchCourses();
+  };
 
-//   if (loading) {
-//     return <div>Loading...</div>;
-//   }
-//   return (
-//     <>
-//       <div
-//         style={{
-//           display: "flex",
-//           flexDirection: "column",
-//           alignItems: "center",
-//           padding: "20px",
-//         }}
-//       >
-//         <div style={{ width: "100%", maxWidth: "100%" }}>
-//           <div
-//             style={{
-//               display: "flex",
-//               justifyContent: "flex-end",
-//               marginBottom: "16px",
-//             }}
-//           >
-//             {/* Button Add Course */}
-//             <AddCourseButton
-//               onCourseCreated={() => showModal("createCourse")}
-//             />
-//           </div>
-//           <Input.Search
-//             placeholder="Tìm kiếm tên Course..."
-//             allowClear
-//             // onSearch={handleSearch}
-//             style={{ width: 400, marginBottom: 16 }}
-//           />
+  const onUpdateSuccess = () => {
+    fetchCourses();
+  };
 
-//           {/* Create Course modal */}
-//           <AddCourseForm
-//             isModalVisible={isVisible("createCourse")}
-//             hideModal={() => hideModal("createCourse")}
-//             onTeacherCreated={onCreateSuccess}
-//           />
+  if (loading) {
+    return <p>Loading courses...</p>;
+  }
 
-//           {/* Course Data Table */}
-//           <CoursesTable
-//             columns={columns}
-//             data={courses}
-//             onDelete={handleDelete}
-//             onEdit={handleEdit}
-//           />
+  if (error) {
+    return <p>{error}</p>;
+  }
 
-//           {/* Edit Course modal */}
-//           <EditCourseForm
-//             isModalVisible={isVisible("editCourse")}
-//             hideModal={() => hideModal("editCourse")}
-//             teacher={selectedCourse}
-//             onUpdate={onUpdateSuccess}
-//           />
-//         </div>
-//       </div>
-//     </>
-//   );
-// };
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  return (
+    <>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          padding: "20px",
+        }}
+      >
+        <div style={{ width: "100%", maxWidth: "100%" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginBottom: "16px",
+            }}
+          >
+            {/* Button Add Course */}
+            <AddCourseButton
+              onCourseCreated={() => showModal("createCourse")}
+            />
+          </div>
+          <Input.Search
+            placeholder="Tìm kiếm tên Course..."
+            allowClear
+            // onSearch={handleSearch}
+            style={{ width: 400, marginBottom: 16 }}
+          />
 
-// export default CoursePage;
+          {/* Create Course modal */}
+          <AddCourseForm
+            isModalVisible={isVisible("createCourse")}
+            hideModal={() => hideModal("createCourse")}
+            onCourseCreated={onCreateSuccess}
+          />
+
+          {/* Course Data Table */}
+          <CoursesTable columns={columns} data={courses} />
+
+          {/* Edit Course modal */}
+          <EditCourseForm
+            isModalVisible={isVisible("editCourse")}
+            hideModal={() => hideModal("editCourse")}
+            course={selectedCourse}
+            onUpdate={onUpdateSuccess}
+          />
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default CoursePage;

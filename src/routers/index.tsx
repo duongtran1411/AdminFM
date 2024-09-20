@@ -12,7 +12,8 @@ import Settings from "../components/users/Settings";
 import CoursesFamilyPage from "../pages/courses/coursefamily";
 import AttendancePage from "../pages/attendance";
 import ModulePage from "../pages/module";
-// import CoursePage from "../pages/courses/course";
+import BuildingPage from "../pages/building";
+import CoursePage from "../pages/courses/course";
 
 // Loading Components
 const LoadingIndicator = () => (
@@ -69,7 +70,9 @@ const getTitleFromLocation = (pathname: string) => {
     case "/teachers":
       return "Quản lý giáo viên";
     case "/classes":
-      return "Quản lý lớp học ";
+      return "Quản lý lớp học";
+    case "/building":
+      return "Quản lý toà nhà";
     default:
       return "404 - Không Tìm Thấy Trang";
   }
@@ -167,6 +170,16 @@ function MainRoutes() {
           ),
         },
         {
+          path: "building",
+          element: (
+            <PageWithTitle title={title}>
+              <Suspense fallback={<LoadingSkeleton />}>
+                <BuildingPage />
+              </Suspense>
+            </PageWithTitle>
+          ),
+        },
+        {
           path: "student-list/class/:classId",
           element: (
             <PageWithTitle title={title}>
@@ -191,7 +204,7 @@ function MainRoutes() {
           element: (
             <PageWithTitle title={title}>
               <Suspense fallback={<LoadingSkeleton />}>
-                {/* <CoursePage /> */}
+                <CoursePage />
               </Suspense>
             </PageWithTitle>
           ),

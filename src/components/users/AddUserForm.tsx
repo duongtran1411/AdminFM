@@ -118,9 +118,8 @@ const AddUserForm = ({ isModalVisible, hideModal, onUserCreated }: Props) => {
         >
           <Select placeholder="Select Role">
             {roles.map((role) => (
-              <Select.Option key={role.role_id} value={role.role_name}>
-                {" "}
-                {role.role_name}{" "}
+              <Select.Option key={role.role_id} value={role.role_id}>
+                {role.role_name}
               </Select.Option>
             ))}
           </Select>
