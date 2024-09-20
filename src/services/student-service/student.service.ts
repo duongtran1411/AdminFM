@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
-import { StudentList } from "../../models/student.model"; // Assuming you have a StudentList type/model defined
 import axiosInstance from "../../utils/axiosInstance";
+import { Student } from "../../models/student.model";
 
 export interface StudentCountData {
   total: number;
@@ -8,10 +8,10 @@ export interface StudentCountData {
 
 class StudentService {
   // Tạo một student mới
-  async create(studentList: StudentList): Promise<StudentList> {
+  async create(studentList: Student): Promise<Student> {
     try {
-      const response: AxiosResponse<StudentList> = await axiosInstance.post(
-        "/student-list",
+      const response: AxiosResponse<Student> = await axiosInstance.post(
+        "/students",
         studentList,
       );
       return response.data;
@@ -20,10 +20,10 @@ class StudentService {
     }
   }
 
-  async findAll(classId?: string): Promise<StudentList[]> {
+  async findAll(classId?: string): Promise<Student[]> {
     try {
-      const response: AxiosResponse<StudentList[]> = await axiosInstance.get(
-        `/student-list/class/${classId}`,
+      const response: AxiosResponse<Student[]> = await axiosInstance.get(
+        `/students/class/${classId}`,
       );
       return response.data;
     } catch (error: any) {
@@ -32,10 +32,10 @@ class StudentService {
   }
 
   // Lấy một student theo ID
-  async findOne(id: number): Promise<StudentList> {
+  async findOne(id: number): Promise<Student> {
     try {
-      const response: AxiosResponse<StudentList> = await axiosInstance.get(
-        `/student-list/${id}`,
+      const response: AxiosResponse<Student> = await axiosInstance.get(
+        `/students/${id}`,
       );
       return response.data;
     } catch (error: any) {
@@ -44,10 +44,10 @@ class StudentService {
   }
 
   // Cập nhật một student theo ID
-  async update(id: number, studentList: StudentList): Promise<StudentList> {
+  async update(id: number, studentList: Student): Promise<Student> {
     try {
-      const response: AxiosResponse<StudentList> = await axiosInstance.patch(
-        `/student-list/${id}`,
+      const response: AxiosResponse<Student> = await axiosInstance.put(
+        `/students/${id}`,
         studentList,
       );
       console.log(response);
@@ -60,25 +60,10 @@ class StudentService {
   // Xóa một student theo ID
   async remove(id: number): Promise<void> {
     try {
-      await axiosInstance.delete(`/student-list/${id}`);
+      await axiosInstance.delete(`/students/${id}`);
       console.log("Delete : " + id);
     } catch (error: any) {
       throw new Error("Error deleting student: " + error.message);
-    }
-  }
-
-  async getTotalStudents(classId: string): Promise<number> {
-    try {
-      const response = await axiosInstance.get<StudentCountData>(
-        `/student-list/class/${classId}/total`,
-      );
-      return response.data.total;
-    } catch (error) {
-      console.error(
-        `Error fetching total students for class ${classId}:`,
-        error,
-      );
-      throw error; // Ném lỗi lên để xử lý ở nơi gọi hàm
     }
   }
 }

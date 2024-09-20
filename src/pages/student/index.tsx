@@ -7,18 +7,16 @@ import EditStudentForm from "../../components/student/EditStudentForm";
 import StudentTable from "../../components/student/StudentTable";
 import TabsMenu from "../../components/student/TabsMenu";
 import useModals from "../../hooks/useModal";
-import { StudentList } from "../../models/student.model";
 import { studentService } from "../../services/student-service/student.service";
+import { Student } from "../../models/student.model";
 
 const StudentPage = () => {
   const { isVisible, showModal, hideModal } = useModals();
   const { classId } = useParams();
-  const [students, setStudents] = useState<StudentList[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedStudent, setSelectedStudent] = useState<StudentList | null>(
-    null,
-  );
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const fetchStudents = async () => {
     try {
       const data = await studentService.findAll(classId);
@@ -57,18 +55,15 @@ const StudentPage = () => {
     },
   ];
 
-  const handleDelete = async (studentId: number) => {
+  const handleDelete = async (id: number) => {
     Modal.confirm({
       title: "Are you sure you want to delete this student?",
       okText: "Delete",
       okType: "danger",
       onOk: async () => {
         try {
-          await studentService.remove(studentId);
-          setStudents(
-            students.filter((student) => student.studentId !== studentId),
-          );
-          console.log(students);
+          await studentService.remove(id);
+          setStudents(students.filter((student) => student.id !== id));
           notification.success({ message: "Student deleted successfully" });
         } catch (error) {
           notification.error({ message: "Error deleting student" });
@@ -77,7 +72,6 @@ const StudentPage = () => {
     });
   };
 
-  // Khi chọn chỉnh sửa, hiển thị form và đặt sinh viên đang chỉnh sửa
   const handleEdit = (id: number) => {
     const student = students.find((s) => s.id === id);
     if (student) {
@@ -118,7 +112,7 @@ const StudentPage = () => {
         <div className="flex justify-between flex-wrap">
           <TabsMenu tabItems={[]} />
           <ActionButtons
-            onNewAiClick={() => showModal("createStudent")}
+            onNewClick={() => showModal("createStudent")}
             onImportClick={() => showModal("importExcel")}
           />
         </div>

@@ -111,7 +111,7 @@ class ScheduleService {
   async findByClassId(id: string): Promise<ScheduleData[]> {
     try {
       const response = await axiosInstance.get<ScheduleData[]>(
-        `/schedule/by-class/${id}`,
+        `/schedules/class/${id}`,
       );
       return response.data;
     } catch (error) {

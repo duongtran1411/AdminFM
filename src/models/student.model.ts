@@ -13,7 +13,7 @@ export interface Class {
 }
 
 // Định nghĩa interface cho StudentList
-export interface StudentList {
+export interface Student {
   id: number;
   studentId: number;
   name: string;

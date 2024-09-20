@@ -10,7 +10,6 @@ import EditClassForm from "./EditClassForm";
 
 interface ClassItemProps {
   name: string;
-  position: string;
   totalStudent: number;
   classId: string;
   onSucess: () => void;
@@ -18,7 +17,6 @@ interface ClassItemProps {
 
 const ClassItem = ({
   name,
-  position,
   totalStudent,
   classId,
   onSucess,
@@ -28,8 +26,8 @@ const ClassItem = ({
   const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
   const navigate = useNavigate();
-  const { showModal, hideModal, isVisible } = useModals(); // Using useModals hook
-  const [editingClass, setEditingClass] = useState<ClassItemProps>();
+  const { showModal, hideModal, isVisible } = useModals();
+  const [editingClass, setEditingClass] = useState();
 
   const handleClick = () => {
     navigate(`/schedule/class/${classId}`);
@@ -37,7 +35,7 @@ const ClassItem = ({
 
   // Edit action
   const handleEdit = () => {
-    // setEditingClass({ name, position, totalStudent, classId });
+    // setEditingClass();
     showModal("editClassModal");
   };
 
@@ -73,11 +71,9 @@ const ClassItem = ({
   const handleSaveEdit = async (updatedClass: ClassItemProps) => {
     try {
       console.log(classId, updatedClass);
-      await ClassService.updateClass(classId, updatedClass); // Call update function
+      await ClassService.updateClass(classId, updatedClass);
       message.success("Class updated successfully");
       hideModal("editClassModal");
-
-      // Refresh the class list or handle UI update
     } catch (error) {
       message.error("Failed to update class");
     }
@@ -97,9 +93,8 @@ const ClassItem = ({
         }}
         onClick={handleClick}
       >
-        {/* Three dots (kebab menu) in the top-right corner */}
         <div
-          onClick={(e) => e.stopPropagation()} // Prevent click event from propagating to the card
+          onClick={(e) => e.stopPropagation()}
           style={{
             position: "absolute",
             top: "16px",
@@ -119,16 +114,6 @@ const ClassItem = ({
             style={{ marginBottom: "16px" }}
           />
           <div style={{ marginTop: "8px" }}>
-            {/* <p
-              style={{
-                fontSize: "14px",
-                fontWeight: "500",
-                color: "#555",
-                marginBottom: 5,
-              }}
-            >
-              Total Student
-            </p> */}
             <p
               style={{
                 fontSize: "24px",
