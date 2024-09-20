@@ -2,24 +2,18 @@ import { Select, Form, Input, Modal, notification } from "antd";
 import { useEffect, useState } from "react";
 import { userService } from "../../services/user-service/user.service";
 import { roleService } from "../../services/role-service/role.service";
+import { Users } from "../../models/users.model";
 
 interface EditUserFormProps {
   isModalVisible: boolean;
   hideModal: () => void;
-  user: UserList | null;
+  user: Users | null;
   onUpdate: () => void;
 }
 
 interface Role {
-  role_id: number;
-  role_name: string;
-}
-
-interface UserList {
-  user_id: number;
-  username: string;
-  password: string;
-  role: string;
+  id: number;
+  name: string;
 }
 
 const EditUserForm = ({
@@ -48,7 +42,7 @@ const EditUserForm = ({
     if (user) {
       // Đặt giá trị của form khi mở modal với dữ liệu của user
       form.setFieldsValue({
-        user_id: user.user_id,
+        user_id: user.id,
         username: user.username,
         password: user.password,
         role: user.role,
@@ -114,8 +108,8 @@ const EditUserForm = ({
         <Form.Item label="Role" name="role" rules={[{ required: true }]}>
           <Select placeholder="Select Role">
             {roles.map((role) => (
-              <Select.Option key={role.role_id} value={role.role_name}>
-                {role.role_name}
+              <Select.Option key={role.id} value={role.id}>
+                {role.name}
               </Select.Option>
             ))}
           </Select>

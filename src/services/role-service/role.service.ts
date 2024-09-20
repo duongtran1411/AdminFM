@@ -1,7 +1,7 @@
 import axiosInstance from "../../utils/axiosInstance";
 
 export interface RoleData {
-  role_id: number;
+  id: number;
   name: string;
 }
 

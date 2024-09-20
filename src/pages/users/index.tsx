@@ -7,6 +7,7 @@ import UsersTable from "../../components/users/UsersTable";
 import useModals from "../../hooks/useModal";
 import { Users } from "../../models/users.model";
 import { userService } from "../../services/user-service/user.service";
+import EditUserForm from "../../components/users/EditUserForm";
 
 const UserPage = () => {
   const { isVisible, showModal, hideModal } = useModals();
@@ -75,7 +76,7 @@ const UserPage = () => {
 
   // Khi chọn chỉnh sửa, hiển thị form và đặt sinh viên đang chỉnh sửa
   const handleEdit = (id: number) => {
-    const user = users.find((s) => s.id === id);
+    const user = users.find((u) => u.id === id);
     if (user) {
       setSelectedUser(user);
       showModal("editUser");
@@ -106,8 +107,6 @@ const UserPage = () => {
       className="rounded-lg flex justify-center items-center"
       style={{
         background: "white",
-        padding: "20px",
-        minHeight: "100vh", // Ensure the layout takes the full height of the screen
       }}
     >
       <div className="w-full max-w-6xl">
@@ -127,12 +126,12 @@ const UserPage = () => {
           onEdit={handleEdit}
         />
       </div>
-      {/* <EditUserForm
+      <EditUserForm
         isModalVisible={isVisible("editUser")}
         hideModal={() => hideModal("editUser")}
         user={selectedUser}
         onUpdate={onUpdateSuccess}
-      /> */}
+      />
     </Layout>
   );
 };

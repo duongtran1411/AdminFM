@@ -11,7 +11,7 @@ interface Props {
 }
 
 interface Role {
-  role_id: number;
+  id: number;
   name: string;
 }
 
@@ -45,7 +45,6 @@ const AddUserForm = ({ isModalVisible, hideModal, onUserCreated }: Props) => {
     } catch (error: any) {
       notification.error({
         message: "User Creation Failed!",
-        description: "Username already exists. Please choose a different one.",
       });
     }
   };
@@ -113,12 +112,13 @@ const AddUserForm = ({ isModalVisible, hideModal, onUserCreated }: Props) => {
           rules={[
             {
               required: true,
+              message: "Please choose the role!",
             },
           ]}
         >
-          <Select placeholder="Select Role">
+          <Select placeholder="Choose Role">
             {roles.map((role) => (
-              <Select.Option key={role.role_id} value={role.role_id}>
+              <Select.Option key={role.id} value={role.id}>
                 {role.name}
               </Select.Option>
             ))}

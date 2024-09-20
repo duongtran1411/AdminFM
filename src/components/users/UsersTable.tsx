@@ -36,13 +36,13 @@ const UsersTable = ({ data, columns, onEdit, onDelete }: DataUserProps) => {
         key: "edit",
         label: "Edit",
         icon: <EditOutlined />,
-        onClick: () => onEdit(record.user_id),
+        onClick: () => onEdit(record.id),
       },
       {
         key: "delete",
         label: <span style={{ color: "red" }}>Delete</span>,
         icon: <DeleteOutlined style={{ color: "red" }} />,
-        onClick: () => onDelete(record.user_id),
+        onClick: () => onDelete(record.id),
       },
     ],
   });
