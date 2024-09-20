@@ -10,8 +10,7 @@ const AttendancePage = () => {
   const [error, setError] = useState("");
   const [attendanceData, setAttendanceData] = useState<AttendanceStatus[]>([]);
   const { scheduleId } = useParams();
-  console.log(scheduleId);
-
+ 
   const fetchAttendanceStatus = async (scheduleId: string) => {
     try {
       const data = await getAttendanceStatus(scheduleId);

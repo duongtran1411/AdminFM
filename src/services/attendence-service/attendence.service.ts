@@ -16,7 +16,7 @@ export const getAttendanceStatus = async (
   try {
     // Gửi yêu cầu GET đến API để lấy trạng thái điểm danh theo scheduleId
     const response = await axiosInstance.get<AttendanceStatus[]>(
-      `schedule/${scheduleId}/students`,
+      `attendance/schedule/${scheduleId}`,
       {
         headers: {
           "Content-Type": "application/json",

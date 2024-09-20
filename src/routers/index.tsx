@@ -261,7 +261,7 @@ function MainRoutes() {
           ),
         },
         {
-          path: "class/schedule/attendance/:scheduleId",
+          path: "/schedule/attendance/:scheduleId",
           element: (
             <PageWithTitle title={title}>
               <Suspense fallback={<LoadingSkeleton />}>

@@ -9,7 +9,7 @@ import {
   Table,
 } from "antd";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ActionButtons from "../../components/schedule/ActionButton";
 import ScheduleTabsMenu from "../../components/schedule/TabsMenu";
 import UpdateScheduleForm from "../../components/schedule/UpdateScheduleForm";
@@ -23,6 +23,7 @@ import StudentPage from "../student";
 import CreateScheduleForm from "../../components/schedule/CreateScheduleForm";
 
 const ScheduleList: React.FC = () => {
+  const navigate = useNavigate();
   const { isVisible, showModal, hideModal } = useModals(); // Khai báo hook
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -89,6 +90,9 @@ const ScheduleList: React.FC = () => {
 
   const handleAddSchedule = () => {
     showModal("createSchedule");
+  };
+  const handleRowClick = (schedule: ScheduleData) => {
+    navigate(`/schedule/attendance/${schedule.id}`);
   };
 
   const menu = (schedule: ScheduleData) => ({
@@ -187,7 +191,14 @@ const ScheduleList: React.FC = () => {
         >
           <ActionButtons onNewClick={handleAddSchedule} />
           <div style={{ marginTop: "60px" }}>
-            <Table columns={columns} dataSource={schedules} rowKey="id" />
+            <Table
+              columns={columns}
+              dataSource={schedules}
+              rowKey="id"
+              onRow={(schedule) => ({
+                onClick: () => handleRowClick(schedule),
+              })}
+            />
           </div>
         </Layout>
       ) : (
