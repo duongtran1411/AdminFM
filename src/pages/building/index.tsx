@@ -9,6 +9,7 @@ import useModals from "../../hooks/useModal";
 import { Building } from "../../models/building.model";
 import buildingService from "../../services/building-service/building.service";
 import { AiOutlineMore } from "react-icons/ai";
+import { Link } from "react-router-dom";
 
 const BuildingPage = () => {
   const { isVisible, showModal, hideModal } = useModals();
@@ -48,6 +49,9 @@ const BuildingPage = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
+      render: (text: string, record: Building) => (
+        <Link to={`/building/${record.id}`}>{text}</Link>
+      ),
     },
     {
       title: "",

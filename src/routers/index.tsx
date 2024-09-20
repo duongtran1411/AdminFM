@@ -14,6 +14,7 @@ import AttendancePage from "../pages/attendance";
 import ModulePage from "../pages/module";
 import BuildingPage from "../pages/building";
 import CoursePage from "../pages/courses/course";
+import ClassroomPage from "../pages/classroom";
 
 // Loading Components
 const LoadingIndicator = () => (
@@ -200,6 +201,16 @@ function MainRoutes() {
           ),
         },
         {
+          path: "classroom",
+          element: (
+            <PageWithTitle title={title}>
+              <Suspense fallback={<LoadingSkeleton />}>
+                <ClassroomPage />
+              </Suspense>
+            </PageWithTitle>
+          ),
+        },
+        {
           path: "courses",
           element: (
             <PageWithTitle title={title}>
@@ -225,6 +236,16 @@ function MainRoutes() {
             <PageWithTitle title={title}>
               <Suspense fallback={<LoadingSkeleton />}>
                 <CoursesFamilyPage />
+              </Suspense>
+            </PageWithTitle>
+          ),
+        },
+        {
+          path: "bulding/:buildingId",
+          element: (
+            <PageWithTitle title={title}>
+              <Suspense fallback={<LoadingSkeleton />}>
+                <ClassroomPage />
               </Suspense>
             </PageWithTitle>
           ),

@@ -44,7 +44,7 @@ const DashBoardMenuList = () => {
       icon: <AiFillBank />,
       children: [
         { key: "building", icon: <SiGoogleclassroom />, label: "Building" },
-        { key: "classeroom", icon: <SiGoogleclassroom />, label: "Classroom" },
+        { key: "classroom", icon: <SiGoogleclassroom />, label: "Classroom" },
         { key: "classes", icon: <SiGoogleclassroom />, label: "Classes" },
         { key: "schedule", icon: <SiGoogleclassroom />, label: "Schedule" },
         // Thêm menulist vào sau nếu cần

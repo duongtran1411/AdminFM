@@ -1,7 +1,6 @@
 export interface Module {
   module_id: number;
   module_name: string;
-  module_code: string;
   exam_type: string;
 }
 
