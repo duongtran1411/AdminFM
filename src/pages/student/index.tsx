@@ -44,8 +44,8 @@ const StudentPage = () => {
     },
     {
       title: "Birth Date",
-      dataIndex: "birthDate",
-      key: "birthDate",
+      dataIndex: "birthdate",
+      key: "birthdate",
       render: (date: string) => new Date(date).toLocaleDateString(),
     },
     {

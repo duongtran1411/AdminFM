@@ -1,0 +1,20 @@
+import { PlusOutlined } from "@ant-design/icons";
+import { Button } from "antd";
+
+interface Props {
+  onNewClick: () => void;
+}
+
+const ActionButtons = ({ onNewClick }: Props) => {
+  return (
+    <div
+      style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}
+    >
+      <Button type="primary" icon={<PlusOutlined />} onClick={onNewClick}>
+        New Schedule
+      </Button>
+    </div>
+  );
+};
+
+export default ActionButtons;

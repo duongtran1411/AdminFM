@@ -2,8 +2,8 @@ import { DatePicker, Form, Input, Modal, notification } from "antd";
 import dayjs from "dayjs";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { StudentList } from "../../models/student.model";
 import { studentService } from "../../services/student-service/student.service";
+import { Student } from "../../models/student.model";
 
 interface Props {
   isModalVisible: boolean;
@@ -23,8 +23,8 @@ const CreateStudentForm = ({
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-      const birthDate = dayjs(values.birthDate).format("YYYY-MM-DD");
-      const newStudent: StudentList = {
+      const birthDate = dayjs(values.birthDate).format("DD-MM-YYYY");
+      const newStudent: Student = {
         ...values,
         birthDate,
         class: classId,
