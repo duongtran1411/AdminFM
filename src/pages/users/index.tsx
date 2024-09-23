@@ -1,33 +1,43 @@
-import { Layout, Modal, notification } from "antd";
+import { Input, Modal, notification } from "antd";
 import { useEffect, useState } from "react";
-import TabsMenu from "../../components/student/TabsMenu";
 import AddUserButton from "../../components/users/AddUserButton";
 import AddUserForm from "../../components/users/AddUserForm";
+import EditUserForm from "../../components/users/EditUserForm";
 import UsersTable from "../../components/users/UsersTable";
 import useModals from "../../hooks/useModal";
 import { Users } from "../../models/users.model";
 import { userService } from "../../services/user-service/user.service";
-import EditUserForm from "../../components/users/EditUserForm";
 
 const UserPage = () => {
   const { isVisible, showModal, hideModal } = useModals();
   const [users, setUsers] = useState<Users[]>([]);
+  const [searchUsers, setSearchUsers] = useState<Users[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedUser, setSelectedUser] = useState<Users | null>(null);
+
   const fetchUser = async () => {
     try {
       const data = await userService.getAllUser();
       setUsers(data);
+      setSearchUsers(data);
     } catch (error) {
       setError("Error loading Users");
     } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchUser();
   }, []);
+
+  const handleSearch = (value: string) => {
+    const filteredUsers = users.filter((user) =>
+      user.username.toLowerCase().includes(value.toLowerCase()),
+    );
+    setSearchUsers(filteredUsers);
+  };
 
   const columns = [
     {
@@ -46,20 +56,15 @@ const UserPage = () => {
       key: "email",
     },
     {
-      title: "Password",
-      dataIndex: "password",
-      key: "password",
-    },
-    {
       title: "Role",
-      dataIndex: "role",
-      key: "role",
+      dataIndex: "roles",
+      key: "roles",
     },
   ];
 
   const handleDelete = async (uid: number) => {
     Modal.confirm({
-      title: "Are you sure you want to delete this student?",
+      title: "Are you sure you want to delete this user?",
       okText: "Delete",
       okType: "danger",
       onOk: async () => {
@@ -74,7 +79,6 @@ const UserPage = () => {
     });
   };
 
-  // Khi chọn chỉnh sửa, hiển thị form và đặt sinh viên đang chỉnh sửa
   const handleEdit = (id: number) => {
     const user = users.find((u) => u.id === id);
     if (user) {
@@ -99,40 +103,57 @@ const UserPage = () => {
     return <p>{error}</p>;
   }
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
   return (
-    <Layout
-      className="rounded-lg flex justify-center items-center"
+    <div
       style={{
-        background: "white",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        padding: "20px",
       }}
     >
-      <div className="w-full max-w-6xl">
-        <div className="flex justify-between flex-wrap">
-          <TabsMenu tabItems={[]} />
+      <div style={{ width: "100%", maxWidth: "100%" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginBottom: "16px",
+          }}
+        >
           <AddUserButton onUserCreated={() => showModal("createUser")} />
         </div>
+
+        <Input.Search
+          placeholder="Search by username..."
+          allowClear
+          onSearch={handleSearch}
+          style={{ width: 400, marginBottom: 16 }}
+        />
+
+        {/* Create User modal */}
         <AddUserForm
           isModalVisible={isVisible("createUser")}
           hideModal={() => hideModal("createUser")}
-          onUserCreated={onCreateSuccess} // Truyền hàm callback
+          onUserCreated={onCreateSuccess}
         />
+
+        {/* User Data Table */}
         <UsersTable
           columns={columns}
-          data={users}
+          data={searchUsers}
           onDelete={handleDelete}
           onEdit={handleEdit}
         />
+
+        {/* Edit User modal */}
+        <EditUserForm
+          isModalVisible={isVisible("editUser")}
+          hideModal={() => hideModal("editUser")}
+          user={selectedUser}
+          onUpdate={onUpdateSuccess}
+        />
       </div>
-      <EditUserForm
-        isModalVisible={isVisible("editUser")}
-        hideModal={() => hideModal("editUser")}
-        user={selectedUser}
-        onUpdate={onUpdateSuccess}
-      />
-    </Layout>
+    </div>
   );
 };
 
