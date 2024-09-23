@@ -53,6 +53,11 @@ const ModulePage = () => {
 
   const columns = [
     {
+      title: "ID",
+      dataIndex: "module_id",
+      key: "module_id",
+    },
+    {
       title: "Module Name",
       dataIndex: "module_name",
       key: "module_name",

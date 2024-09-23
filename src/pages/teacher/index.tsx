@@ -34,6 +34,11 @@ const TeacherPage: React.FC = () => {
 
   const columns: TableProps<Teachers>["columns"] = [
     {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
       title: "Tên giảng viên",
       dataIndex: "name",
       key: "name",

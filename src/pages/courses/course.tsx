@@ -53,6 +53,11 @@ const CoursePage = () => {
 
   const columns = [
     {
+      title: "ID",
+      dataIndex: "course_id",
+      key: "course_id",
+    },
+    {
       title: "Course Name",
       dataIndex: "course_name",
       key: "course_name",
