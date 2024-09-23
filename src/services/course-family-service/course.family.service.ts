@@ -22,7 +22,7 @@ class CoursesFamilyService {
       );
       return response.data;
     } catch (error) {
-      console.error("Error fetching Courses Family:", error);
+      console.error("Error fetching coursefamily:", error);
       throw error;
     }
   }

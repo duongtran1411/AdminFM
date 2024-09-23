@@ -31,7 +31,7 @@ class CourseService {
     }
   }
 
-  async updateCourse(id: string, course: any): Promise<void> {
+  async updateCourse(id: number, course: any): Promise<void> {
     try {
       await axiosInstance.patch(`/courses/${id}`, course);
     } catch (error) {

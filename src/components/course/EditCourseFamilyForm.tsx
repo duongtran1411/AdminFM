@@ -1,7 +1,8 @@
-import { Form, Input, Modal, notification } from "antd";
-import { useEffect } from "react";
-import { CoursesFamily } from "../../models/courses.model";
+import { Checkbox, Form, Input, Modal, notification } from "antd";
+import { useEffect, useState } from "react";
+import { Courses, CoursesFamily } from "../../models/courses.model";
 import courseFamilyService from "../../services/course-family-service/course.family.service";
+import { courseService } from "../../services/courses-service/courses.service";
 
 interface EditCourseFamilyFormProps {
   isModalVisible: boolean;
@@ -17,16 +18,30 @@ const EditCourseFamilyForm = ({
   onUpdate,
 }: EditCourseFamilyFormProps) => {
   const [form] = Form.useForm();
+  const [selectedCourses, setSelectedCourses] = useState<number[]>([]);
+  const [course, setCourse] = useState<Courses[]>([]);
+
   useEffect(() => {
     if (coursefamily) {
       form.setFieldsValue({
         course_family_name: coursefamily.course_family_name,
         year: coursefamily.year,
       });
+      setSelectedCourses(coursefamily.courses.map((c) => c.course_id));
     }
   }, [coursefamily, form]);
 
-  // Handle when the "OK" button is pressed
+  useEffect(() => {
+    const fetchCourses = async () => {
+      const courseList = await courseService.getAllCourses();
+      setCourse(courseList);
+    };
+
+    if (isModalVisible) {
+      fetchCourses();
+    }
+  }, [isModalVisible]);
+
   const handleOk = async () => {
     Modal.confirm({
       title: "Are you sure you want to update this Course Family?",
@@ -35,13 +50,14 @@ const EditCourseFamilyForm = ({
       onOk: async () => {
         try {
           const values = await form.validateFields();
-          const updatedCourse = {
+          const updatedCourseFamily = {
             ...coursefamily,
             ...values,
+            courses: selectedCourses,
           };
           await courseFamilyService.update(
-            updatedCourse.course_family_id,
-            updatedCourse,
+            updatedCourseFamily.course_family_id,
+            updatedCourseFamily,
           );
           form.resetFields();
           hideModal();
@@ -54,6 +70,10 @@ const EditCourseFamilyForm = ({
         }
       },
     });
+  };
+
+  const hanldeChange = (checkedValues: number[]) => {
+    setSelectedCourses(checkedValues);
   };
 
   return (
@@ -93,6 +113,24 @@ const EditCourseFamilyForm = ({
           ]}
         >
           <Input placeholder="Enter Year of the Course Family" />
+        </Form.Item>
+        <Form.Item
+          label="Select Courses"
+          rules={[
+            { required: true, message: "Please select at least one course!" },
+          ]}
+        >
+          <Checkbox.Group
+            value={selectedCourses}
+            onChange={hanldeChange}
+            style={{ width: "100%" }}
+          >
+            {course.map((c) => (
+              <Checkbox key={c.course_id} value={c.course_id}>
+                {c.course_name}
+              </Checkbox>
+            ))}
+          </Checkbox.Group>
         </Form.Item>
       </Form>
     </Modal>

@@ -7,7 +7,6 @@ import SignupForm from "../components/auth/SignupForm";
 import PageWithTitle from "../components/shared/PageWithTitle"; // Import component wrapper
 import PrivateRoute from "../components/shared/PrivateRoute";
 import ScheduleList from "../pages/schedule";
-import CalendarPages from "../pages/calendar/CalendarPages";
 import Settings from "../components/users/Settings";
 import CoursesFamilyPage from "../pages/courses/coursefamily";
 import AttendancePage from "../pages/attendance";
@@ -146,16 +145,6 @@ function MainRoutes() {
             <PageWithTitle title={title}>
               <Suspense fallback={<LoadingSkeleton />}>
                 <Settings />
-              </Suspense>
-            </PageWithTitle>
-          ),
-        },
-        {
-          path: "schedule",
-          element: (
-            <PageWithTitle title={title}>
-              <Suspense fallback={<LoadingSkeleton />}>
-                <CalendarPages />
               </Suspense>
             </PageWithTitle>
           ),

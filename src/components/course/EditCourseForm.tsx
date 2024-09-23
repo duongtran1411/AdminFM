@@ -27,7 +27,6 @@ const EditCourseForm = ({
         course_name: course.course_name,
         course_code: course.course_code,
       });
-      // Set the selected modules based on the course data
       setSelectedModules(course.modules.map((module) => module.module_id));
     }
   }, [course, form]);

@@ -30,28 +30,28 @@ const AddCourseFamilyForm = ({
     }
   }, [isModalVisible]);
 
+  const handleChange = (checkedValues: number[]) => {
+    setSelectedCourses(checkedValues);
+  };
+
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-      const newCourse: CoursesFamily = {
+      const newCourseFmaily: CoursesFamily = {
         ...values,
         courses: selectedCourses,
       };
-      console.log(newCourse);
-      await courseFamilyService.add(newCourse);
-
+      await courseFamilyService.add(newCourseFmaily);
       onCourseCreated();
       notification.success({ message: "Course Family created successfully!" });
       form.resetFields();
+      setSelectedCourses([]);
       hideModal();
     } catch (info) {
       console.log("Validate Failed:", info);
     }
   };
-  const handleChange = (checkedValues: number[]) => {
-    setSelectedCourses(checkedValues);
-    console.log(checkedValues);
-  };
+
   return (
     <Modal
       title="Create New Course Family"

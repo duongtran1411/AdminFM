@@ -46,7 +46,6 @@ const DashBoardMenuList = () => {
         { key: "building", icon: <SiGoogleclassroom />, label: "Building" },
         // { key: "classroom", icon: <SiGoogleclassroom />, label: "Classroom" },
         { key: "classes", icon: <SiGoogleclassroom />, label: "Classes" },
-        { key: "schedule", icon: <SiGoogleclassroom />, label: "Schedule" },
         // Thêm menulist vào sau nếu cần
       ],
     },
