@@ -10,12 +10,11 @@ const AttendancePage = () => {
   const [error, setError] = useState("");
   const [attendanceData, setAttendanceData] = useState<AttendanceStatus[]>([]);
   const { scheduleId } = useParams();
- 
+
   const fetchAttendanceStatus = async (scheduleId: string) => {
     try {
       const data = await getAttendanceStatus(scheduleId);
       setAttendanceData(data);
-      console.log(data);
     } catch (error) {
       console.error("Lỗi khi lấy trạng thái điểm danh", error);
       setError("Failed to load attendance status.");
@@ -23,36 +22,27 @@ const AttendancePage = () => {
   };
 
   useEffect(() => {
-    // fetchStudents();
     fetchAttendanceStatus(scheduleId!);
-    // Ensure scheduleId is correctly defined or passed
-  }, [scheduleId]); // Combine dependencies in the same array
+  }, [scheduleId]);
+
   const columns = [
     {
       title: "Mã Sinh Viên",
-      dataIndex: "studentId",
+      dataIndex: ["student", "studentId"],
       key: "studentId",
     },
     {
       title: "Tên",
-      dataIndex: "studentName",
-      key: "studentName",
+      dataIndex: ["student", "name"],
+      key: "name",
     },
     {
       title: "Trạng Thái Điểm Danh",
-      dataIndex: "isChecked",
-      key: "isChecked",
-      render: (_: any, record: AttendanceStatus) => (
-        <span
-          className={`${
-            record.isChecked
-              ? "text-green-600" // Present
-              : record.isChecked === false
-              ? "text-red-600" // Absent
-              : "text-gray-600" // Not marked
-          }`}
-        >
-          {record.isChecked ? "Có mặt" : "Vắng mặt"}
+      dataIndex: "status",
+      key: "status",
+      render: (status: number) => (
+        <span className={`${status === 1 ? "text-green-600" : "text-red-600"}`}>
+          {status === 1 ? "Có mặt" : "Vắng mặt"}
         </span>
       ),
     },

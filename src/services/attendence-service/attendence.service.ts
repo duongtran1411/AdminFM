@@ -5,8 +5,8 @@ import axiosInstance from "../../utils/axiosInstance";
 export interface AttendanceStatus {
   id: number;
   studentId: string;
-  isChecked: boolean;
-  studentName: string;
+  status: boolean;
+  name: string;
 }
 
 // Service để lấy trạng thái điểm danh theo lịch
