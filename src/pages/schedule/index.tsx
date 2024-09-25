@@ -99,14 +99,33 @@ const ScheduleList: React.FC = () => {
     items: [
       {
         key: "1",
-        label: <span onClick={() => handleEdit(schedule)}>Sửa</span>,
+        label: (
+          <span
+            onClick={(e) => {
+              // e.stopPropagation();
+              handleEdit(schedule);
+            }}
+          >
+            Sửa
+          </span>
+        ),
       },
       {
         key: "2",
-        label: <span onClick={() => handleDelete(schedule)}>Xóa</span>,
+        label: (
+          <span
+            onClick={(e) => {
+              // e.stopPropagation();
+              handleDelete(schedule);
+            }}
+          >
+            Xóa
+          </span>
+        ),
       },
     ],
   });
+
   const columns = [
     {
       title: "ID",
@@ -157,9 +176,13 @@ const ScheduleList: React.FC = () => {
       title: "Actions",
       key: "actions",
       render: (_: any, schedule: ScheduleData) => (
-        <Dropdown menu={menu(schedule)}>
-          <EllipsisOutlined style={{ fontSize: "24px", cursor: "pointer" }} />
-        </Dropdown>
+        <div onClick={(e) => e.stopPropagation()}>
+          <Dropdown menu={menu(schedule)} trigger={["click"]}>
+            <EllipsisOutlined
+              style={{ padding: "10px", fontSize: "24px", cursor: "pointer" }}
+            />
+          </Dropdown>
+        </div>
       ),
     },
   ];

@@ -42,7 +42,7 @@ const UpdateScheduleForm: React.FC<{
     fetchData();
     if (initialValues) {
       form.setFieldsValue({
-        date: initialValues.date.split("T")[0], // Chỉ lấy phần ngày
+        date: initialValues.date.split("T")[0],
         classroomId: initialValues.classroom.id,
         shiftId: initialValues.shift.id,
         teacherId: initialValues.teacher.id,
