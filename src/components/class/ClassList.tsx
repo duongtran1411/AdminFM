@@ -3,10 +3,6 @@ import { useState } from "react";
 import ClassItem from "./ClassItem";
 
 const ClassList = ({ classes, onSuccess }) => {
-  const [studentCounts, setStudentCounts] = useState<{ [key: string]: number }>(
-    {},
-  );
-
   return (
     <Row gutter={[16, 16]}>
       {classes.map((classItem, index) => (
@@ -23,7 +19,7 @@ const ClassList = ({ classes, onSuccess }) => {
             onSucess={onSuccess}
             classId={classItem.id}
             name={classItem.name}
-            totalStudent={studentCounts[classItem.id] || 0} // Fetch total students dynamically
+            totalStudent={classItem.count} // Fetch total students dynamically
           />
         </Col>
       ))}
