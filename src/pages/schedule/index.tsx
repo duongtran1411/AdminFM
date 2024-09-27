@@ -60,7 +60,7 @@ const ScheduleList: React.FC = () => {
       okType: "danger",
       onOk: async () => {
         try {
-          // await scheduleService.remove(schedule.id);
+          await scheduleService.delete(schedule.id);
           console.log(schedule);
           setSchedules(schedules.filter((s) => s.id !== schedule.id));
           notification.success({ message: "Xóa lịch thành công!" });
