@@ -5,11 +5,11 @@ import { useState } from "react";
 import { CiMenuKebab } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
 import useModals from "../../hooks/useModal"; // Adjust the path as needed
-import ClassService, {
-  ClassData,
+import {
+  default as ClassService,
+  default as classService,
 } from "../../services/class-service/class.service"; // Import ClassService
 import EditClassForm from "./EditClassForm";
-import classService from "../../services/class-service/class.service";
 
 interface ClassItemProps {
   name: string;

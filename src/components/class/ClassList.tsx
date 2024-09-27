@@ -15,10 +15,10 @@ const ClassList = ({ classes, onSuccess }) => {
           xxl={5} // One-sixth width on extra-extra-large screens
         >
           <ClassItem
-            onSucess={onSuccess}
             classId={classItem.id}
             name={classItem.name}
             totalStudent={classItem.count} // Fetch total students dynamically
+            onSucess={onSuccess}
           />
         </Col>
       ))}
