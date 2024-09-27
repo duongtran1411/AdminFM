@@ -20,6 +20,18 @@ class ClassService {
     }
   }
 
+  async getClassById(classId: number): Promise<ClassData> {
+    try {
+      const response = await axiosInstance.get<ClassData>(
+        `/classes/${classId}`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+      throw error;
+    }
+  }
+
   async addClass(classData: Class): Promise<Class[]> {
     try {
       const response = await axiosInstance.post<Class[]>("/classes", classData);
@@ -30,16 +42,16 @@ class ClassService {
     }
   }
 
-  async updateClass(classId: string, classData: any): Promise<void> {
+  async updateClass(classId: number, classData: any): Promise<void> {
     try {
-      await axiosInstance.patch(`/classes/${classId}`, classData);
+      await axiosInstance.put(`/classes/${classId}`, classData);
     } catch (error) {
       console.error("Error updating class:", error);
       throw error;
     }
   }
 
-  async deleteClass(classId: string): Promise<void> {
+  async deleteClass(classId: number): Promise<void> {
     try {
       await axiosInstance.delete(`/classes/${classId}`);
     } catch (error) {

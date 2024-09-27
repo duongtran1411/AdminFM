@@ -5,13 +5,16 @@ import { useState } from "react";
 import { CiMenuKebab } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
 import useModals from "../../hooks/useModal"; // Adjust the path as needed
-import ClassService from "../../services/class-service/class.service"; // Import ClassService
+import ClassService, {
+  ClassData,
+} from "../../services/class-service/class.service"; // Import ClassService
 import EditClassForm from "./EditClassForm";
+import classService from "../../services/class-service/class.service";
 
 interface ClassItemProps {
   name: string;
   totalStudent: number;
-  classId: string;
+  classId: number;
   onSucess: () => void;
 }
 
@@ -27,16 +30,19 @@ const ClassItem = ({
 
   const navigate = useNavigate();
   const { showModal, hideModal, isVisible } = useModals();
-  const [editingClass, setEditingClass] = useState(null);
+  const [editingClass, setEditingClass] = useState<any>();
 
   const handleClick = () => {
     navigate(`/schedule/class/${classId}`);
   };
 
-  // Edit action
-  const handleEdit = () => {
-    setEditingClass(null);
-    showModal("editClassModal");
+  // Edit action0.
+  const handleEdit = async () => {
+    const classEdit = await classService.getClassById(classId);
+    if (classEdit) {
+      setEditingClass(classEdit);
+      showModal("editClassModal");
+    }
   };
 
   // Delete action
@@ -70,9 +76,9 @@ const ClassItem = ({
 
   const handleSaveEdit = async (updatedClass: ClassItemProps) => {
     try {
-      console.log(classId, updatedClass);
       await ClassService.updateClass(classId, updatedClass);
       message.success("Class updated successfully");
+      onSucess();
       hideModal("editClassModal");
     } catch (error) {
       message.error("Failed to update class");
