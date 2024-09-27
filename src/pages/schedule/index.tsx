@@ -11,6 +11,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ActionButtons from "../../components/schedule/ActionButton";
+import CreateScheduleForm from "../../components/schedule/CreateScheduleForm";
 import ScheduleTabsMenu from "../../components/schedule/TabsMenu";
 import UpdateScheduleForm from "../../components/schedule/UpdateScheduleForm";
 import useModals from "../../hooks/useModal"; // Import hook
@@ -20,7 +21,6 @@ import {
   scheduleService,
 } from "../../services/schedule-service/schedule.service";
 import StudentPage from "../student";
-import CreateScheduleForm from "../../components/schedule/CreateScheduleForm";
 
 const ScheduleList: React.FC = () => {
   const navigate = useNavigate();
@@ -101,7 +101,7 @@ const ScheduleList: React.FC = () => {
         key: "1",
         label: (
           <span
-            onClick={(e) => {
+            onClick={() => {
               // e.stopPropagation();
               handleEdit(schedule);
             }}
@@ -114,7 +114,7 @@ const ScheduleList: React.FC = () => {
         key: "2",
         label: (
           <span
-            onClick={(e) => {
+            onClick={() => {
               // e.stopPropagation();
               handleDelete(schedule);
             }}

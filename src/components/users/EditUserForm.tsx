@@ -45,7 +45,7 @@ const EditUserForm = ({
         user_id: user.id,
         username: user.username,
         password: user.password,
-        role: user.role,
+        role: user.roles,
       });
     }
   }, [user, form]);

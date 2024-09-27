@@ -27,7 +27,7 @@ const ClassItem = ({
 
   const navigate = useNavigate();
   const { showModal, hideModal, isVisible } = useModals();
-  const [editingClass, setEditingClass] = useState();
+  const [editingClass, setEditingClass] = useState(null);
 
   const handleClick = () => {
     navigate(`/schedule/class/${classId}`);
@@ -35,7 +35,7 @@ const ClassItem = ({
 
   // Edit action
   const handleEdit = () => {
-    // setEditingClass();
+    setEditingClass(null);
     showModal("editClassModal");
   };
 

@@ -1,5 +1,4 @@
 import { Form, Input, Modal, notification } from "antd";
-import dayjs from "dayjs";
 import { useEffect } from "react";
 import { Building } from "../../models/building.model";
 import buildingService from "../../services/building-service/building.service";

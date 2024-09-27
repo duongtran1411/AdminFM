@@ -1,20 +1,15 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Image, Typography, notification } from "antd";
+import { Button, Form, Image, Input, Typography, notification } from "antd";
+import { useForm } from "antd/es/form/Form";
 import * as jwt_decode from "jwt-decode";
 import { useEffect, useState } from "react";
-import { useForm } from "antd/es/form/Form";
+import { Users } from "../../models/users.model";
 import { userService } from "../../services/user-service/user.service";
 
 const { Title } = Typography;
 
-interface ProfileData {
-  user_id: number;
-  username: string;
-  password: string;
-  email: string;
-}
 const Settings = () => {
-  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [profile, setProfile] = useState<Users | null>(null);
   const [form] = useForm();
 
   const fetchProfile = async () => {
@@ -25,7 +20,7 @@ const Settings = () => {
         const userId = decoded.sub;
 
         // Make sure userProfile is treated as ProfileData
-        const userProfile: ProfileData = await userService.getUserById(userId);
+        const userProfile: Users = await userService.getUserById(userId);
 
         setProfile(userProfile);
         form.setFieldsValue({ username: userProfile.username });
@@ -46,7 +41,7 @@ const Settings = () => {
       return;
     }
     const response = await userService.changePassword(
-      profile!!.user_id,
+      profile!!.id,
       newPassword,
     );
     form.resetFields();

@@ -1,5 +1,4 @@
 import { Form, Input, Modal, notification } from "antd";
-import { useParams } from "react-router-dom";
 import { Classroom } from "../../models/class.model";
 import classRoomService from "../../services/class-room-service/class.room.service";
 

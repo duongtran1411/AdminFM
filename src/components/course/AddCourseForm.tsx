@@ -1,4 +1,4 @@
-import { Form, Input, Modal, notification, Checkbox, Spin } from "antd";
+import { Checkbox, Form, Input, Modal, notification } from "antd";
 import { useEffect, useState } from "react";
 import { Courses, Module } from "../../models/courses.model";
 import { courseService } from "../../services/courses-service/courses.service";

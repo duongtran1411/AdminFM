@@ -1,5 +1,4 @@
 import { Form, Input, Modal, notification } from "antd";
-import { useEffect } from "react";
 import { Module } from "../../models/courses.model";
 import { moduleService } from "../../services/module-serice/module.service";
 
