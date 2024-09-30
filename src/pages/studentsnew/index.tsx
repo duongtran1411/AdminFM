@@ -1,0 +1,153 @@
+import { Input, Modal, notification } from "antd";
+import { useEffect, useState } from "react";
+import ActionButtons from "../../components/student/ActionButtons";
+import CreateStudentForm from "../../components/student/CreateStudentForm";
+import EditStudentForm from "../../components/student/EditStudentForm";
+import StudentTable from "../../components/student/StudentTable";
+import useModals from "../../hooks/useModal";
+import { Student } from "../../models/student.model";
+import { studentService } from "../../services/student-service/student.service";
+
+const NewStudentPageList = () => {
+  const { isVisible, showModal, hideModal } = useModals();
+  const [students, setStudents] = useState<Student[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const fetchStudents = async () => {
+    try {
+      const data = await studentService.findStudentsWithoutClass();
+      setStudents(data);
+    } catch (error) {
+      setError("Error loading students");
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchStudents();
+  }, []);
+
+  const columns = [
+    {
+      title: "Mã Sinh Viên",
+      dataIndex: "studentId",
+      key: "studentId",
+    },
+    {
+      title: "Họ và Tên",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Ngày Sinh",
+      dataIndex: "birthdate",
+      key: "birthdate",
+      render: (date: string) => new Date(date).toLocaleDateString(),
+    },
+  ];
+
+  const handleDelete = async (id: number) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this student?",
+      okText: "Delete",
+      okType: "danger",
+      onOk: async () => {
+        try {
+          await studentService.remove(id);
+          setStudents(students.filter((student) => student.id !== id));
+          notification.success({ message: "Student deleted successfully" });
+        } catch (error) {
+          notification.error({ message: "Error deleting student" });
+        }
+      },
+    });
+  };
+
+  const handleEdit = (id: number) => {
+    const student = students.find((s) => s.id === id);
+    if (student) {
+      setSelectedStudent(student);
+      showModal("editStudent");
+    }
+  };
+
+  const onCreateSuccess = () => {
+    fetchStudents();
+  };
+
+  const onUpdateSuccess = () => {
+    fetchStudents();
+  };
+
+  if (loading) {
+    return <p>Loading students...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        padding: "20px",
+      }}
+    >
+      <div style={{ width: "100%", maxWidth: "100%" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginBottom: "16px",
+          }}
+        >
+          {/* Buttons for adding and importing students */}
+          <ActionButtons
+            onNewClick={() => showModal("createStudent")}
+            onImportClick={() => showModal("importExcel")}
+          />
+        </div>
+
+        {/* Search Input */}
+        <Input.Search
+          placeholder="Tìm kiếm sinh viên..."
+          allowClear
+          // onSearch={handleSearch} // Uncomment and implement the search function if needed
+          style={{ width: 400, marginBottom: 16 }}
+        />
+
+        {/* Create Student modal */}
+        <CreateStudentForm
+          isModalVisible={isVisible("createStudent")}
+          hideModal={() => hideModal("createStudent")}
+          onStudentCreated={onCreateSuccess}
+        />
+
+        {/* Student Data Table */}
+        <StudentTable
+          columns={columns}
+          data={students}
+          onDelete={handleDelete}
+          onEdit={handleEdit}
+        />
+
+        {/* Edit Student modal */}
+        <EditStudentForm
+          isModalVisible={isVisible("editStudent")}
+          hideModal={() => hideModal("editStudent")}
+          student={selectedStudent}
+          onUpdate={onUpdateSuccess}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default NewStudentPageList;

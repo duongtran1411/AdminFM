@@ -38,6 +38,7 @@ const DashBoardMenuList = () => {
     { key: "dashboards", icon: <HomeOutlined />, label: "Dashboards" },
     { key: "users", icon: <FaRegUser />, label: "Users" },
     { key: "teachers", icon: <FaChalkboardTeacher />, label: "Teachers" },
+    { key: "students", icon: <FaChalkboardTeacher />, label: "Students" },
     {
       key: "center", // Dropdown for Center
       label: "Center",

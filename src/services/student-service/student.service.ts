@@ -31,6 +31,19 @@ class StudentService {
     }
   }
 
+  async findStudentsWithoutClass(): Promise<Student[]> {
+    try {
+      const response: AxiosResponse<Student[]> = await axiosInstance.get(
+        "/students/without-class",
+      );
+      return response.data;
+    } catch (error: any) {
+      throw new Error(
+        "Error fetching students without class: " + error.message,
+      );
+    }
+  }
+
   // Lấy một student theo ID
   async findOne(id: number): Promise<Student> {
     try {

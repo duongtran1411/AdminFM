@@ -20,7 +20,7 @@ const AddTeacherForm = ({
     try {
       const values = await form.validateFields();
       const birthDate = dayjs(values.birthdate).format("YYYY-MM-DD");
-      const workingDate = dayjs().format("YYYY-MM-DD");
+      const workingDate = dayjs(values.working_date).format("YYYY-MM-DD");
 
       const newTeacher: Teachers = {
         ...values,
@@ -125,6 +125,18 @@ const AddTeacherForm = ({
             style={{ width: "100%" }}
             disabledDate={disabledDate}
           />
+        </Form.Item>
+        <Form.Item
+          name="working_date"
+          label="Ngày vào làm"
+          rules={[
+            {
+              required: true,
+              message: "Please input the teacher's working date!",
+            },
+          ]}
+        >
+          <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
         </Form.Item>
       </Form>
     </Modal>

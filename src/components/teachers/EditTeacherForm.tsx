@@ -29,6 +29,7 @@ const EditTeacherForm = ({
         gender: teacher.gender,
         email: teacher.email,
         birthdate: dayjs(teacher.birthdate),
+        working_date: dayjs(teacher.working_date),
       });
     }
   }, [teacher, form]);
@@ -140,6 +141,18 @@ const EditTeacherForm = ({
             {
               required: true,
               message: "Please input the teacher's birth date!",
+            },
+          ]}
+        >
+          <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+        </Form.Item>
+        <Form.Item
+          name="working_date"
+          label="Ngày vào làm"
+          rules={[
+            {
+              required: true,
+              message: "Please input the teacher's working date!",
             },
           ]}
         >
