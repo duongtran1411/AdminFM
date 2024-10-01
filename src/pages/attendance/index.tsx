@@ -40,11 +40,32 @@ const AttendancePage = () => {
       title: "Trạng Thái Điểm Danh",
       dataIndex: "status",
       key: "status",
-      render: (status: number) => (
-        <span className={`${status === 1 ? "text-green-600" : "text-red-600"}`}>
-          {status === 1 ? "Có mặt" : "Vắng mặt"}
-        </span>
-      ),
+      render: (status: number) => {
+        let text = "";
+        let className = "";
+        switch (status) {
+          case 1:
+            text = "Đi học";
+            className = "text-green-600";
+            break;
+          case 2:
+            text = "Đi muộn";
+            className = "text-yellow-600";
+            break;
+          case 3:
+            text = "Nghỉ CP";
+            className = "text-blue-600";
+            break;
+          case 4:
+            text = "Nghỉ KP";
+            className = "text-red-600";
+            break;
+          default:
+            text = "Không xác định";
+            className = "text-gray-600";
+        }
+        return <span className={className}>{text}</span>;
+      },
     },
   ];
 
