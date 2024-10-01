@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import axiosInstance from "../../utils/axiosInstance";
-import { Student } from "../../models/student.model";
+import { Freshmen, Student } from "../../models/student.model";
 
 export interface StudentCountData {
   total: number;
@@ -17,6 +17,18 @@ class StudentService {
       return response.data;
     } catch (error: any) {
       throw new Error("Error creating student: " + error.message);
+    }
+  }
+
+  async createFreshmen(freshmen: Freshmen): Promise<Freshmen> {
+    try {
+      const response: AxiosResponse<Freshmen> = await axiosInstance.post(
+        "/students",
+        freshmen,
+      );
+      return response.data;
+    } catch (error: any) {
+      throw new Error("Error creating freshmen: " + error.message);
     }
   }
 

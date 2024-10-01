@@ -28,9 +28,9 @@ const FloatButtonGroup = ({ onSuccess }: { onSuccess: () => void }) => {
       message.success("Class added successfully!");
       hideModal("addClassModal");
       await onSuccess();
-    } catch (error) {
-      console.error("Error adding class:", error);
-      message.error("Failed to add class. Please try again.");
+    } catch (ExceptionsHandler) {
+      console.error("Error adding class:", ExceptionsHandler);
+      message.error("Không có học sinh phù hợp.");
     }
   };
 

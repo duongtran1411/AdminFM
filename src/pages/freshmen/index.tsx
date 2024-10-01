@@ -7,8 +7,9 @@ import StudentTable from "../../components/student/StudentTable";
 import useModals from "../../hooks/useModal";
 import { Student } from "../../models/student.model";
 import { studentService } from "../../services/student-service/student.service";
+import FreshmenCreateForm from "../../components/student/FreshmenCreateForm";
 
-const NewStudentPageList = () => {
+const FreshmenPageList = () => {
   const { isVisible, showModal, hideModal } = useModals();
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
@@ -108,9 +109,9 @@ const NewStudentPageList = () => {
             marginBottom: "16px",
           }}
         >
-          {/* Buttons for adding and importing students */}
+          {/* Buttons for adding and importing freshmen */}
           <ActionButtons
-            onNewClick={() => showModal("createStudent")}
+            onNewClick={() => showModal("createFreshmen")}
             onImportClick={() => showModal("importExcel")}
           />
         </div>
@@ -123,14 +124,14 @@ const NewStudentPageList = () => {
           style={{ width: 400, marginBottom: 16 }}
         />
 
-        {/* Create Student modal */}
-        <CreateStudentForm
-          isModalVisible={isVisible("createStudent")}
-          hideModal={() => hideModal("createStudent")}
+        {/* Create Freshmen modal */}
+        <FreshmenCreateForm
+          isModalVisible={isVisible("createFreshmen")}
+          hideModal={() => hideModal("createFreshmen")}
           onStudentCreated={onCreateSuccess}
         />
 
-        {/* Student Data Table */}
+        {/* Freshmen Data Table */}
         <StudentTable
           columns={columns}
           data={students}
@@ -138,10 +139,10 @@ const NewStudentPageList = () => {
           onEdit={handleEdit}
         />
 
-        {/* Edit Student modal */}
+        {/* Edit Freshmen modal */}
         <EditStudentForm
-          isModalVisible={isVisible("editStudent")}
-          hideModal={() => hideModal("editStudent")}
+          isModalVisible={isVisible("editFreshmen")}
+          hideModal={() => hideModal("editFreshmen")}
           student={selectedStudent}
           onUpdate={onUpdateSuccess}
         />
@@ -150,4 +151,4 @@ const NewStudentPageList = () => {
   );
 };
 
-export default NewStudentPageList;
+export default FreshmenPageList;

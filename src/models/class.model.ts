@@ -1,8 +1,9 @@
-
 export interface Class {
   id: number;
   name: string;
-  classRoomId: number;
+  coursesFamilyId: number;
+  shiftId: number;
+  tick: boolean;
 }
 
 export interface Classroom {

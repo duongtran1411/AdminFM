@@ -47,7 +47,7 @@ const MainPage = lazy(() => import("../pages"));
 const StudentPage = lazy(() => import("../pages/student"));
 const TeacherPage = lazy(() => import("../pages/teacher"));
 const UserPage = lazy(() => import("../pages/users"));
-const NewStudentPageList = lazy(() => import("../pages/studentsnew"));
+const FreshmenPageList = lazy(() => import("../pages/freshmen"));
 
 const getTitleFromLocation = (pathname: string) => {
   if (
@@ -195,7 +195,7 @@ function MainRoutes() {
           element: (
             <PageWithTitle title={title}>
               <Suspense fallback={<LoadingSkeleton />}>
-                <NewStudentPageList />
+                <FreshmenPageList />
               </Suspense>
             </PageWithTitle>
           ),
