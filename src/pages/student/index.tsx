@@ -108,7 +108,7 @@ const StudentPage = () => {
         minHeight: "100vh", // Ensure the layout takes the full height of the screen
       }}
     >
-      <div className="w-full max-w-6xl">
+      <div className="w-full ">
         <div className="flex justify-between flex-wrap">
           <TabsMenu tabItems={[]} />
           <ActionButtons

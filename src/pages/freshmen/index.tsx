@@ -1,24 +1,24 @@
 import { Input, Modal, notification } from "antd";
 import { useEffect, useState } from "react";
 import ActionButtons from "../../components/student/ActionButtons";
-import CreateStudentForm from "../../components/student/CreateStudentForm";
-import EditStudentForm from "../../components/student/EditStudentForm";
-import StudentTable from "../../components/student/StudentTable";
-import useModals from "../../hooks/useModal";
-import { Student } from "../../models/student.model";
-import { studentService } from "../../services/student-service/student.service";
+import EditFreshmenForm from "../../components/student/EditFreshmenForm";
 import FreshmenCreateForm from "../../components/student/FreshmenCreateForm";
+import FreshmenTable from "../../components/student/FreshmenTable";
+import useModals from "../../hooks/useModal";
+import { Freshmen } from "../../models/student.model";
+import { studentService } from "../../services/student-service/student.service";
 
 const FreshmenPageList = () => {
   const { isVisible, showModal, hideModal } = useModals();
-  const [students, setStudents] = useState<Student[]>([]);
+  const [students, setStudents] = useState<Freshmen[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [selectedStudent, setSelectedStudent] = useState<Freshmen | null>(null);
   const fetchStudents = async () => {
     try {
       const data = await studentService.findStudentsWithoutClass();
       setStudents(data);
+      console.log(data);
     } catch (error) {
       setError("Error loading students");
     } finally {
@@ -46,6 +46,16 @@ const FreshmenPageList = () => {
       key: "birthdate",
       render: (date: string) => new Date(date).toLocaleDateString(),
     },
+    {
+      title: "Course Family",
+      dataIndex: ["coursesFamily", "course_family_name"],
+      key: "coursesFamily",
+    },
+    {
+      title: "Shift",
+      dataIndex: ["shift", "name"],
+      key: "shift",
+    },
   ];
 
   const handleDelete = async (id: number) => {
@@ -69,7 +79,8 @@ const FreshmenPageList = () => {
     const student = students.find((s) => s.id === id);
     if (student) {
       setSelectedStudent(student);
-      showModal("editStudent");
+      console.log(student);
+      showModal("editFreshmen");
     }
   };
 
@@ -132,7 +143,7 @@ const FreshmenPageList = () => {
         />
 
         {/* Freshmen Data Table */}
-        <StudentTable
+        <FreshmenTable
           columns={columns}
           data={students}
           onDelete={handleDelete}
@@ -140,10 +151,10 @@ const FreshmenPageList = () => {
         />
 
         {/* Edit Freshmen modal */}
-        <EditStudentForm
+        <EditFreshmenForm
           isModalVisible={isVisible("editFreshmen")}
           hideModal={() => hideModal("editFreshmen")}
-          student={selectedStudent}
+          freshmen={selectedStudent}
           onUpdate={onUpdateSuccess}
         />
       </div>

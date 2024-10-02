@@ -1,3 +1,6 @@
+import { CoursesFamily } from "./courses.model";
+import { Shifts } from "./shifts";
+
 // Định nghĩa interface cho StudentClass
 export interface StudentClass {
   id: number;
@@ -16,8 +19,8 @@ export interface Freshmen {
   studentId: number;
   name: string;
   birthDate: Date;
-  coursesFamilyId: number;
-  shiftId: number;
+  coursesFamily: CoursesFamily;
+  shift: Shifts;
 }
 
 // Định nghĩa interface cho StudentList

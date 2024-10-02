@@ -128,11 +128,6 @@ const ScheduleList: React.FC = () => {
 
   const columns = [
     {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-    },
-    {
       title: "Ngày",
       dataIndex: "date",
       key: "date",
@@ -213,7 +208,7 @@ const ScheduleList: React.FC = () => {
           }}
         >
           <ActionButtons onNewClick={handleAddSchedule} />
-          <div style={{ marginTop: "60px" }}>
+          <div style={{ marginTop: "20px" }}>
             <Table
               columns={columns}
               dataSource={schedules}

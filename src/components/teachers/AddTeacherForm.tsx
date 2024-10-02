@@ -17,26 +17,22 @@ const AddTeacherForm = ({
   const [form] = Form.useForm();
 
   const handleOk = async () => {
-    try {
-      const values = await form.validateFields();
-      const birthDate = dayjs(values.birthdate).format("YYYY-MM-DD");
-      const workingDate = dayjs(values.working_date).format("YYYY-MM-DD");
+    const values = await form.validateFields();
+    const birthDate = dayjs(values.birthdate).format("YYYY-MM-DD");
+    const workingDate = dayjs(values.working_date).format("YYYY-MM-DD");
 
-      const newTeacher: Teachers = {
-        ...values,
-        birthdate: birthDate,
-        working_date: workingDate,
-        userId: 2,
-      };
+    const newTeacher: Teachers = {
+      ...values,
+      birthdate: birthDate,
+      working_date: workingDate,
+      userId: 2,
+    };
 
-      await teacherService.create(newTeacher);
-      onTeacherCreated();
-      notification.success({ message: "Teacher created successfully!" });
-      form.resetFields();
-      hideModal();
-    } catch (info) {
-      console.log("Validate Failed:", info);
-    }
+    await teacherService.create(newTeacher);
+    onTeacherCreated();
+    notification.success({ message: "Teacher created successfully!" });
+    form.resetFields();
+    hideModal();
   };
 
   const disabledDate = (current: dayjs.Dayjs) => {

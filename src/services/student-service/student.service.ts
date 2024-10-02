@@ -43,9 +43,9 @@ class StudentService {
     }
   }
 
-  async findStudentsWithoutClass(): Promise<Student[]> {
+  async findStudentsWithoutClass(): Promise<Freshmen[]> {
     try {
-      const response: AxiosResponse<Student[]> = await axiosInstance.get(
+      const response: AxiosResponse<Freshmen[]> = await axiosInstance.get(
         "/students/without-class",
       );
       return response.data;
@@ -75,7 +75,6 @@ class StudentService {
         `/students/${id}`,
         studentList,
       );
-      console.log(response);
       return response.data;
     } catch (error: any) {
       throw new Error("Error updating student: " + error.message);
@@ -86,7 +85,6 @@ class StudentService {
   async remove(id: number): Promise<void> {
     try {
       await axiosInstance.delete(`/students/${id}`);
-      console.log("Delete : " + id);
     } catch (error: any) {
       throw new Error("Error deleting student: " + error.message);
     }
