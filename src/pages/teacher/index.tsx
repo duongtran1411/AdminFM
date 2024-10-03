@@ -65,6 +65,20 @@ const TeacherPage: React.FC = () => {
       key: "email",
     },
     {
+      title: "Module Name",
+      key: "module_name",
+      render: (record: Teachers) => {
+        return record.modules.map((module) => module.module_name).join(", ");
+      },
+    },
+    {
+      title: "Shift",
+      key: "shift_name",
+      render: (record: Teachers) => {
+        return record.working_shift.map((shift) => shift.name).join(", ");
+      },
+    },
+    {
       title: "Ngày vào làm",
       dataIndex: "working_date",
       key: "working_date",

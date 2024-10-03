@@ -1,4 +1,4 @@
-import { Form, Input, Modal, notification } from "antd";
+import { Form, Input, InputNumber, Modal, notification } from "antd";
 import { Module } from "../../models/courses.model";
 import { moduleService } from "../../services/module-serice/module.service";
 
@@ -57,6 +57,18 @@ const AddModuleForm = ({
           rules={[{ required: true, message: "Please input the Exam" }]}
         >
           <Input placeholder="Enter Exam Type" />
+        </Form.Item>
+        <Form.Item
+          name="number_of_classes"
+          label="Number of Classes"
+          rules={[
+            {
+              required: true,
+              message: "Please input the Number of Classes!",
+            },
+          ]}
+        >
+          <InputNumber placeholder="Enter the Number of Classes" />
         </Form.Item>
       </Form>
     </Modal>

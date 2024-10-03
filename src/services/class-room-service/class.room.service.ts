@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { Classroom } from "../../models/class.model";
+import { Classroom } from "../../models/classes.model";
 import axiosInstance from "../../utils/axiosInstance";
 
 class ClassService {

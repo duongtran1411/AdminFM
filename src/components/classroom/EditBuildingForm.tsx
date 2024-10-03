@@ -1,6 +1,6 @@
 import { Form, Input, Modal, notification } from "antd";
 import { useEffect } from "react";
-import { Classroom } from "../../models/class.model";
+import { Classroom } from "../../models/classes.model";
 import classRoomService from "../../services/class-room-service/class.room.service";
 interface EditClassroomForm {
   isModalVisible: boolean;

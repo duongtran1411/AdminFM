@@ -1,7 +1,11 @@
 import { DatePicker, Form, Input, Modal, notification, Select } from "antd";
 import dayjs from "dayjs";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Module } from "../../models/courses.model";
+import { Shifts } from "../../models/shifts";
 import { Teachers } from "../../models/teacher.model";
+import { moduleService } from "../../services/module-serice/module.service";
+import { shiftsService } from "../../services/shifts-service/shifts.service";
 import { teacherService } from "../../services/teacher-service/teacher.service";
 
 interface EditTeacherFormProps {
@@ -18,21 +22,35 @@ const EditTeacherForm = ({
   onUpdate,
 }: EditTeacherFormProps) => {
   const [form] = Form.useForm();
+  const [modules, setModules] = useState<Module[]>([]);
+  const [shifts, setShifts] = useState<Shifts[]>([]);
 
   useEffect(() => {
     if (teacher) {
-      // Đặt giá trị của form khi mở modal với dữ liệu của giang vien
       form.setFieldsValue({
-        id: teacher.id,
-        name: teacher.name,
-        phone: teacher.phone,
-        gender: teacher.gender,
-        email: teacher.email,
+        ...teacher,
         birthdate: dayjs(teacher.birthdate),
         working_date: dayjs(teacher.working_date),
+        modules: teacher.modules.map((module) => module.module_id),
+        working_shift_ids: teacher.working_shift.map((shift) => shift.id),
       });
     }
   }, [teacher, form]);
+
+  useEffect(() => {
+    const fetchModules = async () => {
+      const moduleList = await moduleService.getAllModules();
+      setModules(moduleList);
+    };
+
+    const fetchShifts = async () => {
+      const shiftList = await shiftsService.findAll();
+      setShifts(shiftList);
+    };
+
+    fetchModules();
+    fetchShifts();
+  }, []);
 
   // Xử lý khi nhấn nút "OK"
   const handleOk = async () => {
@@ -157,6 +175,50 @@ const EditTeacherForm = ({
           ]}
         >
           <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+        </Form.Item>
+        <Form.Item
+          name="modules"
+          label="Modules"
+          rules={[
+            {
+              required: true,
+              message: "Please select at least one module!",
+            },
+          ]}
+        >
+          <Select
+            mode="multiple"
+            placeholder="Select modules"
+            style={{ width: "100%" }}
+          >
+            {modules.map((module) => (
+              <Select.Option key={module.module_id} value={module.module_id}>
+                {module.module_name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+        <Form.Item
+          name="working_shift_ids"
+          label="Shift"
+          rules={[
+            {
+              required: true,
+              message: "Please select at least one shift!",
+            },
+          ]}
+        >
+          <Select
+            mode="multiple"
+            placeholder="Select shifts"
+            style={{ width: "100%" }}
+          >
+            {shifts.map((shift) => (
+              <Select.Option key={shift.id} value={shift.id}>
+                {shift.name}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
       </Form>
     </Modal>

@@ -1,5 +1,5 @@
 // services/class/class.service.ts
-import { Class } from "../../models/class.model";
+import { Class } from "../../models/classes.model";
 import axiosInstance from "../../utils/axiosInstance";
 
 export interface ClassData {

@@ -1,4 +1,4 @@
-import { Form, Input, Modal, notification } from "antd";
+import { Form, Input, InputNumber, Modal, notification } from "antd";
 import { useEffect } from "react";
 import { Module } from "../../models/courses.model";
 import { moduleService } from "../../services/module-serice/module.service";
@@ -25,6 +25,7 @@ const EditModuleForm = ({
         module_id: module.module_id,
         module_name: module.module_name,
         exam_type: module.exam_type,
+        number_of_classes: module.number_of_classes,
       });
     }
   }, [module, form]);
@@ -60,7 +61,7 @@ const EditModuleForm = ({
       open={isModalVisible}
       onOk={handleOk}
       onCancel={() => {
-        form.resetFields(); // Reset các trường form khi đóng modal
+        form.resetFields();
         hideModal();
       }}
       okText="Update"
@@ -91,6 +92,18 @@ const EditModuleForm = ({
           ]}
         >
           <Input placeholder="Enter the Exam Type" />
+        </Form.Item>
+        <Form.Item
+          name="number_of_classes"
+          label="Number of Classes"
+          rules={[
+            {
+              required: true,
+              message: "Please input the Number of Classes!",
+            },
+          ]}
+        >
+          <InputNumber placeholder="Enter the Number of Classes" />
         </Form.Item>
       </Form>
     </Modal>

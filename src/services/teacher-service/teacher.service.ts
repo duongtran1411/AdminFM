@@ -6,6 +6,7 @@ class TeacherService {
   async findAll(): Promise<Teachers[]> {
     try {
       const response = await axiosInstance.get<Teachers[]>("/teachers");
+      console.log(response.data);
       return response.data;
     } catch (error) {
       console.error("Error fetching teachers:", error);

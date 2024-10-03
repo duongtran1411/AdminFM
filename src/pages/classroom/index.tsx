@@ -7,7 +7,7 @@ import AddClassroomForm from "../../components/classroom/AddClassroomForm";
 import ClassroomTable from "../../components/classroom/ClassroomTable";
 import TabsMenu from "../../components/student/TabsMenu";
 import useModals from "../../hooks/useModal";
-import { Classroom } from "../../models/class.model";
+import { Classroom } from "../../models/classes.model";
 import classRoomService from "../../services/class-room-service/class.room.service";
 import { useParams } from "react-router-dom";
 import EditClassroomForm from "../../components/classroom/EditBuildingForm";

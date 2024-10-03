@@ -3,7 +3,7 @@ import { FloatButton, message, Tooltip } from "antd";
 import { RcFile } from "antd/es/upload";
 import { FaPlus } from "react-icons/fa";
 import useModals from "../../hooks/useModal";
-import { Class } from "../../models/class.model";
+import { Class } from "../../models/classes.model";
 import classService from "../../services/class-service/class.service";
 import { uploadFile } from "../../services/upload-service/upload.service";
 import ImportForm from "../shared/ImportForm";

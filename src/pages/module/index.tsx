@@ -67,7 +67,11 @@ const ModulePage = () => {
       dataIndex: "exam_type",
       key: "exam_type",
     },
-    // Thêm các column nếu cần
+    {
+      title: "Số buổi",
+      dataIndex: "number_of_classes",
+      key: "number_of_classes",
+    },
     {
       title: "",
       key: "actions",

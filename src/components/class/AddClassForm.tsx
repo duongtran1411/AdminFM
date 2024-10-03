@@ -5,7 +5,7 @@ import { CoursesFamily } from "../../models/courses.model";
 import courseFamilyService from "../../services/course-family-service/course.family.service";
 import { Shifts } from "../../models/shifts";
 import { shiftsService } from "../../services/shifts-service/shifts.service";
-import { Class } from "../../models/class.model";
+import { Class } from "../../models/classes.model";
 
 interface AddClassFormProps {
   visible: boolean;
@@ -41,6 +41,7 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
     const classData: Class = {
       ...values,
       tick: values.isActive || false,
+      tick_to_create_schedules: values.tick_to_create_schedules || false,
     };
     onAdd(classData);
     form.resetFields();
@@ -99,6 +100,9 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
               </Select.Option>
             ))}
           </Select>
+        </Form.Item>
+        <Form.Item name="tick_to_create_schedules" valuePropName="checked">
+          <Checkbox>Tự động tạo lịch</Checkbox>
         </Form.Item>
         <Form.Item name="isActive" valuePropName="checked">
           <Checkbox>Tự động thêm 20 sinh viên</Checkbox>

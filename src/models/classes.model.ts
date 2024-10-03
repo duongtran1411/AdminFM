@@ -4,6 +4,7 @@ export interface Class {
   coursesFamilyId: number;
   shiftId: number;
   tick: boolean;
+  tick_to_create_schedules: boolean;
 }
 
 export interface Classroom {

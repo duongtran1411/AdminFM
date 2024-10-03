@@ -1,5 +1,5 @@
 import { Form, Input, Modal, notification } from "antd";
-import { Classroom } from "../../models/class.model";
+import { Classroom } from "../../models/classes.model";
 import classRoomService from "../../services/class-room-service/class.room.service";
 
 interface Props {
