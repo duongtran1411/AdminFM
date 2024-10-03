@@ -1,53 +1,44 @@
 import { AxiosResponse } from "axios";
 import axiosInstance from "../../utils/axiosInstance";
 import { Freshmen, Student } from "../../models/student.model";
-
-export interface StudentCountData {
-  total: number;
-}
+import { Response } from "../../models/response.model";
 
 class StudentService {
   // Tạo một student mới
-  async create(studentList: Student): Promise<Student> {
+  async create(studentList: Student): Promise<Response<Student>> {
     try {
-      const response: AxiosResponse<Student> = await axiosInstance.post(
-        "/students",
-        studentList,
-      );
+      const response: AxiosResponse<Response<Student>> =
+        await axiosInstance.post("/students", studentList);
       return response.data;
     } catch (error: any) {
       throw new Error("Error creating student: " + error.message);
     }
   }
 
-  async createFreshmen(freshmen: Freshmen): Promise<Freshmen> {
+  async createFreshmen(freshmen: Freshmen): Promise<Response<Freshmen>> {
     try {
-      const response: AxiosResponse<Freshmen> = await axiosInstance.post(
-        "/students",
-        freshmen,
-      );
+      const response: AxiosResponse<Response<Freshmen>> =
+        await axiosInstance.post("/students", freshmen);
       return response.data;
     } catch (error: any) {
       throw new Error("Error creating freshmen: " + error.message);
     }
   }
 
-  async findAll(classId?: string): Promise<Student[]> {
+  async findAll(classId?: string): Promise<Response<Student[]>> {
     try {
-      const response: AxiosResponse<Student[]> = await axiosInstance.get(
-        `/students/class/${classId}`,
-      );
+      const response: AxiosResponse<Response<Student[]>> =
+        await axiosInstance.get(`/students/class/${classId}`);
       return response.data;
     } catch (error: any) {
       throw new Error("Error fetching students: " + error.message);
     }
   }
 
-  async findStudentsWithoutClass(): Promise<Freshmen[]> {
+  async findStudentsWithoutClass(): Promise<Response<Freshmen[]>> {
     try {
-      const response: AxiosResponse<Freshmen[]> = await axiosInstance.get(
-        "/students/without-class",
-      );
+      const response: AxiosResponse<Response<Freshmen[]>> =
+        await axiosInstance.get("/students/without-class");
       return response.data;
     } catch (error: any) {
       throw new Error(
@@ -57,11 +48,10 @@ class StudentService {
   }
 
   // Lấy một student theo ID
-  async findOne(id: number): Promise<Student> {
+  async findOne(id: number): Promise<Response<Student>> {
     try {
-      const response: AxiosResponse<Student> = await axiosInstance.get(
-        `/students/${id}`,
-      );
+      const response: AxiosResponse<Response<Student>> =
+        await axiosInstance.get(`/students/${id}`);
       return response.data;
     } catch (error: any) {
       throw new Error("Error fetching student: " + error.message);
@@ -69,12 +59,10 @@ class StudentService {
   }
 
   // Cập nhật một student theo ID
-  async update(id: number, studentList: Student): Promise<Student> {
+  async update(id: number, studentList: Student): Promise<Response<Student>> {
     try {
-      const response: AxiosResponse<Student> = await axiosInstance.put(
-        `/students/${id}`,
-        studentList,
-      );
+      const response: AxiosResponse<Response<Student>> =
+        await axiosInstance.put(`/students/${id}`, studentList);
       return response.data;
     } catch (error: any) {
       throw new Error("Error updating student: " + error.message);
@@ -82,9 +70,11 @@ class StudentService {
   }
 
   // Xóa một student theo ID
-  async remove(id: number): Promise<void> {
+  async remove(id: number): Promise<Response<void>> {
     try {
-      await axiosInstance.delete(`/students/${id}`);
+      const response: AxiosResponse<Response<void>> =
+        await axiosInstance.delete(`/students/${id}`);
+      return response.data;
     } catch (error: any) {
       throw new Error("Error deleting student: " + error.message);
     }

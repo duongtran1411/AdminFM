@@ -13,7 +13,7 @@ const ClassPage = () => {
   const fetchClasses = async () => {
     try {
       const data = await ClassService.getClasses();
-      setClassesData(data);
+      setClassesData(data.data);
     } catch (error) {
       setError("Error loading classes");
     } finally {

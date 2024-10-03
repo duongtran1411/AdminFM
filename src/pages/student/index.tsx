@@ -20,7 +20,7 @@ const StudentPage = () => {
   const fetchStudents = async () => {
     try {
       const data = await studentService.findAll(classId);
-      setStudents(data);
+      setStudents(data.data);
     } catch (error) {
       setError("Error loading students");
     } finally {

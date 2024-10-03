@@ -8,12 +8,6 @@ export interface StudentClass {
   studentId: string;
 }
 
-// Định nghĩa interface cho Class
-export interface Class {
-  id: number;
-  name: string;
-  // Có thể thêm các trường khác nếu cần
-}
 export interface Freshmen {
   id: number;
   studentId: number;
@@ -22,7 +16,11 @@ export interface Freshmen {
   coursesFamily: CoursesFamily;
   shift: Shifts;
 }
-
+export interface FreshmenResponse {
+  statusCode: number;
+  message: string;
+  data: Freshmen[];
+}
 // Định nghĩa interface cho StudentList
 export interface Student {
   id: number;

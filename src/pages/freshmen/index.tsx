@@ -17,8 +17,8 @@ const FreshmenPageList = () => {
   const fetchStudents = async () => {
     try {
       const data = await studentService.findStudentsWithoutClass();
-      setStudents(data);
       console.log(data);
+      setStudents(data.data);
     } catch (error) {
       setError("Error loading students");
     } finally {

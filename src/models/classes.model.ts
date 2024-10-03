@@ -5,6 +5,7 @@ export interface Class {
   shiftId: number;
   tick: boolean;
   tick_to_create_schedules: boolean;
+  totalStudent: number;
 }
 
 export interface Classroom {
