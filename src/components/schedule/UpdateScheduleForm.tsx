@@ -27,7 +27,7 @@ const UpdateScheduleForm: React.FC<{
           await Promise.all([
             scheduleService.getShifts(),
             scheduleService.getClassrooms(),
-            scheduleService.getLecturers(),
+            scheduleService.getTeachers(),
             scheduleService.getModule(),
           ]);
         setShifts(shiftsData);

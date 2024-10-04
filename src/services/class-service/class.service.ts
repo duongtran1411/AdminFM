@@ -1,5 +1,6 @@
 // services/class/class.service.ts
 import { Class } from "../../models/classes.model";
+import { Module } from "../../models/courses.model";
 import axiosInstance from "../../utils/axiosInstance";
 
 export interface ClassData {
@@ -13,10 +14,22 @@ export interface ClassResponse {
 }
 
 class ClassService {
+  async getModulesByCoursesFamilyOfClass(classId: number): Promise<Module[]> {
+    try {
+      const response = await axiosInstance.get<Module[]>(
+        `/classes/modules/${classId}`,
+      );
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+      throw error;
+    }
+  }
+
   async getClasses(): Promise<ClassResponse> {
     try {
       const response = await axiosInstance.get<ClassResponse>("/classes");
-      console.log(response.data);
       return response.data;
     } catch (error) {
       console.error("Error fetching classes:", error);

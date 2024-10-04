@@ -1,11 +1,9 @@
 // components/class/AddClassForm.tsx
-import { Button, Form, Input, Modal, Select, Checkbox } from "antd";
+import { Button, Checkbox, Form, Input, Modal, Select } from "antd";
 import React, { useEffect, useState } from "react";
+import { Class } from "../../models/classes.model";
 import { CoursesFamily } from "../../models/courses.model";
 import courseFamilyService from "../../services/course-family-service/course.family.service";
-import { Shifts } from "../../models/shifts";
-import { shiftsService } from "../../services/shifts-service/shifts.service";
-import { Class } from "../../models/classes.model";
 
 interface AddClassFormProps {
   visible: boolean;
@@ -19,20 +17,14 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
   onCancel,
 }) => {
   const [coursesfamily, setCoursesFamily] = useState<CoursesFamily[]>([]);
-  const [shift, setShift] = useState<Shifts[]>([]);
 
   useEffect(() => {
     const fetchCourse = async () => {
       const cfm = await courseFamilyService.getAll();
       setCoursesFamily(cfm);
     };
-    const fetchShift = async () => {
-      const shift = await shiftsService.findAll();
-      setShift(shift);
-    };
     if (visible) {
       fetchCourse();
-      fetchShift();
     }
   }, [visible]);
   const [form] = Form.useForm();
@@ -82,27 +74,6 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
               </Select.Option>
             ))}
           </Select>
-        </Form.Item>
-        <Form.Item
-          name="shiftId"
-          label="Shift"
-          rules={[
-            {
-              required: true,
-              message: "Please select the Shift!",
-            },
-          ]}
-        >
-          <Select placeholder="Chọn Shift">
-            {shift.map((s) => (
-              <Select.Option key={s.id} value={s.id}>
-                {s.name}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-        <Form.Item name="tick_to_create_schedules" valuePropName="checked">
-          <Checkbox>Tự động tạo lịch</Checkbox>
         </Form.Item>
         <Form.Item name="isActive" valuePropName="checked">
           <Checkbox>Tự động thêm 20 sinh viên</Checkbox>

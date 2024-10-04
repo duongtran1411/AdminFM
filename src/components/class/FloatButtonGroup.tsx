@@ -11,7 +11,6 @@ import AddClassForm from "./AddClassForm";
 const FloatButtonGroup = ({ onSuccess }: { onSuccess: () => void }) => {
   const handleUpload = async (file: RcFile) => {
     try {
-      console.log(file.name);
       await uploadFile(file);
       message.success("File uploaded successfully!");
       hideModal("importClassExcel");

@@ -14,13 +14,14 @@ import ActionButtons from "../../components/schedule/ActionButton";
 import CreateScheduleForm from "../../components/schedule/CreateScheduleForm";
 import ScheduleTabsMenu from "../../components/schedule/TabsMenu";
 import UpdateScheduleForm from "../../components/schedule/UpdateScheduleForm";
-import useModals from "../../hooks/useModal"; // Import hook
+import useModals from "../../hooks/useModal";
 import {
   CreateScheduleData,
   ScheduleData,
   scheduleService,
 } from "../../services/schedule-service/schedule.service";
 import StudentPage from "../student";
+import CreateScheduleAutoForm from "../../components/schedule/CreateScheduleAutoForm";
 
 const ScheduleList: React.FC = () => {
   const navigate = useNavigate();
@@ -50,6 +51,7 @@ const ScheduleList: React.FC = () => {
 
   const handleEdit = (schedule: ScheduleData) => {
     setSelectedSchedule(schedule);
+    console.log(schedule);
     showModal("editSchedule");
   };
 
@@ -70,6 +72,19 @@ const ScheduleList: React.FC = () => {
       },
     });
   };
+  const onSubmitAutoSchedule = async (values: any) => {
+    try {
+      console.log(values);
+      await fetchSchedules();
+      notification.success({ message: "Tạo lịch học tự động thành công!" });
+      hideModal("createScheduleAuto");
+    } catch (error) {
+      console.error("Error submitting auto schedule:", error);
+      notification.error({
+        message: "Có lỗi xảy ra khi tạo lịch học tự động. Vui lòng thử lại.",
+      });
+    }
+  };
 
   const onSubmit = async (values: CreateScheduleData) => {
     try {
@@ -89,7 +104,11 @@ const ScheduleList: React.FC = () => {
   };
 
   const handleAddSchedule = () => {
-    showModal("createSchedule");
+    if (schedules.length === 0) {
+      showModal("createScheduleAuto");
+    } else {
+      showModal("createSchedule");
+    }
   };
   const handleRowClick = (schedule: ScheduleData) => {
     navigate(`/schedule/attendance/${schedule.id}`);
@@ -207,7 +226,10 @@ const ScheduleList: React.FC = () => {
             position: "relative",
           }}
         >
-          <ActionButtons onNewClick={handleAddSchedule} />
+          <ActionButtons
+            onNewClick={handleAddSchedule}
+            isEmpty={schedules.length === 0}
+          />
           <div style={{ marginTop: "20px" }}>
             <Table
               columns={columns}
@@ -233,6 +255,11 @@ const ScheduleList: React.FC = () => {
         isModalVisible={isVisible("createSchedule")}
         hideModal={() => hideModal("createSchedule")}
         onSubmit={onSubmit}
+      />
+      <CreateScheduleAutoForm
+        isModalVisible={isVisible("createScheduleAuto")}
+        hideModal={() => hideModal("createScheduleAuto")}
+        onSubmit={onSubmitAutoSchedule}
       />
     </div>
   );

@@ -14,7 +14,8 @@ const AttendancePage = () => {
   const fetchAttendanceStatus = async (scheduleId: string) => {
     try {
       const data = await getAttendanceStatus(scheduleId);
-      setAttendanceData(data);
+      console.log(data);
+      setAttendanceData(data.attendances);
     } catch (error) {
       console.error("Lỗi khi lấy trạng thái điểm danh", error);
       setError("Failed to load attendance status.");

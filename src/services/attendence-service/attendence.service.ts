@@ -1,21 +1,37 @@
 // attendence.service.ts
 import axiosInstance from "../../utils/axiosInstance";
 
-// Định nghĩa interface cho dữ liệu điểm danh
-export interface AttendanceStatus {
+// Define interface for Student
+export interface Student {
   id: number;
   studentId: string;
-  status: boolean;
   name: string;
+  email: string;
+  gender: string | null;
+  birthdate: string;
+  phone: string | null;
 }
 
-// Service để lấy trạng thái điểm danh theo lịch
+// Define interface for AttendanceStatus
+export interface AttendanceStatus {
+  student: Student;
+  status: number;
+  note: string | null;
+}
+
+// Define interface for AttendanceResponse
+export interface AttendanceResponse {
+  attendances: AttendanceStatus[];
+  total: number;
+}
+
+// Service to get attendance status by schedule
 export const getAttendanceStatus = async (
   scheduleId: string,
-): Promise<AttendanceStatus[]> => {
+): Promise<AttendanceResponse> => {
   try {
-    // Gửi yêu cầu GET đến API để lấy trạng thái điểm danh theo scheduleId
-    const response = await axiosInstance.get<AttendanceStatus[]>(
+    // Send GET request to API to get attendance status by scheduleId
+    const response = await axiosInstance.get<AttendanceResponse>(
       `attendance/schedule/${scheduleId}`,
       {
         headers: {
@@ -24,12 +40,6 @@ export const getAttendanceStatus = async (
       },
     );
 
-    // Chuyển đổi dữ liệu thành dạng { studentId: true/false }
-    //  const attendanceMap = response.data.reduce((acc: Record<number, boolean>, attendance: AttendanceStatus) => {
-    //    acc[attendance.studentId] = attendance.status === 1;
-    //    return acc;
-    //  }, {});
-    //  console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching attendance status:", error);

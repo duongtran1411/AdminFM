@@ -1,3 +1,6 @@
+import { Classroom } from "../../models/classes.model";
+import { Shifts } from "../../models/shifts";
+import { Teachers } from "../../models/teacher.model";
 import axiosInstance from "../../utils/axiosInstance";
 
 // Interface cho dữ liệu lịch học
@@ -22,6 +25,21 @@ export interface CreateScheduleData {
   classroomId: number; // Update with actual data type
 }
 
+// New DTO for auto-generated schedule
+export interface AutoGenerateScheduleDto {
+  schedules: {
+    createScheduleDto: {
+      shiftId: number;
+      classId: number;
+      classroomId: number;
+      teacherId: number;
+      moduleId: number;
+      startDate: string;
+    };
+    selectedDays: string[];
+  }[];
+}
+
 class ScheduleService {
   // Lấy danh sách lịch học
   async findAll(): Promise<ScheduleData[]> {
@@ -37,7 +55,9 @@ class ScheduleService {
   // Lấy thông tin chi tiết một lịch học
   async findOne(id: number): Promise<ScheduleData> {
     try {
-      const response = await axiosInstance.get<ScheduleData>(`/schedules/${id}`);
+      const response = await axiosInstance.get<ScheduleData>(
+        `/schedules/${id}`,
+      );
       return response.data;
     } catch (error) {
       console.error(`Error fetching schedule with id ${id}:`, error);
@@ -55,6 +75,22 @@ class ScheduleService {
       return response.data;
     } catch (error) {
       console.error("Error creating schedule:", error);
+      throw error;
+    }
+  }
+
+  async autoGenerateSchedule(
+    classId: number,
+    schedule: AutoGenerateScheduleDto,
+  ): Promise<AutoGenerateScheduleDto> {
+    try {
+      const response = await axiosInstance.post<AutoGenerateScheduleDto>(
+        `/schedules/auto/${classId}`,
+        schedule,
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error auto-generating schedule:", error);
       throw error;
     }
   }
@@ -120,11 +156,9 @@ class ScheduleService {
     }
   }
 
-  async getShifts(): Promise<{ id: number; name: string }[]> {
+  async getShifts(): Promise<Shifts[]> {
     try {
-      const response = await axiosInstance.get<{ id: number; name: string }[]>(
-        "/shifts",
-      );
+      const response = await axiosInstance.get<Shifts[]>("/shifts");
       return response.data;
     } catch (error) {
       console.error("Error fetching shifts:", error);
@@ -132,11 +166,9 @@ class ScheduleService {
     }
   }
 
-  async getClassrooms(): Promise<{ id: number; name: string }[]> {
+  async getClassrooms(): Promise<Classroom[]> {
     try {
-      const response = await axiosInstance.get<{ id: number; name: string }[]>(
-        "/classroom",
-      );
+      const response = await axiosInstance.get<Classroom[]>("/classroom");
       return response.data;
     } catch (error) {
       console.error("Error fetching classrooms:", error);
@@ -144,26 +176,22 @@ class ScheduleService {
     }
   }
 
-  async getLecturers(): Promise<{ id: number; name: string }[]> {
+  async getTeachers(): Promise<Teachers[]> {
     try {
-      const response = await axiosInstance.get<{ id: number; name: string }[]>(
-        "/teachers",
-      );
+      const response = await axiosInstance.get<Teachers[]>("/teachers");
       return response.data;
     } catch (error) {
-      console.error("Error fetching lecturers:", error);
+      console.error("Error fetching teachers:", error);
       throw error;
     }
   }
 
   async getModule(): Promise<any[]> {
     try {
-      const response = await axiosInstance.get<any[]>(
-        "/module",
-      );
+      const response = await axiosInstance.get<any[]>("/module");
       return response.data;
     } catch (error) {
-      console.error("Error fetching lecturers:", error);
+      console.error("Error fetching modules:", error);
       throw error;
     }
   }
