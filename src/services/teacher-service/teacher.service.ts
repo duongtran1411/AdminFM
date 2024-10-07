@@ -39,22 +39,19 @@ class TeacherService {
   // Cập nhật thông tin giáo viên
   async update(id: number, teacher: Partial<Teachers>): Promise<Teachers> {
     try {
-      // Gửi yêu cầu PUT để cập nhật giáo viên
       const response = await axiosInstance.patch<Teachers>(
         `/teachers/${id}`,
         teacher,
       );
 
-      // Kiểm tra xem phản hồi có chứa dữ liệu cần thiết không
       if (response.status === 200 && response.data) {
         return response.data;
       } else {
         throw new Error(`Unexpected response status: ${response.status}`);
       }
     } catch (error) {
-      // In lỗi để kiểm tra khi có lỗi xảy ra
       console.error(`Error updating teacher with id ${id}:`, error);
-      throw error; // Ném lỗi lên để xử lý ở nơi gọi hàm
+      throw error;
     }
   }
 

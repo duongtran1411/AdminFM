@@ -195,6 +195,63 @@ class ScheduleService {
       throw error;
     }
   }
+
+  async getAvailableClassrooms(
+    moduleId: number,
+    shiftId: number,
+    startDate: string,
+    selectedDays: string,
+  ): Promise<Classroom[]> {
+    const response = await axiosInstance.get(
+      `/schedules/available-classrooms`,
+      {
+        params: {
+          moduleId,
+          shiftId,
+          startDate,
+          selectedDays: selectedDays, // This is already a JSON string
+        },
+        paramsSerializer: (params) => {
+          return Object.entries(params)
+            .map(([key, value]) => {
+              if (key === "selectedDays") {
+                return `${key}=${encodeURIComponent(value)}`;
+              }
+              return `${key}=${value}`;
+            })
+            .join("&");
+        },
+      },
+    );
+    return response.data;
+  }
+
+  async getAvailableTeachers(
+    moduleId: number,
+    shiftId: number,
+    startDate: string,
+    selectedDays: string,
+  ): Promise<Teachers[]> {
+    const response = await axiosInstance.get(`/schedules/available-teachers`, {
+      params: {
+        moduleId,
+        shiftId,
+        startDate,
+        selectedDays: selectedDays,
+      },
+      paramsSerializer: (params) => {
+        return Object.entries(params)
+          .map(([key, value]) => {
+            if (key === "selectedDays") {
+              return `${key}=${encodeURIComponent(value)}`;
+            }
+            return `${key}=${value}`;
+          })
+          .join("&");
+      },
+    });
+    return response.data;
+  }
 }
 
 export const scheduleService = new ScheduleService();

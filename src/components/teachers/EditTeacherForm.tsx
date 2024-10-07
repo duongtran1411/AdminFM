@@ -69,6 +69,7 @@ const EditTeacherForm = ({
             ...values,
             working_date: workingDate,
             birthdate: birthDate,
+            working_shift: values.working_shift_ids,
           };
           await teacherService.update(updatedTeacher.id, updatedTeacher);
           form.resetFields();

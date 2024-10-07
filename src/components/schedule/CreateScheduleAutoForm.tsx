@@ -1,10 +1,9 @@
-import { Button, Input, Modal, Select, Table, message } from "antd";
+import { Button, Input, Modal, Select, Table, message, Spin } from "antd";
+import { debounce } from "lodash";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Classroom } from "../../models/classes.model";
 import { Module } from "../../models/courses.model";
 import { Shifts } from "../../models/shifts";
-import { Teachers } from "../../models/teacher.model";
 import classService from "../../services/class-service/class.service";
 import { scheduleService } from "../../services/schedule-service/schedule.service";
 
@@ -14,39 +13,85 @@ const CreateScheduleAutoForm: React.FC<{
   onSubmit: (values: any) => void;
 }> = ({ isModalVisible, hideModal, onSubmit }) => {
   const [shifts, setShifts] = useState<Shifts[]>([]);
-  const [classrooms, setClassrooms] = useState<Classroom[]>([]);
-  const [teachers, setTeachers] = useState<Teachers[]>([]);
   const [modules, setModules] = useState<Module[]>([]);
   const [tableData, setTableData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
   const { classId } = useParams<{ classId: string }>();
 
   useEffect(() => {
     const fetchData = async () => {
-      const [shiftsData, classroomsData, teacherData, modulesData] =
-        await Promise.all([
-          scheduleService.getShifts(),
-          scheduleService.getClassrooms(),
-          scheduleService.getTeachers(),
-          classService.getModulesByCoursesFamilyOfClass(Number(classId!)),
-        ]);
+      const [shiftsData, modulesData] = await Promise.all([
+        scheduleService.getShifts(),
+        classService.getModulesByCoursesFamilyOfClass(Number(classId!)),
+      ]);
       setShifts(shiftsData);
-      setClassrooms(classroomsData);
-      setTeachers(teacherData);
       setModules(modulesData);
 
       const initialTableData = modulesData.map((module) => ({
         key: module.module_id.toString(),
         moduleId: module.module_id,
-        startDate: "",
-        classroomId: undefined,
-        shiftId: undefined,
-        teacherId: undefined,
+        selectedDays: [],
+        availableClassrooms: [],
+        availableTeachers: [],
       }));
       setTableData(initialTableData);
     };
 
     fetchData();
   }, [classId]);
+
+  const fetchAvailableData = debounce(async (record: any) => {
+    if (record.startDate && record.shiftId && record.selectedDays.length > 0) {
+      try {
+        const selectedDaysString = JSON.stringify(record.selectedDays);
+        const [classrooms, teachers] = await Promise.all([
+          scheduleService.getAvailableClassrooms(
+            record.moduleId,
+            record.shiftId,
+            record.startDate,
+            selectedDaysString,
+          ),
+          scheduleService.getAvailableTeachers(
+            record.moduleId,
+            record.shiftId,
+            record.startDate,
+            selectedDaysString,
+          ),
+        ]);
+        setTableData((prevData) =>
+          prevData.map((item) =>
+            item.key === record.key
+              ? {
+                  ...item,
+                  availableClassrooms: classrooms,
+                  availableTeachers: teachers,
+                }
+              : item,
+          ),
+        );
+      } catch (error) {
+        console.error("Error fetching available data:", error);
+        message.error(
+          "Không thể lấy danh sách phòng học và giảng viên khả dụng.",
+        );
+      }
+    }
+  }, 300);
+
+  const handleTableChange = (key: string, dataIndex: string, value: any) => {
+    setTableData((prevData) =>
+      prevData.map((item) => {
+        if (item.key === key) {
+          const updatedItem = { ...item, [dataIndex]: value };
+          if (["startDate", "shiftId", "selectedDays"].includes(dataIndex)) {
+            fetchAvailableData(updatedItem);
+          }
+          return updatedItem;
+        }
+        return item;
+      }),
+    );
+  };
 
   const columns = [
     {
@@ -55,11 +100,7 @@ const CreateScheduleAutoForm: React.FC<{
       key: "moduleId",
       render: (_: any, record: any) => {
         const module = modules.find((m) => m.module_id === record.moduleId);
-        return (
-          <div style={{ width: "100%" }}>
-            {module ? module.module_name : "N/A"}
-          </div>
-        );
+        return module ? module.module_name : "N/A";
       },
     },
     {
@@ -73,88 +114,7 @@ const CreateScheduleAutoForm: React.FC<{
           onChange={(e) =>
             handleTableChange(record.key, "startDate", e.target.value)
           }
-          style={{ width: "100%" }}
         />
-      ),
-    },
-    {
-      title: "Phòng học",
-      dataIndex: "classroomId",
-      key: "classroomId",
-      render: (_: any, record: any) => (
-        <Select
-          value={record.classroomId}
-          onChange={(value) =>
-            handleTableChange(record.key, "classroomId", value)
-          }
-          style={{ width: "100%" }}
-          optionLabelProp="label"
-        >
-          {classrooms.map((classroom) => (
-            <Select.Option
-              key={classroom.id}
-              value={classroom.id}
-              label={classroom.name}
-            >
-              {classroom.name}
-            </Select.Option>
-          ))}
-        </Select>
-      ),
-    },
-    {
-      title: "Ca học",
-      dataIndex: "shiftId",
-      key: "shiftId",
-      render: (_: any, record: any) => (
-        <Select
-          value={record.shiftId}
-          onChange={(value) => handleTableChange(record.key, "shiftId", value)}
-          style={{ width: "100%" }}
-          optionLabelProp="label"
-        >
-          {shifts.map((shift) => (
-            <Select.Option key={shift.id} value={shift.id} label={shift.name}>
-              {shift.name}
-            </Select.Option>
-          ))}
-        </Select>
-      ),
-    },
-    {
-      title: "Giảng viên",
-      dataIndex: "teacherId",
-      key: "teacherId",
-      render: (_: any, record: any) => (
-        <Select
-          value={record.teacherId}
-          onChange={(value) =>
-            handleTableChange(record.key, "teacherId", value)
-          }
-          style={{ width: "100%" }}
-          optionLabelProp="label"
-          listHeight={400}
-          dropdownStyle={{ minWidth: "150px" }}
-        >
-          {teachers.map((teacher) => (
-            <Select.Option
-              key={teacher.id}
-              value={teacher.id}
-              label={teacher.name}
-            >
-              <div
-                style={{
-                  whiteSpace: "normal",
-                  padding: "8px 0",
-                  lineHeight: "1.5",
-                  fontSize: "14px",
-                }}
-              >
-                {teacher.name}
-              </div>
-            </Select.Option>
-          ))}
-        </Select>
       ),
     },
     {
@@ -169,7 +129,6 @@ const CreateScheduleAutoForm: React.FC<{
             handleTableChange(record.key, "selectedDays", value)
           }
           style={{ width: "100%" }}
-          dropdownStyle={{ minWidth: "150px" }}
         >
           {[
             "Monday",
@@ -187,17 +146,71 @@ const CreateScheduleAutoForm: React.FC<{
         </Select>
       ),
     },
+    {
+      title: "Ca học",
+      dataIndex: "shiftId",
+      key: "shiftId",
+      render: (_: any, record: any) => (
+        <Select
+          dropdownStyle={{ minWidth: "150px" }}
+          value={record.shiftId}
+          onChange={(value) => handleTableChange(record.key, "shiftId", value)}
+          style={{ width: "100%" }}
+        >
+          {shifts.map((shift) => (
+            <Select.Option key={shift.id} value={shift.id}>
+              {shift.name}
+            </Select.Option>
+          ))}
+        </Select>
+      ),
+    },
+    {
+      title: "Phòng học",
+      dataIndex: "classroomId",
+      key: "classroomId",
+      render: (_: any, record: any) => (
+        <Select
+          dropdownStyle={{ minWidth: "150px" }}
+          value={record.classroomId}
+          onChange={(value) =>
+            handleTableChange(record.key, "classroomId", value)
+          }
+          style={{ width: "100%" }}
+        >
+          {record.availableClassrooms.map((classroom) => (
+            <Select.Option key={classroom.id} value={classroom.id}>
+              {classroom.name}
+            </Select.Option>
+          ))}
+        </Select>
+      ),
+    },
+    {
+      title: "Giảng viên",
+      dataIndex: "teacherId",
+      key: "teacherId",
+      render: (_: any, record: any) => (
+        <Select
+          dropdownStyle={{ minWidth: "200px" }}
+          value={record.teacherId}
+          onChange={(value) =>
+            handleTableChange(record.key, "teacherId", value)
+          }
+          style={{ width: "100%" }}
+        >
+          {record.availableTeachers.map((teacher) => (
+            <Select.Option key={teacher.id} value={teacher.id}>
+              {teacher.name}
+            </Select.Option>
+          ))}
+        </Select>
+      ),
+    },
   ];
 
-  const handleTableChange = (key: string, dataIndex: string, value: any) => {
-    setTableData((prevData) =>
-      prevData.map((item) =>
-        item.key === key ? { ...item, [dataIndex]: value } : item,
-      ),
-    );
-  };
-
   const onFinish = async () => {
+    setLoading(true);
     try {
       const scheduleData = tableData.map((item) => ({
         createScheduleDto: {
@@ -221,25 +234,30 @@ const CreateScheduleAutoForm: React.FC<{
     } catch (error) {
       console.error("Error auto-generating schedule:", error);
       message.error("Có lỗi xảy ra khi tạo lịch học tự động.");
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const handleHideModal = () => {
-    hideModal();
   };
 
   return (
     <Modal
       title="Thêm mới lịch học tự động"
       visible={isModalVisible}
-      onCancel={handleHideModal}
+      onCancel={hideModal}
       footer={null}
       width={1000}
     >
-      <Table dataSource={tableData} columns={columns} pagination={false} />
-      <Button type="primary" onClick={onFinish} style={{ marginTop: 16 }}>
-        Tạo lịch học tự động
-      </Button>
+      <Spin spinning={loading} tip="Đang tạo lịch học...">
+        <Table dataSource={tableData} columns={columns} pagination={false} />
+        <Button
+          type="primary"
+          onClick={onFinish}
+          style={{ marginTop: 16 }}
+          disabled={loading}
+        >
+          Tạo lịch học tự động
+        </Button>
+      </Spin>
     </Modal>
   );
 };

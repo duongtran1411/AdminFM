@@ -55,8 +55,8 @@ const DashBoardMenuList = () => {
       label: "Academic",
       icon: <HiAcademicCap />,
       children: [
-        { key: "courses", icon: <LuBookMarked />, label: "Courses" },
         { key: "coursefamily", icon: <LuBookCopy />, label: "Courses Family" },
+        { key: "courses", icon: <LuBookMarked />, label: "Courses" },
         { key: "module", icon: <AiOutlineFolder />, label: "Module" },
         // Thêm menulist vào sau nếu cần
       ],
