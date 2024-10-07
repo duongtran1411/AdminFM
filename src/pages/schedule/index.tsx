@@ -51,7 +51,6 @@ const ScheduleList: React.FC = () => {
 
   const handleEdit = (schedule: ScheduleData) => {
     setSelectedSchedule(schedule);
-    console.log(schedule);
     showModal("editSchedule");
   };
 

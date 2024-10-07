@@ -1,13 +1,14 @@
 // components/class/AddClassForm.tsx
 import { Button, Checkbox, Form, Input, Modal, Select } from "antd";
 import React, { useEffect, useState } from "react";
-import { Class } from "../../models/classes.model";
 import { CoursesFamily } from "../../models/courses.model";
+import { Response } from "../../models/response.model";
+import { ClassResponse } from "../../services/class-service/class.service";
 import courseFamilyService from "../../services/course-family-service/course.family.service";
 
 interface AddClassFormProps {
   visible: boolean;
-  onAdd: (values: Class) => void;
+  onAdd: (values: Response<ClassResponse>) => void;
   onCancel: () => void;
 }
 
@@ -30,11 +31,11 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
   const [form] = Form.useForm();
 
   const handleFinish = (values: any) => {
-    const classData: Class = {
+    const classData: Response<ClassResponse> = {
       ...values,
       tick: values.isActive || false,
-      tick_to_create_schedules: values.tick_to_create_schedules || false,
     };
+    console.log(classData);
     onAdd(classData);
     form.resetFields();
   };

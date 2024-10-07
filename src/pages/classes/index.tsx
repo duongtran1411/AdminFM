@@ -2,11 +2,10 @@
 import { useEffect, useState } from "react";
 import ClassList from "../../components/class/ClassList";
 import FloatButtonGroup from "../../components/class/FloatButtonGroup";
-import ClassService, {
-  ClassData,
-} from "../../services/class-service/class.service";
+import ClassService from "../../services/class-service/class.service";
+import { Class } from "../../models/classes.model";
 const ClassPage = () => {
-  const [classesData, setClassesData] = useState<ClassData[]>([]);
+  const [classesData, setClassesData] = useState<Class[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 

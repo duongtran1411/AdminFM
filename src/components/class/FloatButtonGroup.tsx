@@ -3,11 +3,13 @@ import { FloatButton, message, Tooltip } from "antd";
 import { RcFile } from "antd/es/upload";
 import { FaPlus } from "react-icons/fa";
 import useModals from "../../hooks/useModal";
-import { Class } from "../../models/classes.model";
-import classService from "../../services/class-service/class.service";
+import classService, {
+  ClassResponse,
+} from "../../services/class-service/class.service";
 import { uploadFile } from "../../services/upload-service/upload.service";
 import ImportForm from "../shared/ImportForm";
 import AddClassForm from "./AddClassForm";
+import { Response } from "../../models/response.model";
 const FloatButtonGroup = ({ onSuccess }: { onSuccess: () => void }) => {
   const handleUpload = async (file: RcFile) => {
     try {
@@ -21,15 +23,14 @@ const FloatButtonGroup = ({ onSuccess }: { onSuccess: () => void }) => {
     }
   };
 
-  const handleAddClass = async (classData: Class) => {
+  const handleAddClass = async (classData: Response<ClassResponse>) => {
     try {
       await classService.addClass(classData);
-      message.success("Class added successfully!");
+      message.success("Thêm lớp thành công!");
       hideModal("addClassModal");
       await onSuccess();
-    } catch (ExceptionsHandler) {
-      console.error("Error adding class:", ExceptionsHandler);
-      message.error("Không có học sinh phù hợp.");
+    } catch (error) {
+      message.error("Không đủ số lượng sinh viên.");
     }
   };
 

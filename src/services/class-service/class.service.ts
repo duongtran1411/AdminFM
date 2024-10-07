@@ -1,16 +1,16 @@
-// services/class/class.service.ts
 import { Class } from "../../models/classes.model";
 import { Module } from "../../models/courses.model";
+import { Response } from "../../models/response.model";
 import axiosInstance from "../../utils/axiosInstance";
 
-export interface ClassData {
-  data: { id: number; title: string; position: string; totalStudent: number };
-}
+// export interface ClassData {
+//   data: { id: number; title: string; position: string; totalStudent: number };
+// }
 
 export interface ClassResponse {
   statusCode: number;
   message: string;
-  data: ClassData[];
+  data: Class[];
 }
 
 class ClassService {
@@ -19,7 +19,6 @@ class ClassService {
       const response = await axiosInstance.get<Module[]>(
         `/classes/modules/${classId}`,
       );
-      console.log(response.data);
       return response.data;
     } catch (error) {
       console.error("Error fetching classes:", error);
@@ -37,11 +36,9 @@ class ClassService {
     }
   }
 
-  async getClassById(classId: number): Promise<ClassData> {
+  async getClassById(classId: number): Promise<Class> {
     try {
-      const response = await axiosInstance.get<ClassData>(
-        `/classes/${classId}`,
-      );
+      const response = await axiosInstance.get<Class>(`/classes/${classId}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching classes:", error);
@@ -49,14 +46,17 @@ class ClassService {
     }
   }
 
-  async addClass(classData: Class): Promise<Class[]> {
-    try {
-      const response = await axiosInstance.post<Class[]>("/classes", classData);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching classes:", error);
-      throw error;
+  async addClass(
+    classData: Response<ClassResponse>,
+  ): Promise<Response<ClassResponse>> {
+    const response = await axiosInstance.post<Response<ClassResponse>>(
+      "/classes",
+      classData,
+    );
+    if (response.data.data === null) {
+      throw new Error(response.data.message);
     }
+    return response.data;
   }
 
   async updateClass(classId: number, classData: any): Promise<void> {
