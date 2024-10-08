@@ -1,5 +1,6 @@
-import { Button, Input, Modal, Select, Table, message, Spin } from "antd";
+import { Button, DatePicker, message, Modal, Select, Spin, Table } from "antd";
 import { debounce } from "lodash";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Module } from "../../models/courses.model";
@@ -108,12 +109,16 @@ const CreateScheduleAutoForm: React.FC<{
       dataIndex: "startDate",
       key: "startDate",
       render: (_: any, record: any) => (
-        <Input
-          type="date"
-          value={record.startDate}
-          onChange={(e) =>
-            handleTableChange(record.key, "startDate", e.target.value)
+        <DatePicker
+          value={record.startDate ? moment(record.startDate) : null}
+          onChange={(_, dateString) =>
+            handleTableChange(record.key, "startDate", dateString)
           }
+          disabledDate={(current) => {
+            // Vô hiệu hóa các ngày trước hôm nay
+            return current && current < moment().endOf("day");
+          }}
+          style={{ width: "100%" }}
         />
       ),
     },
@@ -223,17 +228,16 @@ const CreateScheduleAutoForm: React.FC<{
         },
         selectedDays: item.selectedDays || [],
       }));
-
+      console.log(scheduleData);
       const result = await scheduleService.autoGenerateSchedule(
         Number(classId),
         { schedules: scheduleData },
       );
       onSubmit(result);
-      message.success("Lịch học đã được tạo tự động thành công!");
       hideModal();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error auto-generating schedule:", error);
-      message.error("Có lỗi xảy ra khi tạo lịch học tự động.");
+      message.error(error?.response?.data?.error, 10);
     } finally {
       setLoading(false);
     }

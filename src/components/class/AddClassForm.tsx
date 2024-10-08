@@ -33,9 +33,10 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
   const handleFinish = (values: any) => {
     const classData: Response<ClassResponse> = {
       ...values,
+      coursesFamilyId: values.course_family_name,
       tick: values.isActive || false,
     };
-    console.log(classData);
+    // console.log(classData);
     onAdd(classData);
     form.resetFields();
   };
