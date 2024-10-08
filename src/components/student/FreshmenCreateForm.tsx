@@ -1,12 +1,12 @@
 import { DatePicker, Form, Input, Modal, notification, Select } from "antd";
 import dayjs from "dayjs";
-import { Freshmen, Student } from "../../models/student.model";
-import { studentService } from "../../services/student-service/student.service";
 import { useEffect, useState } from "react";
 import { CoursesFamily } from "../../models/courses.model";
-import courseFamilyService from "../../services/course-family-service/course.family.service";
 import { Shifts } from "../../models/shifts";
+import { Freshmen } from "../../models/student.model";
+import courseFamilyService from "../../services/course-family-service/course.family.service";
 import { shiftsService } from "../../services/shifts-service/shifts.service";
+import { studentService } from "../../services/student-service/student.service";
 
 interface Props {
   isModalVisible: boolean;
