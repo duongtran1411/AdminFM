@@ -2,17 +2,11 @@ import { Promotion } from "../../models/promotions.model";
 import { Response } from "../../models/response.model";
 import axiosInstance from "../../utils/axiosInstance";
 
-export interface PromotionResponse {
-  statusCode: number;
-  message: string;
-  data: Promotion[];
-}
-
 class PromotionsService {
-  async getPromotions(): Promise<Promotion[]> {
+  async getPromotions(): Promise<Response<Promotion[]>> {
     try {
-      const response = await axiosInstance.get<PromotionResponse>("/promotions");
-      return response.data.data;
+      const response = await axiosInstance.get<Response<Promotion[]>>("/promotions");
+      return response.data;
     } catch (error) {
       console.error("Error fetching promotions:", error);
       throw error;
@@ -21,7 +15,9 @@ class PromotionsService {
 
   async getPromotionById(promotionId: number): Promise<Promotion> {
     try {
-      const response = await axiosInstance.get<Promotion>(`/promotions/${promotionId}`);
+      const response = await axiosInstance.get<Promotion>(
+        `/promotions/${promotionId}`,
+      );
       return response.data;
     } catch (error) {
       console.error("Error fetching promotion:", error);
@@ -29,20 +25,23 @@ class PromotionsService {
     }
   }
 
-  async addPromotion(
-    promotionData: Response<PromotionResponse>
-  ): Promise<Response<PromotionResponse>> {
-    const response = await axiosInstance.post<Response<PromotionResponse>>(
-      "/promotions",
-      promotionData
-    );
-    if (response.data.data === null) {
-      throw new Error(response.data.message);
+  async addPromotion(promotionData: Promotion): Promise<Response<Promotion>> {
+    try {
+      const response = await axiosInstance.post<Response<Promotion>>(
+        "/promotions",
+        promotionData,
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error adding promotion:", error);
+      throw error;
     }
-    return response.data;
   }
 
-  async updatePromotion(promotionId: number, promotionData: any): Promise<void> {
+  async updatePromotion(
+    promotionId: number,
+    promotionData: any,
+  ): Promise<void> {
     try {
       await axiosInstance.put(`/promotions/${promotionId}`, promotionData);
     } catch (error) {

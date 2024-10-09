@@ -1,7 +1,8 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Input, Menu, Modal, notification } from "antd";
+import { Button, Dropdown, Menu, Modal, notification } from "antd";
 import { useEffect, useState } from "react";
 import { AiOutlineMore } from "react-icons/ai";
+import Loading from "../../components/common/loading";
 import AddCourseButton from "../../components/course/AddCourseButton";
 import AddCourseForm from "../../components/course/AddCourseForm";
 import CoursesTable from "../../components/course/CourseTable";
@@ -9,7 +10,6 @@ import EditCourseForm from "../../components/course/EditCourseForm";
 import useModals from "../../hooks/useModal";
 import { Courses } from "../../models/courses.model";
 import { courseService } from "../../services/courses-service/courses.service";
-import Loading from "../../components/common/loading";
 
 const CoursePage = () => {
   const { isVisible, showModal, hideModal } = useModals();
@@ -155,13 +155,7 @@ const CoursePage = () => {
               onCourseCreated={() => showModal("createCourse")}
             />
           </div>
-          <Input.Search
-            placeholder="Tìm kiếm tên Course..."
-            allowClear
-            // onSearch={handleSearch}
-            style={{ width: 400, marginBottom: 16 }}
-          />
-
+       
           {/* Create Course modal */}
           <AddCourseForm
             isModalVisible={isVisible("createCourse")}
