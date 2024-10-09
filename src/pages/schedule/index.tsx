@@ -1,16 +1,10 @@
 import { EllipsisOutlined } from "@ant-design/icons";
-import {
-  Alert,
-  Dropdown,
-  Layout,
-  Modal,
-  notification,
-  Spin,
-  Table,
-} from "antd";
+import { Alert, Dropdown, Layout, Modal, notification, Table } from "antd";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Loading from "../../components/common/loading";
 import ActionButtons from "../../components/schedule/ActionButton";
+import CreateScheduleAutoForm from "../../components/schedule/CreateScheduleAutoForm";
 import CreateScheduleForm from "../../components/schedule/CreateScheduleForm";
 import ScheduleTabsMenu from "../../components/schedule/TabsMenu";
 import UpdateScheduleForm from "../../components/schedule/UpdateScheduleForm";
@@ -21,11 +15,10 @@ import {
   scheduleService,
 } from "../../services/schedule-service/schedule.service";
 import StudentPage from "../student";
-import CreateScheduleAutoForm from "../../components/schedule/CreateScheduleAutoForm";
 
 const ScheduleList: React.FC = () => {
   const navigate = useNavigate();
-  const { isVisible, showModal, hideModal } = useModals(); // Khai báo hook
+  const { isVisible, showModal, hideModal } = useModals();
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +26,12 @@ const ScheduleList: React.FC = () => {
   const [selectedSchedule, setSelectedSchedule] = useState<ScheduleData>();
   const { classId } = useParams<{ classId: string }>();
 
+  useEffect(() => {
+    fetchSchedules();
+  }, []);
+
   const fetchSchedules = async () => {
+    setLoading(true);
     try {
       const data = await scheduleService.findByClassId(classId!);
       setSchedules(data);
@@ -44,10 +42,6 @@ const ScheduleList: React.FC = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchSchedules();
-  }, []);
 
   const handleEdit = (schedule: ScheduleData) => {
     setSelectedSchedule(schedule);
@@ -62,7 +56,6 @@ const ScheduleList: React.FC = () => {
       onOk: async () => {
         try {
           await scheduleService.delete(schedule.id);
-          console.log(schedule);
           setSchedules(schedules.filter((s) => s.id !== schedule.id));
           notification.success({ message: "Xóa lịch thành công!" });
         } catch (error) {
@@ -201,11 +194,7 @@ const ScheduleList: React.FC = () => {
   ];
 
   if (loading) {
-    return (
-      <div style={{ textAlign: "center", paddingTop: "20px" }}>
-        <Spin size="large" />
-      </div>
-    );
+    return <Loading />;
   }
 
   if (error) {

@@ -8,6 +8,7 @@ import AddTeacherButton from "../../components/teachers/AddTeacherButton";
 import AddTeacherForm from "../../components/teachers/AddTeacherForm";
 import TeacherTable from "../../components/teachers/TeacherTable";
 import EditTeacherForm from "../../components/teachers/EditTeacherForm";
+import Loading from "../../components/common/loading";
 
 const TeacherPage: React.FC = () => {
   const { isVisible, showModal, hideModal } = useModals();
@@ -19,6 +20,7 @@ const TeacherPage: React.FC = () => {
 
   const fetchTeachers = async () => {
     try {
+      setLoading(true);
       const data = await teacherService.findAll();
       setTeachers(data);
       setSearchTeacher(data);
@@ -119,15 +121,11 @@ const TeacherPage: React.FC = () => {
   };
 
   if (loading) {
-    return <p>Loading teachers...</p>;
+    return <Loading />;
   }
 
   if (error) {
     return <p>{error}</p>;
-  }
-
-  if (loading) {
-    return <div>Loading...</div>;
   }
 
   return (

@@ -9,6 +9,7 @@ import AddCourseFamilyButton from "../../components/course/AddCourseFamilyButton
 import AddCourseFamilyForm from "../../components/course/AddCourseFamilyForm";
 import CoursesFamilyTable from "../../components/course/CoursesFamilyTable";
 import EditCourseFamilyForm from "../../components/course/EditCourseFamilyForm";
+import Loading from "../../components/common/loading";
 
 const CoursePage = () => {
   const { isVisible, showModal, hideModal } = useModals();
@@ -128,16 +129,13 @@ const CoursePage = () => {
   };
 
   if (loading) {
-    return <p>Loading courses family...</p>;
+    return <Loading />;
   }
 
   if (error) {
     return <p>{error}</p>;
   }
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
   return (
     <>
       <div

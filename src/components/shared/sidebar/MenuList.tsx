@@ -45,7 +45,6 @@ const DashBoardMenuList = () => {
       icon: <AiFillBank />,
       children: [
         { key: "building", icon: <SiGoogleclassroom />, label: "Building" },
-        // { key: "classroom", icon: <SiGoogleclassroom />, label: "Classroom" },
         { key: "classes", icon: <SiGoogleclassroom />, label: "Classes" },
         // Thêm menulist vào sau nếu cần
       ],
@@ -61,6 +60,18 @@ const DashBoardMenuList = () => {
         // Thêm menulist vào sau nếu cần
       ],
     },
+    {
+      key: "tuyensinh",
+      label: "Tuyển Sinh",
+      icon: <HiAcademicCap />,
+      children: [
+        {
+          key: "promotions",
+          icon: <LuBookCopy />,
+          label: "CT Ưu Đãi",
+        },
+      ],
+    },
   ];
 
   return (
@@ -74,7 +85,7 @@ const DashBoardMenuList = () => {
         onClick={({ key }) => handleMenuClick(key)}
         style={{
           background: colorBgContainer,
-          fontSize: "0.9rem",
+          fontSize: "0.8rem",
         }}
         className="flex text-lg from-inherit flex-col mt-2 overflow-auto scrollbar scrollbar-thumb-gray-900 scrollbar-track-gray-100"
       />

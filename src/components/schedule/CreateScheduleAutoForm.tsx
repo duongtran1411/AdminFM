@@ -176,6 +176,7 @@ const CreateScheduleAutoForm: React.FC<{
       key: "classroomId",
       render: (_: any, record: any) => (
         <Select
+          showSearch
           dropdownStyle={{ minWidth: "150px" }}
           value={record.classroomId}
           onChange={(value) =>

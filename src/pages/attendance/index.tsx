@@ -5,20 +5,25 @@ import {
   AttendanceStatus,
   getAttendanceStatus,
 } from "../../services/attendence-service/attendence.service";
+import Loading from "../../components/common/loading";
 
 const AttendancePage = () => {
   const [error, setError] = useState("");
   const [attendanceData, setAttendanceData] = useState<AttendanceStatus[]>([]);
+  const [loading, setLoading] = useState(true);
   const { scheduleId } = useParams();
 
   const fetchAttendanceStatus = async (scheduleId: string) => {
     try {
+      setLoading(true);
       const data = await getAttendanceStatus(scheduleId);
       console.log(data);
       setAttendanceData(data.attendances);
     } catch (error) {
       console.error("Lỗi khi lấy trạng thái điểm danh", error);
       setError("Failed to load attendance status.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -81,6 +86,10 @@ const AttendancePage = () => {
   // if (loading) {
   //   return <p>Đang tải danh sách sinh viên...</p>;
   // }
+
+  if (loading) {
+    return <Loading />;
+  }
 
   if (error) {
     return <p>{error}</p>;

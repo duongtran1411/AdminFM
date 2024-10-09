@@ -1,15 +1,17 @@
-// components/class/ClassPage.tsx
 import { useEffect, useState } from "react";
 import ClassList from "../../components/class/ClassList";
 import FloatButtonGroup from "../../components/class/FloatButtonGroup";
 import ClassService from "../../services/class-service/class.service";
 import { Class } from "../../models/classes.model";
+import Loading from "../../components/common/loading";
+
 const ClassPage = () => {
   const [classesData, setClassesData] = useState<Class[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchClasses = async () => {
+    setLoading(true);
     try {
       const data = await ClassService.getClasses();
       setClassesData(data.data);
@@ -25,7 +27,7 @@ const ClassPage = () => {
   }, []);
 
   if (loading) {
-    return <p>Loading classes...</p>;
+    return <Loading />;
   }
 
   if (error) {

@@ -11,6 +11,7 @@ import { Classroom } from "../../models/classes.model";
 import classRoomService from "../../services/class-room-service/class.room.service";
 import { useParams } from "react-router-dom";
 import EditClassroomForm from "../../components/classroom/EditBuildingForm";
+import Loading from "../../components/common/loading";
 
 const ClassroomPage = () => {
   const { isVisible, showModal, hideModal } = useModals();
@@ -118,16 +119,13 @@ const ClassroomPage = () => {
   };
 
   if (loading) {
-    return <p>Loading Classroom...</p>;
+    return <Loading />;
   }
 
   if (error) {
     return <p>{error}</p>;
   }
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
   return (
     <div
       style={{

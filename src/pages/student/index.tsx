@@ -9,6 +9,7 @@ import TabsMenu from "../../components/student/TabsMenu";
 import useModals from "../../hooks/useModal";
 import { studentService } from "../../services/student-service/student.service";
 import { Student } from "../../models/student.model";
+import Loading from "../../components/common/loading";
 
 const StudentPage = () => {
   const { isVisible, showModal, hideModal } = useModals();
@@ -18,6 +19,7 @@ const StudentPage = () => {
   const [error, setError] = useState("");
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const fetchStudents = async () => {
+    setLoading(true);
     try {
       const data = await studentService.findAll(classId);
       setStudents(data.data);
@@ -89,16 +91,13 @@ const StudentPage = () => {
   };
 
   if (loading) {
-    return <p>Loading students...</p>;
+    return <Loading />;
   }
 
   if (error) {
     return <p>{error}</p>;
   }
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
   return (
     <Layout
       className="rounded-lg flex justify-center items-center"

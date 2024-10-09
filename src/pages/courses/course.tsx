@@ -9,6 +9,7 @@ import EditCourseForm from "../../components/course/EditCourseForm";
 import useModals from "../../hooks/useModal";
 import { Courses } from "../../models/courses.model";
 import { courseService } from "../../services/courses-service/courses.service";
+import Loading from "../../components/common/loading";
 
 const CoursePage = () => {
   const { isVisible, showModal, hideModal } = useModals();
@@ -124,16 +125,13 @@ const CoursePage = () => {
   };
 
   if (loading) {
-    return <p>Loading courses...</p>;
+    return <Loading />;
   }
 
   if (error) {
     return <p>{error}</p>;
   }
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
   return (
     <>
       <div
