@@ -11,7 +11,7 @@ import Loading from "../../components/common/loading";
 import useModals from "../../hooks/useModal";
 import { AdmissionProgram } from "../../models/admission.model";
 import { Response } from "../../models/response.model";
-import AdmissionService from "../../services/admission-service/admission.service";
+import admissionService from "../../services/admission-program-service/admission.service";
 
 const AdmissionPage = () => {
   const { isVisible, showModal, hideModal } = useModals();
@@ -20,11 +20,11 @@ const AdmissionPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedAdmissionProgram, setSelectedAdmissionProgram] =
-    useState<AdmissionProgram | null>(null);
+    useState<Response<AdmissionProgram> | null>(null);
 
   const fetchAdmissionPrograms = async () => {
     try {
-      const response = await AdmissionService.getAll();
+      const response = await admissionService.getAll();
       setAdmissionProgramsResponse(response);
     } catch (error) {
       setError("Error loading admission programs");
@@ -84,8 +84,8 @@ const AdmissionPage = () => {
       key: "registration",
       render: (_: string, record: AdmissionProgram) => (
         <span>
-          {moment(record.startRegister).format("DD/MM/YYYY")} -{" "}
-          {moment(record.endRegister).format("DD/MM/YYYY")}
+          {moment(record.startRegistration).format("DD/MM/YYYY")} -{" "}
+          {moment(record.endRegistration).format("DD/MM/YYYY")}
         </span>
       ),
     },
@@ -115,7 +115,7 @@ const AdmissionPage = () => {
       okType: "danger",
       onOk: async () => {
         try {
-          await AdmissionService.delete(id);
+          await admissionService.delete(id);
           if (admissionProgramsResponse) {
             const updatedAdmissionPrograms =
               admissionProgramsResponse.data.filter((p) => p.id !== id);
@@ -134,10 +134,8 @@ const AdmissionPage = () => {
     });
   };
 
-  const handleEdit = (id: number) => {
-    const admissionProgram = admissionProgramsResponse?.data.find(
-      (p) => p.id === id,
-    );
+  const handleEdit = async (id: number) => {
+    const admissionProgram = await admissionService.getById(id);
     if (admissionProgram) {
       setSelectedAdmissionProgram(admissionProgram);
       showModal("editAdmissionProgram");

@@ -118,11 +118,13 @@ const EditCourseForm = ({
             onChange={handleModuleChange}
             style={{ width: "100%" }}
           >
-            {modules.map((module) => (
-              <Checkbox key={module.module_id} value={module.module_id}>
-                {module.module_name}
-              </Checkbox>
-            ))}
+            {modules.map((module) => {
+              return (
+                <Checkbox key={module.module_id} value={module.module_id}>
+                  {module.module_name}
+                </Checkbox>
+              );
+            })}
           </Checkbox.Group>
         </Form.Item>
       </Form>

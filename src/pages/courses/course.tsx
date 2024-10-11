@@ -155,7 +155,7 @@ const CoursePage = () => {
               onCourseCreated={() => showModal("createCourse")}
             />
           </div>
-       
+
           {/* Create Course modal */}
           <AddCourseForm
             isModalVisible={isVisible("createCourse")}

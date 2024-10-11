@@ -6,9 +6,8 @@ export interface AdmissionProgram {
   description: string;
   startDate: Date;
   endDate: Date;
-  startRegister: Date;
-  endRegister: Date;
+  startRegistration: Date;
+  endRegistration: Date;
   quota: number;
-
-  applicationDocumentIds: ApplicationDocument[];
+  applicationDocuments: ApplicationDocument[];
 }

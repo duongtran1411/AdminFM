@@ -25,7 +25,6 @@ const ApplicationDocumentPage = () => {
   const fetchApplicationDocument = async () => {
     try {
       const data = await applicationDocumentsService.getAll();
-      console.log(data);
       setApplicationDocumentsResponse(data);
     } catch (error) {
       setError("Error loading Application Document");

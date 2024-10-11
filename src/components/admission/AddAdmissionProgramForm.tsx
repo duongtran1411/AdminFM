@@ -10,8 +10,8 @@ import {
 import { useEffect, useState } from "react";
 import { AdmissionProgram } from "../../models/admission.model";
 import { ApplicationDocument } from "../../models/applicationdocument.model";
-import AdmissionService from "../../services/admission-service/admission.service";
 import applicationDocumentsService from "../../services/application-documents-service/application.documents.service";
+import admissionService from "../../services/admission-program-service/admission.service";
 
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
@@ -60,7 +60,7 @@ const AddAdmissionProgramForm: React.FC<AddAdmissionProgramFormProps> = ({
         applicationDocumentIds: selectedAdmissionProgram,
       };
 
-      await AdmissionService.add(newAdmissionProgram);
+      await admissionService.add(newAdmissionProgram);
       notification.success({
         message: "Thêm chương trình tuyển sinh thành công",
       });

@@ -11,7 +11,8 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import { AdmissionProgram } from "../../models/admission.model";
 import { ApplicationDocument } from "../../models/applicationdocument.model";
-import admissionService from "../../services/admission-service/admission.service";
+import { Response } from "../../models/response.model";
+import admissionService from "../../services/admission-program-service/admission.service";
 import applicationDocumentsService from "../../services/application-documents-service/application.documents.service";
 
 const { TextArea } = Input;
@@ -20,7 +21,7 @@ const { RangePicker } = DatePicker;
 interface EditAdmissionProgramFormProps {
   isModalVisible: boolean;
   hideModal: () => void;
-  admissionProgram: AdmissionProgram | null;
+  admissionProgram: Response<AdmissionProgram> | null;
   onUpdate: () => void;
 }
 
@@ -40,22 +41,25 @@ const EditAdmissionProgramForm = ({
 
   useEffect(() => {
     if (admissionProgram) {
-      console.log(admissionProgram);
       form.setFieldsValue({
-        name: admissionProgram.name,
-        description: admissionProgram.description,
+        name: admissionProgram.data.name,
+        description: admissionProgram.data.description,
         period: [
-          moment(admissionProgram.startDate),
-          moment(admissionProgram.endDate),
+          moment(admissionProgram.data.startDate),
+          moment(admissionProgram.data.endDate),
         ],
-        startRegister: moment(admissionProgram.startRegister),
-        endRegister: moment(admissionProgram.endRegister),
-        quota: admissionProgram.quota,
+        startRegister: moment(admissionProgram.data.startRegistration),
+        endRegister: moment(admissionProgram.data.endRegistration),
+        quota: admissionProgram.data.quota,
+        applicationDocuments: admissionProgram.data.applicationDocuments.map(
+          (document) => document.id,
+        ),
       });
-      
-      // Đảm bảo rằng selectedAdmissionProgram được cập nhật sau khi admissionProgram thay đổi
+
       setSelectedAdmissionProgram(
-        admissionProgram.applicationDocumentIds.map((document) => document.id)
+        admissionProgram.data.applicationDocuments.map(
+          (document) => document.id,
+        ),
       );
     }
   }, [admissionProgram, form]);
@@ -64,19 +68,12 @@ const EditAdmissionProgramForm = ({
     const fetchApplicationDocuments = async () => {
       const response = await applicationDocumentsService.getAll();
       setApplicationDocuments(response.data);
-      
-      // Cập nhật lại selectedAdmissionProgram sau khi có dữ liệu mới
-      if (admissionProgram) {
-        setSelectedAdmissionProgram(prevSelected => 
-          prevSelected.filter(id => response.data.some(doc => doc.id === id))
-        );
-      }
     };
 
     if (isModalVisible) {
       fetchApplicationDocuments();
     }
-  }, [isModalVisible, admissionProgram]);
+  }, [isModalVisible]);
 
   const handleOk = async () => {
     try {
@@ -95,7 +92,7 @@ const EditAdmissionProgramForm = ({
         };
 
         await admissionService.update(
-          admissionProgram.id,
+          admissionProgram.data.id,
           updatedAdmissionProgram,
         );
         hideModal();
@@ -177,7 +174,6 @@ const EditAdmissionProgramForm = ({
             style={{ width: "100%" }}
           >
             {applicationDocuments.map((applicationDocument) => {
-              console.log(applicationDocument.id);
               return (
                 <Checkbox
                   key={applicationDocument.id}

@@ -15,9 +15,9 @@ class AdmissionService {
     }
   }
 
-  async getById(admissionId: number): Promise<AdmissionProgram> {
+  async getById(admissionId: number): Promise<Response<AdmissionProgram>> {
     try {
-      const response = await axiosInstance.get<AdmissionProgram>(
+      const response = await axiosInstance.get<Response<AdmissionProgram>>(
         `/admission-program/${admissionId}`,
       );
       return response.data;
@@ -27,7 +27,9 @@ class AdmissionService {
     }
   }
 
-  async add(admissionData: AdmissionProgram): Promise<Response<AdmissionProgram>> {
+  async add(
+    admissionData: AdmissionProgram,
+  ): Promise<Response<AdmissionProgram>> {
     try {
       const response = await axiosInstance.post<Response<AdmissionProgram>>(
         "/admission-program",
@@ -40,12 +42,12 @@ class AdmissionService {
     }
   }
 
-  async update(
-    admissionId: number,
-    admissionData: any,
-  ): Promise<void> {
+  async update(admissionId: number, admissionData: any): Promise<void> {
     try {
-      await axiosInstance.put(`/admission-program/${admissionId}`, admissionData);
+      await axiosInstance.put(
+        `/admission-program/${admissionId}`,
+        admissionData,
+      );
     } catch (error) {
       console.error("Error updating admission:", error);
       throw error;
