@@ -10,7 +10,7 @@ import useModals from "../../hooks/useModal";
 import { Classroom } from "../../models/classes.model";
 import classRoomService from "../../services/class-room-service/class.room.service";
 import { useParams } from "react-router-dom";
-import EditClassroomForm from "../../components/classroom/EditBuildingForm";
+import EditClassroomForm from "../../components/classroom/EditClassroomForm";
 import Loading from "../../components/common/loading";
 
 const ClassroomPage = () => {

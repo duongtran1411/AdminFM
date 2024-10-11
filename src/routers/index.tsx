@@ -49,6 +49,8 @@ const TeacherPage = lazy(() => import("../pages/teacher"));
 const UserPage = lazy(() => import("../pages/users"));
 const FreshmenPageList = lazy(() => import("../pages/freshmen"));
 const PromotionPage = lazy(() => import("../pages/promotions"));
+const AdmissionPage = lazy(() => import("../pages/admission"));
+const ApplicationDocumentPage = lazy(() => import("../pages/applicationdocument"));
 const getTitleFromLocation = (pathname: string) => {
   if (
     matchPath({ path: "/student-list/class/:classId", end: false }, pathname)
@@ -276,6 +278,26 @@ function MainRoutes() {
             <PageWithTitle title={title}>
               <Suspense fallback={<LoadingSkeleton />}>
                 <PromotionPage />
+              </Suspense>
+            </PageWithTitle>
+          ),
+        },
+        {
+          path: "admission",
+          element: (
+            <PageWithTitle title={title}>
+              <Suspense fallback={<LoadingSkeleton />}>
+                <AdmissionPage />
+              </Suspense>
+            </PageWithTitle>
+          ),
+        },
+        {
+          path: "applicationdocument",
+          element: (
+            <PageWithTitle title={title}>
+              <Suspense fallback={<LoadingSkeleton />}>
+                <ApplicationDocumentPage />
               </Suspense>
             </PageWithTitle>
           ),

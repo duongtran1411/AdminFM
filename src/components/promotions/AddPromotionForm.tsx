@@ -43,7 +43,6 @@ const AddPromotionForm: React.FC<AddPromotionFormProps> = ({
         registrationMethod: values.registrationMethod,
         requiredDocument: values.requiredDocument,
       };
-      console.log(newPromotion)
 
       await PromotionsService.addPromotion(newPromotion);
       notification.success({ message: "Thêm ưu đãi thành công" });
