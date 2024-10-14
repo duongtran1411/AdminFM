@@ -62,6 +62,21 @@ class AdmissionService {
       throw error;
     }
   }
+
+  async updateDocumentInApplicationProgram(
+    admissionId: number,
+    documentIds: number[],
+  ): Promise<void> {
+    try {
+      await axiosInstance.put(
+        `/admission-program/${admissionId}/documents`,
+        { applicationDocumentIds: documentIds },
+      );
+    } catch (error) {
+      console.error("Error updating documents in admission program:", error);
+      throw error;
+    }
+  }
 }
 
 export default new AdmissionService();

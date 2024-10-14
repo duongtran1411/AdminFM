@@ -1,37 +1,58 @@
 import { List, Button } from "antd";
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined } from "@ant-design/icons";
+import { AdmissionProgram } from "../../models/admission.model";
+import { Response } from "../../models/response.model";
+import useModals from "../../hooks/useModal";
+import EditDocumentInAdmissionProgramForm from "./EditDocumentInAdmissionProgramForm";
 
-const AttachedDocumentList = () => {
-  const documents = [
-    "Học bạ bản chính",
-    "Bản photo học bạ",
-    "Giấy chứng nhận hoàn thành chương trình Tiểu học",
-    "Bản photo Sổ hộ khẩu",
-    "Bản sao giấy khai sinh (hoặc trích lục bản sao giấy khai sinh)",
-  ];
+interface ApplicationDocumentProps {
+  applicationDocument: Response<AdmissionProgram> | null;
+  onUpdate: () => void;
+}
+
+const AttachedDocumentList = ({
+  applicationDocument,
+  onUpdate,
+}: ApplicationDocumentProps) => {
+  const { isVisible, showModal, hideModal } = useModals();
+
+  const handleEditClick = () => {
+    showModal("editDocumetInAdmissionProgram");
+  };
 
   return (
-    <div className="border border-gray-200 rounded-lg p-5 h-full flex flex-col">
+    <div className="max-w-2xs mx-0 p-5 border border-gray-300 rounded-lg bg-gray-50 shadow-md min-h-[400px]">
       <div className="flex items-center mb-5">
         <h2 className="text-2xl font-bold mr-2">Thành phần hồ sơ</h2>
         <QuestionCircleOutlined className="text-red-500" />
       </div>
       <div className="flex-grow">
         <List
-          dataSource={documents}
+          dataSource={applicationDocument?.data.applicationDocuments}
           renderItem={(item) => (
-            <List.Item className="py-2 border-b border-gray-200 last:border-b-0">
+            <List.Item
+              key={item.id}
+              className="py-2 border-b border-gray-200 last:border-b-0"
+            >
               <span className="text-green-600 mr-2">•</span>
-              {item}
+              {item.name}
             </List.Item>
           )}
         />
       </div>
-      <div className="mt-5">
-        <Button type="primary" className="bg-green-600 hover:bg-green-700">
-          Sửa
-        </Button>
-      </div>
+      <EditDocumentInAdmissionProgramForm
+        isModalVisible={isVisible("editDocumetInAdmissionProgram")}
+        hideModal={() => hideModal("editDocumetInAdmissionProgram")}
+        applicationDocument={applicationDocument}
+        onUpdate={onUpdate}
+      />
+      <Button
+        type="primary"
+        className=" hover:bg-green-700"
+        onClick={handleEditClick}
+      >
+        Sửa
+      </Button>
     </div>
   );
 };

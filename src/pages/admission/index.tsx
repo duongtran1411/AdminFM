@@ -1,12 +1,12 @@
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EyeOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Menu, Modal, notification, Tooltip } from "antd";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { AiOutlineMore } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 import AddAdmissionProgramButton from "../../components/admission/AddAdmissionProgramButton";
 import AddAdmissionProgramForm from "../../components/admission/AddAdmissionProgramForm";
 import AdmissionProgramTable from "../../components/admission/AdmissionProgramTable";
-import EditAdmissionProgramForm from "../../components/admission/EditAdmissionProgramForm";
 import Loading from "../../components/common/loading";
 import useModals from "../../hooks/useModal";
 import { AdmissionProgram } from "../../models/admission.model";
@@ -19,8 +19,8 @@ const AdmissionPage = () => {
     useState<Response<AdmissionProgram[]> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedAdmissionProgram, setSelectedAdmissionProgram] =
     useState<Response<AdmissionProgram> | null>(null);
+  const navigate = useNavigate();
 
   const fetchAdmissionPrograms = async () => {
     try {
@@ -40,11 +40,11 @@ const AdmissionPage = () => {
   const menu = (admissionProgram: AdmissionProgram) => (
     <Menu>
       <Menu.Item
-        key="edit"
-        icon={<EditOutlined />}
-        onClick={() => handleEdit(admissionProgram.id)}
+        key="view"
+        icon={<EyeOutlined />}
+        onClick={() => handleView(admissionProgram.id)}
       >
-        Edit
+        View Details
       </Menu.Item>
       <Menu.Item
         style={{ color: "red" }}
@@ -59,7 +59,7 @@ const AdmissionPage = () => {
 
   const columns = [
     {
-      title: "Name",
+      title: "Tên",
       dataIndex: "name",
       key: "name",
       ellipsis: true,
@@ -70,7 +70,7 @@ const AdmissionPage = () => {
       ),
     },
     {
-      title: "Period",
+      title: "Thời gian tuyển sinh",
       key: "period",
       render: (_: string, record: AdmissionProgram) => (
         <span>
@@ -80,7 +80,7 @@ const AdmissionPage = () => {
       ),
     },
     {
-      title: "Registration",
+      title: "Thời gian đăng ký",
       key: "registration",
       render: (_: string, record: AdmissionProgram) => (
         <span>
@@ -90,12 +90,12 @@ const AdmissionPage = () => {
       ),
     },
     {
-      title: "Quota",
+      title: "Số lượng tuyển sinh",
       dataIndex: "quota",
       key: "quota",
     },
     {
-      title: "Actions",
+      title: "",
       key: "actions",
       render: (_, record: AdmissionProgram) => (
         <Dropdown overlay={menu(record)} trigger={["click"]}>
@@ -108,6 +108,10 @@ const AdmissionPage = () => {
     },
   ];
 
+  const handleView = (id: number) => {
+    navigate(`/admission/${id}`);
+  };
+  
   const handleDelete = async (id: number) => {
     Modal.confirm({
       title: "Are you sure you want to delete this Admission Program?",
@@ -134,21 +138,10 @@ const AdmissionPage = () => {
     });
   };
 
-  const handleEdit = async (id: number) => {
-    const admissionProgram = await admissionService.getById(id);
-    if (admissionProgram) {
-      setSelectedAdmissionProgram(admissionProgram);
-      showModal("editAdmissionProgram");
-    }
-  };
-
   const onCreateSuccess = () => {
     fetchAdmissionPrograms();
   };
 
-  const onUpdateSuccess = () => {
-    fetchAdmissionPrograms();
-  };
 
   if (loading) {
     return <Loading />;
@@ -186,13 +179,6 @@ const AdmissionPage = () => {
             data={
               admissionProgramsResponse ? admissionProgramsResponse.data : []
             }
-          />
-
-          <EditAdmissionProgramForm
-            isModalVisible={isVisible("editAdmissionProgram")}
-            hideModal={() => hideModal("editAdmissionProgram")}
-            admissionProgram={selectedAdmissionProgram}
-            onUpdate={onUpdateSuccess}
           />
         </div>
       </div>

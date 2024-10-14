@@ -71,14 +71,14 @@ const DashBoardMenuList = () => {
           label: "Thành phần hồ sơ",
         },
         {
-          key: "promotions",
-          icon: <LuBookCopy />,
-          label: "CT Ưu Đãi",
-        },
-        {
           key: "admission",
           icon: <LuBookCopy />,
           label: "CT Tuyển Sinh",
+        },
+        {
+          key: "promotions",
+          icon: <LuBookCopy />,
+          label: "CT Ưu Đãi",
         },
       ],
     },

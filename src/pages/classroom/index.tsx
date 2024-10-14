@@ -26,7 +26,6 @@ const ClassroomPage = () => {
   const fetchClassroom = async () => {
     try {
       const data = await classRoomService.getClassroomsByBId(+buildingId!);
-      // console.log(data);
       setClassrooms(data);
     } catch (error) {
       setError("Error loading Classroom");

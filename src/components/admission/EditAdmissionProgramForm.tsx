@@ -1,5 +1,4 @@
 import {
-  Checkbox,
   DatePicker,
   Form,
   Input,
@@ -10,10 +9,8 @@ import {
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { AdmissionProgram } from "../../models/admission.model";
-import { ApplicationDocument } from "../../models/applicationdocument.model";
 import { Response } from "../../models/response.model";
 import admissionService from "../../services/admission-program-service/admission.service";
-import applicationDocumentsService from "../../services/application-documents-service/application.documents.service";
 
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
@@ -32,9 +29,7 @@ const EditAdmissionProgramForm = ({
   onUpdate,
 }: EditAdmissionProgramFormProps) => {
   const [form] = Form.useForm();
-  const [applicationDocuments, setApplicationDocuments] = useState<
-    ApplicationDocument[]
-  >([]);
+
   const [selectedAdmissionProgram, setSelectedAdmissionProgram] = useState<
     number[]
   >([]);
@@ -63,17 +58,6 @@ const EditAdmissionProgramForm = ({
       );
     }
   }, [admissionProgram, form]);
-
-  useEffect(() => {
-    const fetchApplicationDocuments = async () => {
-      const response = await applicationDocumentsService.getAll();
-      setApplicationDocuments(response.data);
-    };
-
-    if (isModalVisible) {
-      fetchApplicationDocuments();
-    }
-  }, [isModalVisible]);
 
   const handleOk = async () => {
     try {
@@ -107,9 +91,7 @@ const EditAdmissionProgramForm = ({
       });
     }
   };
-  const handleChange = (checkedValues: number[]) => {
-    setSelectedAdmissionProgram(checkedValues);
-  };
+
   return (
     <Modal
       title="Chỉnh sửa chương trình tuyển sinh"
@@ -157,33 +139,6 @@ const EditAdmissionProgramForm = ({
           rules={[{ required: true }]}
         >
           <InputNumber min={0} />
-        </Form.Item>
-        <Form.Item
-          name="applicationDocuments"
-          label="Chọn thêm tài liệu đăng ký"
-          rules={[
-            {
-              required: true,
-              message: "Vui lòng chọn ít nhất một tài liệu đăng ký!",
-            },
-          ]}
-        >
-          <Checkbox.Group
-            value={selectedAdmissionProgram}
-            onChange={handleChange}
-            style={{ width: "100%" }}
-          >
-            {applicationDocuments.map((applicationDocument) => {
-              return (
-                <Checkbox
-                  key={applicationDocument.id}
-                  value={applicationDocument.id}
-                >
-                  {applicationDocument.name}
-                </Checkbox>
-              );
-            })}
-          </Checkbox.Group>
         </Form.Item>
       </Form>
     </Modal>
