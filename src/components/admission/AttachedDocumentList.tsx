@@ -21,7 +21,7 @@ const AttachedDocumentList = ({
   };
 
   return (
-    <div className="max-w-2xs mx-0 p-5 border border-gray-300 rounded-lg bg-gray-50 shadow-md min-h-[400px]">
+    <div className="max-w-2xl mx-0 p-5 border border-gray-300 rounded-lg bg-gray-50 shadow-md min-h-full flex flex-col">
       <div className="flex items-center mb-5">
         <h2 className="text-2xl font-bold mr-2">Thành phần hồ sơ</h2>
         <QuestionCircleOutlined className="text-red-500" />
@@ -46,13 +46,11 @@ const AttachedDocumentList = ({
         applicationDocument={applicationDocument}
         onUpdate={onUpdate}
       />
-      <Button
-        type="primary"
-        className=" hover:bg-green-700"
-        onClick={handleEditClick}
-      >
-        Sửa
-      </Button>
+      <div className="mt-auto">
+        <Button type="primary" onClick={handleEditClick}>
+          Sửa
+        </Button>
+      </div>
     </div>
   );
 };

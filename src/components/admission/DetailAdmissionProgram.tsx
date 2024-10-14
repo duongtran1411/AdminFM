@@ -21,7 +21,7 @@ const DetailAdmissionProgram = ({
   };
 
   return (
-    <div className="max-w-2xs mx-1 p-5 border border-gray-300 rounded-lg bg-gray-50 shadow-md min-h-[400px]">
+    <div className="max-w-2xl mx-0 p-5 border border-gray-300 rounded-lg bg-gray-50 shadow-md min-h-full flex flex-col">
       <h2 className="text-2xl font-bold mb-4 text-gray-800">Thông tin chung</h2>
       <Typography>
         <Paragraph>
@@ -48,13 +48,11 @@ const DetailAdmissionProgram = ({
         </Paragraph>
       </Typography>
 
-      <Button
-        type="primary"
-        className=" hover:bg-green-700"
-        onClick={handleEditClick} 
-      >
-        Sửa
-      </Button>
+      <div className="mt-auto">
+        <Button type="primary" onClick={handleEditClick}>
+          Sửa
+        </Button>
+      </div>
 
       <EditAdmissionProgramForm
         isModalVisible={isVisible("editAdmissionProgram")}
