@@ -36,7 +36,7 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
             <Form.Item
               name="name"
               label="Họ và tên"
-              rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]} // Updated message
+              rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]} 
             >
               <Input placeholder="Nhập họ và tên" />
             </Form.Item>
@@ -47,7 +47,7 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
               name="phone"
               rules={[
                 { required: true, message: "Vui lòng nhập số điện thoại!" },
-              ]} // Added validation
+              ]} 
             >
               <Input placeholder="Nhập số điện thoại của bạn" />
             </Form.Item>

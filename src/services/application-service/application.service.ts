@@ -27,6 +27,21 @@ class ApplicationService {
       throw error;
     }
   }
+
+  async update(
+    applicationId: number,
+    applicationData: any,
+  ): Promise<void> {
+    try {
+      await axiosInstance.put(
+        `/application/${applicationId}`,
+        applicationData,
+      );
+    } catch (error) {
+      console.error("Error updating application:", error);
+      throw error;
+    }
+  }
 }
 
 export default new ApplicationService();

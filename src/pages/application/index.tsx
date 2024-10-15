@@ -1,7 +1,6 @@
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Menu } from "antd";
+import { EditOutlined } from "@ant-design/icons";
+import { Button } from "antd";
 import { useEffect, useState } from "react";
-import { AiOutlineMore } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
 import AddApplicationButton from "../../components/application/AddApplicationButton";
 import ApplicationTable from "../../components/application/ApplicationTable";
@@ -10,18 +9,20 @@ import TabsMenu from "../../components/student/TabsMenu";
 import { Application } from "../../models/application.model";
 import { Response } from "../../models/response.model";
 import applicationService from "../../services/application-service/application.service";
+import useModals from "../../hooks/useModal";
+import EditApplicationForm from "../../components/application/EditApplicationForm";
 
 const ApplicationPage = () => {
   const navigate = useNavigate();
   const { admissionId } = useParams();
-  //   const { isVisible, showModal, hideModal } = useModals();
+  const { isVisible, showModal, hideModal } = useModals();
   const [applicationResponse, setApplicationResponse] = useState<Response<
     Application[]
   > | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  //   const [selectedApplication, setSelectedApplication] =
-  //     useState<Application | null>(null);
+    const [selectedApplication, setSelectedApplication] =
+      useState<Application | null>(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
 
   const fetchApplication = async () => {
@@ -37,26 +38,6 @@ const ApplicationPage = () => {
   useEffect(() => {
     fetchApplication();
   }, []);
-
-  const menu = (_: Application) => (
-    <Menu>
-      <Menu.Item
-        key="edit"
-        icon={<EditOutlined />}
-        // onClick={() => handleEdit(ad.id)}
-      >
-        Edit
-      </Menu.Item>
-      <Menu.Item
-        key="delete"
-        style={{ color: "red" }}
-        icon={<DeleteOutlined style={{ color: "red" }} />}
-        // onClick={() => handleDelete(ad.id)}
-      >
-        Delete
-      </Menu.Item>
-    </Menu>
-  );
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked;
@@ -80,7 +61,7 @@ const ApplicationPage = () => {
 
   const columns = [
     {
-      title: <input type="checkbox" onChange={handleSelectAll} />, 
+      title: <input type="checkbox" onChange={handleSelectAll} />,
       dataIndex: "select",
       key: "select",
       render: (_, record) => (
@@ -126,13 +107,17 @@ const ApplicationPage = () => {
       title: "",
       key: "actions",
       render: (_, record) => (
-        <Dropdown overlay={menu(record)} trigger={["click"]}>
-          <Button
-            type="text"
-            icon={<AiOutlineMore style={{ fontSize: "20px" }} />}
-            style={{ float: "right" }}
-          />
-        </Dropdown>
+        //   <Menu.Item
+        //   key="edit"
+        //   icon={<EditOutlined />}
+        //   // onClick={() => handleEdit(ad.id)}
+        // >
+        //   Edit
+        // </Menu.Item>
+        <Button
+          icon={<EditOutlined />}
+          onClick={() => handleEdit(record.id)}
+        ></Button>
       ),
     },
   ];
@@ -158,21 +143,18 @@ const ApplicationPage = () => {
   //     });
   //   };
 
-  //   const handleEdit = (id: number) => {
-  //     const application = applicationResponse?.data.find((s) => s.id === id);
-  //     if (application) {
-  //       setSelectedApplication(application);
-  //       showModal("editApplication");
-  //     }
-  //   };
+  const handleEdit = (id: number) => {
+    const application = applicationResponse?.data.find((s) => s.id === id);
+    console.log(application);
+    if (application) {
+      setSelectedApplication(application);
+      showModal("editApplication");
+    }
+  };
 
-  //   const onCreateSuccess = () => {
-  //     fetchApplication();
-  //   };
-
-  //   const onUpdateSuccess = () => {
-  //     fetchApplication();
-  //   };
+  const onUpdateSuccess = () => {
+    fetchApplication();
+  };
 
   if (loading) {
     return <Loading />;
@@ -211,12 +193,12 @@ const ApplicationPage = () => {
           columns={columns}
         />
       </div>
-      {/* <EditApplicationForm
+      <EditApplicationForm
         isModalVisible={isVisible("editApplication")}
         hideModal={() => hideModal("editApplication")}
         application={selectedApplication}
         onUpdate={onUpdateSuccess}
-      /> */}
+      />
     </div>
   );
 };

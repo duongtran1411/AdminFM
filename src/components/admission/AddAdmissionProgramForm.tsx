@@ -57,7 +57,7 @@ const AddAdmissionProgramForm: React.FC<AddAdmissionProgramFormProps> = ({
         endDate: values.period[1].format("YYYY-MM-DD"),
         startRegistration: values.period[0].format("YYYY-MM-DD"),
         endRegistration: values.period[1].format("YYYY-MM-DD"),
-        applicationDocumentIds: selectedAdmissionProgram,
+        applicationDocuments: selectedAdmissionProgram,
       };
 
       await admissionService.add(newAdmissionProgram);
