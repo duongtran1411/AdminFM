@@ -5,7 +5,7 @@ export interface Application {
   name: string;
   email: string;
   gender: string;
-  birthDate: Date;
+  birthDate: string;
   phone: string;
   status: ApplicationStatus;
 }

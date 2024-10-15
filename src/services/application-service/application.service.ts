@@ -10,7 +10,20 @@ class ApplicationService {
       );
       return response.data;
     } catch (error) {
-      console.error("Error fetching application :", error);
+      console.error("Error fetching application:", error);
+      throw error;
+    }
+  }
+
+  async add(application: Application): Promise<Response<Application>> {
+    try {
+      const response = await axiosInstance.post<Response<Application>>(
+        "/applications",
+        application,
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error adding application:", error);
       throw error;
     }
   }

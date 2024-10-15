@@ -1,53 +1,67 @@
-import { Button, Table } from "antd";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { ApplicationDocument } from "../../models/applicationdocument.model";
-import admissionService from "../../services/admission-program-service/admission.service";
-import Loading from "../common/loading";
+import { Button } from "antd";
+import AddAttachedDocumentForm from "./AddAttachedDocumentForm";
+import AddInformationApplication from "./AddInformationApplication";
+import { useState, useRef } from "react";
+import applicationService from "../../services/application-service/application.service";
+import attachedDocumentService from "../../services/attached-document-service/attached.document.service";
+import { ApplicationStatus } from "../../models/application.status.enum.model";
+import { Application } from "../../models/application.model";
+import { FormInstance } from "antd/es/form";
+import dayjs from "dayjs";
 
 const AddApplicationForm = () => {
-  const [applicationDocument, setApplicationDocument] = useState<
-    ApplicationDocument[]
-  >([]);
-  const [loading, setLoading] = useState(true);
-  const { admissionId } = useParams();
+  const formRef = useRef<FormInstance>(null);
+  const [formData, setFormData] = useState<Application>({
+    id: 0,
+    name: "",
+    email: "",
+    gender: "",
+    birthDate: "",
+    phone: "",
+    status: ApplicationStatus.WAITING,
+  });
+  const [attachedDocuments, setAttachedDocuments] = useState<{
+    [key: string]: File;
+  }>({});
 
-  const fetchAdmissionProgram = async () => {
-    if (admissionId) {
-      const response = await admissionService.getById(Number(admissionId));
-      setApplicationDocument(response.data.applicationDocuments);
+  const handleSave = async () => {
+    try {
+      if (formRef.current) {
+        await formRef.current.validateFields();
+
+        const applications = await applicationService.getAll();
+        const newId = applications.data.length + 1;
+        const newFormData = { 
+          ...formData, 
+          id: newId, 
+          birthdate: dayjs(formData.birthDate).format("YYYY-MM-DD"),
+        };
+        await applicationService.add(newFormData);
+
+        if (attachedDocuments && newFormData) {
+          for (const [documentType, file] of Object.entries(
+            attachedDocuments,
+          )) {
+            await attachedDocumentService.add(
+              documentType,
+              newFormData.id,
+              file,
+            );
+          }
+        }
+      } else {
+        console.error("Form reference is not set.");
+      }
+    } catch (error) {
+      console.error("Validation failed:", error);
     }
-    setLoading(false);
   };
-  useEffect(() => {
-    fetchAdmissionProgram();
-  }, [admissionId]);
-
-  if (loading) {
-    return <Loading />;
-  }
-  const columns = [
-    {
-      title: "Loại hồ sơ",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Tệp đính kèm",
-      key: "actions",
-      render: (_) => <Button type="link">+ Thêm tệp</Button>,
-    },
-  ];
-
-  const data = applicationDocument.map((item) => ({
-    ...item,
-    key: item.id,
-  }));
 
   return (
     <div className="p-6 bg-white shadow-md rounded-lg">
-      <h1 className="text-xl font-bold mb-4">Hồ sơ đính kèm</h1>
-      <Table dataSource={data} columns={columns} pagination={false} />
+      <AddAttachedDocumentForm setAttachedDocument={setAttachedDocuments} />
+      <AddInformationApplication setFormData={setFormData} formRef={formRef} />
+      <Button onClick={handleSave}>Lưu</Button>
     </div>
   );
 };

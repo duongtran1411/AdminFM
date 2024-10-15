@@ -22,6 +22,7 @@ const ApplicationPage = () => {
   const [error, setError] = useState("");
   //   const [selectedApplication, setSelectedApplication] =
   //     useState<Application | null>(null);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
 
   const fetchApplication = async () => {
     try {
@@ -57,7 +58,39 @@ const ApplicationPage = () => {
     </Menu>
   );
 
+  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = event.target.checked;
+    if (checked) {
+      const allIds = applicationResponse?.data.map((item) => item.id) || [];
+      setSelectedRowKeys(allIds);
+    } else {
+      setSelectedRowKeys([]);
+    }
+  };
+
+  const handleSelect = (id: number) => {
+    setSelectedRowKeys((prev) => {
+      if (prev.includes(id)) {
+        return prev.filter((key) => key !== id);
+      } else {
+        return [...prev, id];
+      }
+    });
+  };
+
   const columns = [
+    {
+      title: <input type="checkbox" onChange={handleSelectAll} />, 
+      dataIndex: "select",
+      key: "select",
+      render: (_, record) => (
+        <input
+          type="checkbox"
+          checked={selectedRowKeys.includes(record.id)}
+          onChange={() => handleSelect(record.id)}
+        />
+      ),
+    },
     {
       title: "Họ và Tên",
       dataIndex: "name",

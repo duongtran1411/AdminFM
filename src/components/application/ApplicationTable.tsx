@@ -46,7 +46,7 @@ const ApplicationTable = ({ data, columns }: DataApplicationProps) => {
           className: "border border-gray-300",
         }))}
         rowClassName={(_, index) =>
-          index % 2 === 0 ? "bg-gray-200" : "bg-white"
+          index % 2 === 0 ? "bg-white" : "bg-gray-100"
         }
       />
     </div>
