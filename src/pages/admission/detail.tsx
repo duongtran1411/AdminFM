@@ -8,7 +8,7 @@ import Loading from "../../components/common/loading";
 import { AdmissionProgram } from "../../models/admission.model";
 import { Response } from "../../models/response.model";
 import AdmissionService from "../../services/admission-program-service/admission.service";
-import AddApplicationForm from "../../components/application/AddApplicationForm";
+import ApplicationPage from "../application";
 
 const AdmissionDetail = () => {
   const [activeTab, setActiveTab] = useState<string>("1");
@@ -63,7 +63,7 @@ const AdmissionDetail = () => {
             position: "relative",
           }}
         >
-          <AddApplicationForm />
+          <ApplicationPage />
         </Layout>
       )}
     </>
