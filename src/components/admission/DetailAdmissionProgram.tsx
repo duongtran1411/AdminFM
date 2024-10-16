@@ -3,6 +3,7 @@ import { AdmissionProgram } from "../../models/admission.model";
 import { Response } from "../../models/response.model";
 import EditAdmissionProgramForm from "../../components/admission/EditAdmissionProgramForm"; // Import the Edit modal
 import useModals from "../../hooks/useModal"; // Import useModals
+import dayjs from "dayjs"; // Import dayjs for date formatting
 
 interface AdmissionProgramProps {
   admissionProgram: Response<AdmissionProgram> | null;
@@ -32,19 +33,19 @@ const DetailAdmissionProgram = ({
         </Paragraph>
         <Paragraph>
           <strong>Thời gian đăng ký: </strong>{" "}
-          {admissionProgram?.data.startRegistration.toString()} -{" "}
-          {admissionProgram?.data.endRegistration.toString()}
+          {dayjs(admissionProgram?.data.startRegistration).format("DD/MM/YYYY")}{" "}
+          - {dayjs(admissionProgram?.data.endRegistration).format("DD/MM/YYYY")}
         </Paragraph>
         <Paragraph>
           <strong>Số lượng: </strong> {admissionProgram?.data.quota}
         </Paragraph>
         <Paragraph>
           <strong>Ngày bắt đầu: </strong>{" "}
-          {admissionProgram?.data.startDate?.toString()}
+          {dayjs(admissionProgram?.data.startDate).format("DD/MM/YYYY")}
         </Paragraph>
         <Paragraph>
           <strong>Ngày kết thúc: </strong>{" "}
-          {admissionProgram?.data.endDate?.toString()}
+          {dayjs(admissionProgram?.data.endDate).format("DD/MM/YYYY")}
         </Paragraph>
       </Typography>
 

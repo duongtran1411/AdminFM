@@ -17,7 +17,6 @@ const FreshmenPageList = () => {
   const fetchStudents = async () => {
     try {
       const data = await studentService.findStudentsWithoutClass();
-      console.log(data);
       setStudents(data.data);
     } catch (error) {
       setError("Error loading students");
@@ -50,11 +49,6 @@ const FreshmenPageList = () => {
       title: "Course Family",
       dataIndex: ["coursesFamily", "course_family_name"],
       key: "coursesFamily",
-    },
-    {
-      title: "Shift",
-      dataIndex: ["shift", "name"],
-      key: "shift",
     },
   ];
 

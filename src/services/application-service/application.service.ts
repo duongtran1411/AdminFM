@@ -1,4 +1,5 @@
 import { Application } from "../../models/application.model";
+import { ApplicationStatus } from "../../models/application.status.enum.model";
 import { Response } from "../../models/response.model";
 import axiosInstance from "../../utils/axiosInstance";
 
@@ -10,7 +11,21 @@ class ApplicationService {
       );
       return response.data;
     } catch (error) {
-      console.error("Error fetching application:", error);
+      console.error("Error fetching applications:", error);
+      throw error;
+    }
+  }
+
+  async getByAdmissionId(
+    admissionId: number,
+  ): Promise<Response<Application[]>> {
+    try {
+      const response = await axiosInstance.get<Response<Application[]>>(
+        `/applications/addmission/${admissionId}`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching applications by admissionId:", error);
       throw error;
     }
   }
@@ -30,15 +45,32 @@ class ApplicationService {
 
   async update(
     applicationId: number,
-    applicationData: any,
-  ): Promise<void> {
+    applicationData: Partial<Application>,
+  ): Promise<Response<Application>> {
     try {
-      await axiosInstance.put(
-        `/application/${applicationId}`,
+      const response = await axiosInstance.put<Response<Application>>(
+        `/applications/${applicationId}`,
         applicationData,
       );
+      return response.data;
     } catch (error) {
       console.error("Error updating application:", error);
+      throw error;
+    }
+  }
+
+  async changeStatus(
+    applicationId: number,
+    status: ApplicationStatus,
+  ): Promise<Response<Application>> {
+    try {
+      const response = await axiosInstance.put<Response<Application>>(
+        `/applications/${applicationId}/status`,
+        { status },
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error updating application status:", error);
       throw error;
     }
   }

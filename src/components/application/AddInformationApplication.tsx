@@ -1,14 +1,26 @@
 import { Col, DatePicker, Form, Input, Row, Select } from "antd";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Application } from "../../models/application.model";
+import { CoursesFamily } from "../../models/courses.model";
+import courseFamilyService from "../../services/course-family-service/course.family.service";
 
 const AddInformationApplication = ({ setFormData, formRef }) => {
   const [form] = Form.useForm();
+  const [coursesfamily, setCoursesFamily] = useState<CoursesFamily[]>([]);
+
+  useEffect(() => {
+    const fetchCourseFamily = async () => {
+      const cfm = await courseFamilyService.getAll();
+      setCoursesFamily(cfm);
+    };
+
+    fetchCourseFamily();
+  }, []);
 
   useEffect(() => {
     form.setFieldsValue({
       name: "",
-      birthDate: "",
+      birthdate: "",
       gender: null,
       email: "",
       phone: "",
@@ -36,7 +48,7 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
             <Form.Item
               name="name"
               label="Họ và tên"
-              rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]} 
+              rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]}
             >
               <Input placeholder="Nhập họ và tên" />
             </Form.Item>
@@ -47,7 +59,7 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
               name="phone"
               rules={[
                 { required: true, message: "Vui lòng nhập số điện thoại!" },
-              ]} 
+              ]}
             >
               <Input placeholder="Nhập số điện thoại của bạn" />
             </Form.Item>
@@ -56,9 +68,9 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              name="birthDate"
+              name="birthdate"
               label="Ngày sinh"
-              rules={[{ required: true, message: "Vui lòng nhập ngày sinh!" }]} 
+              rules={[{ required: true, message: "Vui lòng nhập ngày sinh!" }]}
             >
               <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
             </Form.Item>
@@ -67,7 +79,7 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
             <Form.Item
               name="gender"
               label="Giới tính"
-              rules={[{ required: true, message: "Vui lòng chọn giới tính!" }]} 
+              rules={[{ required: true, message: "Vui lòng chọn giới tính!" }]}
             >
               <Select placeholder="Chọn giới tính">
                 <Select.Option value="Nam">Nam</Select.Option>
@@ -88,6 +100,29 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
               ]}
             >
               <Input placeholder="Nhập Email" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="coursesFamilyName"
+              label="Courses Family"
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập courses family!",
+                },
+              ]}
+            >
+              <Select placeholder="Chọn Courses Family">
+                {coursesfamily.map((c) => (
+                  <Select.Option
+                    key={c.course_family_id}
+                    value={c.course_family_id}
+                  >
+                    {c.course_family_name}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
           </Col>
         </Row>

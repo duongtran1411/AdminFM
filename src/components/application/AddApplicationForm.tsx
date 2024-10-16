@@ -9,17 +9,19 @@ import { Application } from "../../models/application.model";
 import { FormInstance } from "antd/es/form";
 import dayjs from "dayjs";
 
+const initialFormData: Application = {
+  id: 0,
+  name: "",
+  email: "",
+  gender: "",
+  birthdate: "",
+  phone: "",
+  status: ApplicationStatus.WAITING,
+};
+
 const AddApplicationForm = () => {
   const formRef = useRef<FormInstance>(null);
-  const [formData, setFormData] = useState<Application>({
-    id: 0,
-    name: "",
-    email: "",
-    gender: "",
-    birthDate: "",
-    phone: "",
-    status: ApplicationStatus.WAITING,
-  });
+  const [formData, setFormData] = useState<Application>(initialFormData);
   const [attachedDocuments, setAttachedDocuments] = useState<{
     [key: string]: File;
   }>({});
@@ -27,6 +29,18 @@ const AddApplicationForm = () => {
   // Hàm reset file đã đính kèm
   const resetAttachedDocuments = () => {
     setAttachedDocuments({});
+  };
+
+  const resetForm = () => {
+    formRef.current?.resetFields();
+    setFormData(initialFormData);
+    resetAttachedDocuments();
+  };
+
+  const saveDocuments = async (newId: number) => {
+    for (const [documentType, file] of Object.entries(attachedDocuments)) {
+      await attachedDocumentService.add(documentType, newId, file);
+    }
   };
 
   const handleSave = async () => {
@@ -39,38 +53,17 @@ const AddApplicationForm = () => {
         const newFormData = {
           ...formData,
           id: newId,
-          birthdate: dayjs(formData.birthDate).format("YYYY-MM-DD"),
+          birthdate: dayjs(formData.birthdate).format("YYYY-MM-DD"),
         };
+        console.log(newFormData);
         await applicationService.add(newFormData);
+        await saveDocuments(newFormData.id);
 
-        if (attachedDocuments && newFormData) {
-          for (const [documentType, file] of Object.entries(
-            attachedDocuments,
-          )) {
-            await attachedDocumentService.add(
-              documentType,
-              newFormData.id,
-              file,
-            );
-          }
+        notification.success({
+          message: "Thêm mới hồ sơ tuyển sinh thành công",
+        });
 
-          notification.success({
-            message: "Thêm mới hồ sơ tuyển sinh thành công",
-          });
-
-          // Reset form fields and attached documents after successful save
-          formRef.current.resetFields();
-          setFormData({
-            id: 0,
-            name: "",
-            email: "",
-            gender: "",
-            birthDate: "",
-            phone: "",
-            status: ApplicationStatus.WAITING,
-          });
-          resetAttachedDocuments();
-        }
+        resetForm();
       } else {
         console.error("Form reference is not set.");
       }

@@ -11,6 +11,8 @@ import { Response } from "../../models/response.model";
 import applicationService from "../../services/application-service/application.service";
 import useModals from "../../hooks/useModal";
 import EditApplicationForm from "../../components/application/EditApplicationForm";
+import ButtonChangeStatus from "../../components/application/ButtonChangeStatus";
+import ChangeStatusForm from "../../components/application/ChangeStatusForm";
 
 const ApplicationPage = () => {
   const navigate = useNavigate();
@@ -21,13 +23,17 @@ const ApplicationPage = () => {
   > | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-    const [selectedApplication, setSelectedApplication] =
-      useState<Application | null>(null);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
+  const [selectedApplication, setSelectedApplication] =
+    useState<Application | null>(null);
+  const [selectedApplicationIds, setSelectedApplicationIds] = useState<
+    number[]
+  >([]);
 
   const fetchApplication = async () => {
     try {
-      const data = await applicationService.getAll();
+      const data = await applicationService.getByAdmissionId(
+        Number(admissionId),
+      );
       setApplicationResponse(data);
     } catch (error) {
       setError("Error loading Application");
@@ -35,22 +41,13 @@ const ApplicationPage = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchApplication();
   }, []);
 
-  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const checked = event.target.checked;
-    if (checked) {
-      const allIds = applicationResponse?.data.map((item) => item.id) || [];
-      setSelectedRowKeys(allIds);
-    } else {
-      setSelectedRowKeys([]);
-    }
-  };
-
   const handleSelect = (id: number) => {
-    setSelectedRowKeys((prev) => {
+    setSelectedApplicationIds((prev) => {
       if (prev.includes(id)) {
         return prev.filter((key) => key !== id);
       } else {
@@ -61,13 +58,31 @@ const ApplicationPage = () => {
 
   const columns = [
     {
-      title: <input type="checkbox" onChange={handleSelectAll} />,
+      title: (
+        <input
+          type="checkbox"
+          onChange={() => {
+            if (
+              selectedApplicationIds.length === applicationResponse?.data.length
+            ) {
+              setSelectedApplicationIds([]);
+            } else {
+              setSelectedApplicationIds(
+                applicationResponse?.data?.map((item) => item.id).filter((id): id is number => id !== undefined) || [],
+              );
+            }
+          }}
+          checked={
+            selectedApplicationIds.length === applicationResponse?.data.length
+          }
+        />
+      ),
       dataIndex: "select",
       key: "select",
       render: (_, record) => (
         <input
           type="checkbox"
-          checked={selectedRowKeys.includes(record.id)}
+          checked={selectedApplicationIds.includes(record.id)}
           onChange={() => handleSelect(record.id)}
         />
       ),
@@ -107,45 +122,13 @@ const ApplicationPage = () => {
       title: "",
       key: "actions",
       render: (_, record) => (
-        //   <Menu.Item
-        //   key="edit"
-        //   icon={<EditOutlined />}
-        //   // onClick={() => handleEdit(ad.id)}
-        // >
-        //   Edit
-        // </Menu.Item>
-        <Button
-          icon={<EditOutlined />}
-          onClick={() => handleEdit(record.id)}
-        ></Button>
+        <Button icon={<EditOutlined />} onClick={() => handleEdit(record.id)} />
       ),
     },
   ];
 
-  //   const handleDelete = async () => {
-  //     Modal.confirm({
-  //       title: "Bạn có chắc chắn muốn xóa thành phần hồ sơ này?",
-  //       okText: "Xóa",
-  //       okType: "danger",
-  //       onOk: async () => {
-  //         try {
-  //             await applicationDocumentsService.delete(adId);
-  //             fetchApplicationDocument();
-  //           notification.success({
-  //             message: "Thành phần hồ sơ đã được xóa thành công!",
-  //           });
-  //         } catch (error) {
-  //           notification.error({
-  //             message: "Lỗi xóa thành phần hồ sơ",
-  //           });
-  //         }
-  //       },
-  //     });
-  //   };
-
   const handleEdit = (id: number) => {
     const application = applicationResponse?.data.find((s) => s.id === id);
-    console.log(application);
     if (application) {
       setSelectedApplication(application);
       showModal("editApplication");
@@ -154,6 +137,7 @@ const ApplicationPage = () => {
 
   const onUpdateSuccess = () => {
     fetchApplication();
+    setSelectedApplicationIds([]);
   };
 
   if (loading) {
@@ -186,13 +170,30 @@ const ApplicationPage = () => {
           }}
         >
           <TabsMenu tabItems={[]} />
-          <AddApplicationButton onApplicationCreate={handleApplicationCreate} />
+          <div style={{ display: "flex", gap: "16px" }}>
+            {selectedApplicationIds.length > 0 && (
+              <ButtonChangeStatus
+                onChangeStatusClick={() =>
+                  showModal("changeStatusApplication")
+                }
+              />
+            )}
+            <AddApplicationButton
+              onApplicationCreate={handleApplicationCreate}
+            />
+          </div>
         </div>
         <ApplicationTable
           data={applicationResponse?.data || []}
           columns={columns}
         />
       </div>
+      <ChangeStatusForm
+        isModalVisible={isVisible("changeStatusApplication")}
+        hideModal={() => hideModal("changeStatusApplication")}
+        onStatusChanged={onUpdateSuccess}
+        selectedIds={selectedApplicationIds}
+      />
       <EditApplicationForm
         isModalVisible={isVisible("editApplication")}
         hideModal={() => hideModal("editApplication")}

@@ -219,7 +219,7 @@ const PromotionPage = () => {
 
           <Modal
             title={<Title level={3}>Details</Title>}
-            visible={isVisible("viewPromotion")}
+            open={isVisible("viewPromotion")}
             onCancel={() => hideModal("viewPromotion")}
             footer={null}
             width={600}

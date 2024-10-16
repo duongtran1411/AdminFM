@@ -1,5 +1,5 @@
 import { DeleteOutlined, EyeOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Menu, Modal, notification, Tooltip } from "antd";
+import { Button, Dropdown, MenuProps, Modal, notification, Tooltip } from "antd";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { AiOutlineMore } from "react-icons/ai";
@@ -19,12 +19,13 @@ const AdmissionPage = () => {
     useState<Response<AdmissionProgram[]> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-    useState<Response<AdmissionProgram> | null>(null);
+  useState<Response<AdmissionProgram> | null>(null);
   const navigate = useNavigate();
 
   const fetchAdmissionPrograms = async () => {
     try {
       const response = await admissionService.getAll();
+      console.log(response);
       setAdmissionProgramsResponse(response);
     } catch (error) {
       setError("Error loading admission programs");
@@ -37,25 +38,26 @@ const AdmissionPage = () => {
     fetchAdmissionPrograms();
   }, []);
 
-  const menu = (admissionProgram: AdmissionProgram) => (
-    <Menu>
-      <Menu.Item
-        key="view"
-        icon={<EyeOutlined />}
-        onClick={() => handleView(admissionProgram.id)}
-      >
-        View Details
-      </Menu.Item>
-      <Menu.Item
-        style={{ color: "red" }}
-        key="delete"
-        icon={<DeleteOutlined style={{ color: "red" }} />}
-        onClick={() => handleDelete(admissionProgram.id)}
-      >
-        Delete
-      </Menu.Item>
-    </Menu>
-  );
+  const menu = (admissionProgram: AdmissionProgram): MenuProps => ({
+    items: [
+      {
+        key: 'view',
+        label: 'View Details',
+        icon: <EyeOutlined />,
+        onClick: () => handleView(admissionProgram.id),
+      },
+      {
+        key: 'delete',
+        label: (
+          <span style={{ color: "red" }}>
+            <DeleteOutlined style={{ color: "red" }} /> Delete
+          </span>
+        ),
+        onClick: () => handleDelete(admissionProgram.id),
+      },
+    ],
+  });
+  
 
   const columns = [
     {
@@ -98,7 +100,7 @@ const AdmissionPage = () => {
       title: "",
       key: "actions",
       render: (_, record: AdmissionProgram) => (
-        <Dropdown overlay={menu(record)} trigger={["click"]}>
+        <Dropdown menu={menu(record)} trigger={["click"]}>
           <Button
             type="text"
             icon={<AiOutlineMore style={{ fontSize: "20px" }} />}
@@ -111,7 +113,7 @@ const AdmissionPage = () => {
   const handleView = (id: number) => {
     navigate(`/admission/${id}`);
   };
-  
+
   const handleDelete = async (id: number) => {
     Modal.confirm({
       title: "Are you sure you want to delete this Admission Program?",
@@ -142,7 +144,6 @@ const AdmissionPage = () => {
     fetchAdmissionPrograms();
   };
 
-
   if (loading) {
     return <Loading />;
   }
@@ -169,7 +170,7 @@ const AdmissionPage = () => {
           />
 
           <AddAdmissionProgramForm
-            visible={isVisible("createAdmissionProgram")}
+            open={isVisible("createAdmissionProgram")}
             hideModal={() => hideModal("createAdmissionProgram")}
             onAdmissionProgramCreated={onCreateSuccess}
           />

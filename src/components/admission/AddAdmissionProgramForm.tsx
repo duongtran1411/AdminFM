@@ -17,13 +17,13 @@ const { TextArea } = Input;
 const { RangePicker } = DatePicker;
 
 interface AddAdmissionProgramFormProps {
-  visible: boolean;
+  open: boolean;
   hideModal: () => void;
   onAdmissionProgramCreated: () => void;
 }
 
 const AddAdmissionProgramForm: React.FC<AddAdmissionProgramFormProps> = ({
-  visible,
+  open,
   hideModal,
   onAdmissionProgramCreated,
 }) => {
@@ -41,10 +41,10 @@ const AddAdmissionProgramForm: React.FC<AddAdmissionProgramFormProps> = ({
       setApplicationDocuments(applicationDocuments.data);
     };
 
-    if (visible) {
+    if (open) {
       fetchApplicationDocuments();
     }
-  }, [visible]);
+  }, [open]);
 
   const onFinish = async () => {
     try {
@@ -79,7 +79,7 @@ const AddAdmissionProgramForm: React.FC<AddAdmissionProgramFormProps> = ({
   return (
     <Modal
       title="Tạo mới chương trình tuyển sinh"
-      visible={visible}
+      open={open}
       onCancel={hideModal}
       onOk={() => form.submit()}
     >
@@ -100,14 +100,40 @@ const AddAdmissionProgramForm: React.FC<AddAdmissionProgramFormProps> = ({
         <Form.Item
           name="startRegistration"
           label="Thời gian đăng ký"
-          rules={[{ required: true }]}
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng nhập thời gian bắt đầu đăng ký",
+            },
+          ]}
         >
           <DatePicker />
         </Form.Item>
+
         <Form.Item
           name="endRegistration"
           label="Thời gian đóng đơn"
-          rules={[{ required: true }]}
+          dependencies={["startRegistration"]}
+          rules={[
+            { required: true, message: "Vui lòng nhập thời gian đóng đơn" },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                const startRegistration = getFieldValue("startRegistration");
+                if (
+                  !value ||
+                  !startRegistration ||
+                  startRegistration.isBefore(value)
+                ) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(
+                  new Error(
+                    "Thời gian đóng đơn phải lớn hơn thời gian bắt đầu đăng ký",
+                  ),
+                );
+              },
+            }),
+          ]}
         >
           <DatePicker />
         </Form.Item>

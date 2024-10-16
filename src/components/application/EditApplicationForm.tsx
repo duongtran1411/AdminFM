@@ -1,7 +1,9 @@
-import { Form, Input, Modal, notification } from "antd";
+import { DatePicker, Form, Input, Modal, notification, Select } from "antd";
 import { useEffect } from "react";
 import { Application } from "../../models/application.model";
 import applicationService from "../../services/application-service/application.service";
+import dayjs from "dayjs";
+
 interface EditApplicationPropsForm {
   isModalVisible: boolean;
   hideModal: () => void;
@@ -21,11 +23,14 @@ const EditApplicationForm = ({
     if (application) {
       form.setFieldsValue({
         name: application.name,
+        phone: application.phone,
+        email: application.email,
+        gender: application.gender,
+        birthdate: dayjs(application.birthdate),
       });
     }
   }, [application, form]);
 
-  // Xử lý khi nhấn nút "OK"
   const handleOk = async () => {
     Modal.confirm({
       title: "Bạn có chắc chắn muốn cập nhật thành phần hồ sơ này?",
@@ -34,10 +39,12 @@ const EditApplicationForm = ({
       onOk: async () => {
         try {
           const values = await form.validateFields();
+          const birthdate = dayjs(values.birthdate).format("YYYY-MM-DD");
 
           const updatedApplication = {
             ...application,
             ...values,
+            birthdate: birthdate,
           };
           await applicationService.update(
             updatedApplication.id,
@@ -60,11 +67,11 @@ const EditApplicationForm = ({
 
   return (
     <Modal
-      title="Chỉnh sửa thành phần hồ sơ"
+      title="Chỉnh sửa hồ sơ"
       open={isModalVisible}
       onOk={handleOk}
       onCancel={() => {
-        form.resetFields(); 
+        form.resetFields();
         hideModal();
       }}
       okText="Cập nhật"
@@ -74,15 +81,45 @@ const EditApplicationForm = ({
       <Form form={form} layout="vertical">
         <Form.Item
           name="name"
-          label="Tên thành phần hồ sơ"
+          label="Họ và tên"
+          rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]}
+        >
+          <Input placeholder="Nhập họ và tên" />
+        </Form.Item>
+        <Form.Item
+          label="Số điện thoại"
+          name="phone"
+          rules={[{ required: true, message: "Vui lòng nhập số điện thoại!" }]}
+        >
+          <Input placeholder="Nhập số điện thoại của bạn" />
+        </Form.Item>
+        <Form.Item
+          name="birthdate"
+          label="Ngày sinh"
+          rules={[{ required: true, message: "Vui lòng nhập ngày sinh!" }]}
+        >
+          <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+        </Form.Item>
+        <Form.Item
+          name="gender"
+          label="Giới tính"
+          rules={[{ required: true, message: "Vui lòng chọn giới tính!" }]}
+        >
+          <Select placeholder="Chọn giới tính">
+            <Select.Option value="Nam">Nam</Select.Option>
+            <Select.Option value="Nữ">Nữ</Select.Option>
+            <Select.Option value="Khác">Khác</Select.Option>
+          </Select>
+        </Form.Item>
+        <Form.Item
+          name="email"
+          label="Email"
           rules={[
-            {
-              required: true,
-              message: "Vui lòng nhập tên thành phần hồ sơ!",
-            },
+            { required: true, message: "Vui lòng nhập email!" },
+            { type: "email", message: "Email không hợp lệ!" },
           ]}
         >
-          <Input placeholder="Nhập tên thành phần hồ sơ" />
+          <Input placeholder="Nhập Email" />
         </Form.Item>
       </Form>
     </Modal>
