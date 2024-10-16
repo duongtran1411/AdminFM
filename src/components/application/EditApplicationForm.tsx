@@ -29,7 +29,7 @@ const EditApplicationForm = ({
         birthdate: dayjs(application.birthdate),
       });
     }
-  }, [application, form]);
+  }, [application]);
 
   const handleOk = async () => {
     Modal.confirm({
@@ -71,7 +71,6 @@ const EditApplicationForm = ({
       open={isModalVisible}
       onOk={handleOk}
       onCancel={() => {
-        form.resetFields();
         hideModal();
       }}
       okText="Cập nhật"

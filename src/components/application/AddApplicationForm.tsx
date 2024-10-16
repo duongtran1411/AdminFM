@@ -8,18 +8,21 @@ import { ApplicationStatus } from "../../models/application.status.enum.model";
 import { Application } from "../../models/application.model";
 import { FormInstance } from "antd/es/form";
 import dayjs from "dayjs";
+import { useParams } from "react-router-dom";
 
 const initialFormData: Application = {
-  id: 0,
   name: "",
   email: "",
   gender: "",
   birthdate: "",
   phone: "",
   status: ApplicationStatus.WAITING,
+  admissionProgramId: 0,
 };
 
 const AddApplicationForm = () => {
+  const { admissionId } = useParams();
+  console.log(admissionId);
   const formRef = useRef<FormInstance>(null);
   const [formData, setFormData] = useState<Application>(initialFormData);
   const [attachedDocuments, setAttachedDocuments] = useState<{
@@ -39,6 +42,7 @@ const AddApplicationForm = () => {
 
   const saveDocuments = async (newId: number) => {
     for (const [documentType, file] of Object.entries(attachedDocuments)) {
+      console.log(newId);
       await attachedDocumentService.add(documentType, newId, file);
     }
   };
@@ -48,16 +52,14 @@ const AddApplicationForm = () => {
       if (formRef.current) {
         await formRef.current.validateFields();
 
-        const applications = await applicationService.getAll();
-        const newId = applications.data.length + 1;
         const newFormData = {
           ...formData,
-          id: newId,
+          admissionProgramId: admissionId ? Number(admissionId) : 0,
           birthdate: dayjs(formData.birthdate).format("YYYY-MM-DD"),
         };
-        console.log(newFormData);
-        await applicationService.add(newFormData);
-        await saveDocuments(newFormData.id);
+        const newApplication = await applicationService.add(newFormData);
+        console.log(newApplication);
+        await saveDocuments(newApplication.data.id!);
 
         notification.success({
           message: "Thêm mới hồ sơ tuyển sinh thành công",
