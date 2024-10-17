@@ -74,6 +74,23 @@ class ApplicationService {
       throw error;
     }
   }
+
+  async changeStatusMultiple(
+    id: number[],
+    status: ApplicationStatus,
+  ): Promise<Response<Application>> {
+    console.log(id);
+    try {
+      const response = await axiosInstance.patch<Response<Application>>(
+        "/applications/status-multiple",
+        { id, status },
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error updating multiple application statuses:", error);
+      throw error;
+    }
+  }
 }
 
 export default new ApplicationService();

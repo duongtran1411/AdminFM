@@ -68,7 +68,9 @@ const ApplicationPage = () => {
               setSelectedApplicationIds([]);
             } else {
               setSelectedApplicationIds(
-                applicationResponse?.data?.map((item) => item.id).filter((id): id is number => id !== undefined) || [],
+                applicationResponse?.data
+                  ?.map((item) => item.id)
+                  .filter((id): id is number => id !== undefined) || [],
               );
             }
           }}
@@ -178,9 +180,7 @@ const ApplicationPage = () => {
           <div style={{ display: "flex", gap: "16px" }}>
             {selectedApplicationIds.length > 0 && (
               <ButtonChangeStatus
-                onChangeStatusClick={() =>
-                  showModal("changeStatusApplication")
-                }
+                onChangeStatusClick={() => showModal("changeStatusApplication")}
               />
             )}
             <AddApplicationButton

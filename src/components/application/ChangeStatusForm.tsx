@@ -26,11 +26,14 @@ const ChangeStatusForm = ({
           const values = await form.validateFields();
           const status = values.status;
 
-          await Promise.all(
-            selectedIds.map((id) =>
-              applicationService.changeStatus(id, status),
-            ),
-          );
+          if (selectedIds.length === 1) {
+            await applicationService.changeStatus(selectedIds[0], status);
+            console.log(
+              await applicationService.changeStatus(selectedIds[0], status),
+            );
+          } else if (selectedIds.length > 1) {
+            await applicationService.changeStatusMultiple(selectedIds, status);
+          }
 
           notification.success({
             message: "Thay đổi trạng thái thành công!",
