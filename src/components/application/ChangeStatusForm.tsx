@@ -17,26 +17,35 @@ const ChangeStatusForm = ({
   const [form] = Form.useForm();
 
   const handleOk = async () => {
-    try {
-      const values = await form.validateFields();
-      const status = values.status;
+    Modal.confirm({
+      title: "Xác nhận thay đổi trạng thái",
+      content: "Bạn có chắc chắn muốn thay đổi trạng thái không?",
+      okType: "danger",
+      onOk: async () => {
+        try {
+          const values = await form.validateFields();
+          const status = values.status;
 
-      await Promise.all(
-        selectedIds.map((id) => applicationService.changeStatus(id, status)),
-      );
+          await Promise.all(
+            selectedIds.map((id) =>
+              applicationService.changeStatus(id, status),
+            ),
+          );
 
-      notification.success({
-        message: "Thay đổi trạng thái thành công!",
-      });
-      hideModal();
-      onStatusChanged();
-      form.resetFields();
-    } catch (error) {
-      console.error(error);
-      notification.error({
-        message: "Đã xảy ra lỗi khi thay đổi trạng thái!",
-      });
-    }
+          notification.success({
+            message: "Thay đổi trạng thái thành công!",
+          });
+          hideModal();
+          onStatusChanged();
+          form.resetFields();
+        } catch (error) {
+          console.error(error);
+          notification.error({
+            message: "Đã xảy ra lỗi khi thay đổi trạng thái!",
+          });
+        }
+      },
+    });
   };
 
   return (

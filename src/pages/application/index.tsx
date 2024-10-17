@@ -114,6 +114,11 @@ const ApplicationPage = () => {
       key: "email",
     },
     {
+      title: "Hộ khẩu thường trú",
+      dataIndex: "permanentResidence",
+      key: "permanentResidence",
+    },
+    {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",

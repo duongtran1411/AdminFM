@@ -24,6 +24,9 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
       gender: null,
       email: "",
       phone: "",
+      admissionProgramId: null,
+      coursesFamilyId: null,
+      permanentResidence: "",
     });
   }, [form]);
 
@@ -125,6 +128,23 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
               </Select>
             </Form.Item>
           </Col>
+        </Row>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item
+              name="permanentResidence"
+              label="Hộ khẩu thường trú"
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập hộ không thường trú!",
+                },
+              ]}
+            >
+              <Input placeholder="Nhập hộ không thường trú" />
+            </Form.Item>
+          </Col>
+          <Col span={12}></Col>
         </Row>
       </Form>
     </div>

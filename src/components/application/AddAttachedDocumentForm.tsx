@@ -6,7 +6,7 @@ import { ApplicationDocument } from "../../models/applicationdocument.model";
 import admissionService from "../../services/admission-program-service/admission.service";
 import Loading from "../common/loading";
 
-const AddAttachedDocumentForm = ({ setAttachedDocument }) => {
+const AddAttachedDocumentForm = ({ setAttachedDocument, resetUploadKey }) => { // Nhận thêm prop resetUploadKey
   const [loading, setLoading] = useState(true);
   const [applicationDocument, setApplicationDocument] = useState<ApplicationDocument[]>([]);
   const [attachedFiles, setAttachedFiles] = useState<{ [key: string]: File }>({});
@@ -23,6 +23,12 @@ const AddAttachedDocumentForm = ({ setAttachedDocument }) => {
   useEffect(() => {
     fetchAdmissionProgram();
   }, [admissionId]);
+
+  // Reset attached files when resetUploadKey changes
+  useEffect(() => {
+    setAttachedFiles({});
+    setAttachedDocument({});
+  }, [resetUploadKey]); // Reset tệp đính kèm khi resetUploadKey thay đổi
 
   if (loading) {
     return <Loading />;
@@ -42,7 +48,7 @@ const AddAttachedDocumentForm = ({ setAttachedDocument }) => {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {attachedFiles[record.name] ? (
             <>
-              <span>{attachedFiles[record.name]?.name}</span>
+              <i style={{ marginRight: 8, color: '#1890ff' }}>{attachedFiles[record.name]?.name}</i>
               <AiOutlineClose 
                 style={{ marginLeft: 8, cursor: 'pointer', color: 'red' }} 
                 onClick={() => handleFileRemove(record.name)} 

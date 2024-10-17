@@ -50,6 +50,16 @@ const FreshmenPageList = () => {
       dataIndex: ["coursesFamily", "course_family_name"],
       key: "coursesFamily",
     },
+    {
+      title: "Hộ khẩu thường chú",
+      dataIndex: "permanentResidence",
+      key: "permanentResidence",
+    },
+    {
+      title: "Khoá",
+      dataIndex: "cohort",
+      key: "cohort",
+    },
   ];
 
   const handleDelete = async (id: number) => {

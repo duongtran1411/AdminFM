@@ -27,6 +27,7 @@ const EditApplicationForm = ({
         email: application.email,
         gender: application.gender,
         birthdate: dayjs(application.birthdate),
+        permanentResidence: application.permanentResidence,
       });
     }
   }, [application]);
@@ -120,6 +121,18 @@ const EditApplicationForm = ({
         >
           <Input placeholder="Nhập Email" />
         </Form.Item>
+        <Form.Item
+              name="permanentResidence"
+              label="Hộ khẩu thường trú"
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập hộ không thường trú!",
+                },
+              ]}
+            >
+              <Input placeholder="Nhập hộ không thường trú" />
+            </Form.Item>
       </Form>
     </Modal>
   );

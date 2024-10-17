@@ -8,5 +8,6 @@ export interface Application {
   birthdate: string;
   phone: string;
   status: ApplicationStatus;
+  permanentResidence: string;
   admissionProgramId: number;
 }

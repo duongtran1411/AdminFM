@@ -9,12 +9,17 @@ interface EditClassFormProps {
   initialValues: any; // Giá trị ban đầu từ lớp học cần chỉnh sửa
 }
 
-const EditClassForm: React.FC<EditClassFormProps> = ({ visible, onEdit, onCancel, initialValues }) => {
+const EditClassForm: React.FC<EditClassFormProps> = ({
+  visible,
+  onEdit,
+  onCancel,
+  initialValues,
+}) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
     if (initialValues) {
-      console.log(initialValues)
+      console.log(initialValues);
       form.setFieldsValue(initialValues);
     }
   }, [initialValues, form]);
@@ -27,7 +32,7 @@ const EditClassForm: React.FC<EditClassFormProps> = ({ visible, onEdit, onCancel
   return (
     <Modal
       title="Chỉnh Sửa Lớp Học"
-      visible={visible}
+      open={visible}
       onCancel={onCancel}
       footer={null}
     >
@@ -39,14 +44,6 @@ const EditClassForm: React.FC<EditClassFormProps> = ({ visible, onEdit, onCancel
         >
           <Input placeholder="Nhập tên lớp" />
         </Form.Item>
-{/* 
-        <Form.Item
-          name="classDescription"
-          label="Mô Tả"
-          rules={[{ required: true, message: "Vui lòng nhập mô tả" }]}
-        >
-          <Input.TextArea placeholder="Nhập mô tả lớp" />
-        </Form.Item> */}
 
         <Form.Item>
           <Button type="primary" htmlType="submit">
