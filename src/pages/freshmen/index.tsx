@@ -1,8 +1,6 @@
-import { Input, Modal, notification } from "antd";
+import { Modal, notification } from "antd";
 import { useEffect, useState } from "react";
-import ActionButtons from "../../components/student/ActionButtons";
 import EditFreshmenForm from "../../components/student/EditFreshmenForm";
-import FreshmenCreateForm from "../../components/student/FreshmenCreateForm";
 import FreshmenTable from "../../components/student/FreshmenTable";
 import useModals from "../../hooks/useModal";
 import { Freshmen } from "../../models/student.model";
@@ -88,9 +86,9 @@ const FreshmenPageList = () => {
     }
   };
 
-  const onCreateSuccess = () => {
-    fetchStudents();
-  };
+  // const onCreateSuccess = () => {
+  //   fetchStudents();
+  // };
 
   const onUpdateSuccess = () => {
     fetchStudents();
@@ -125,26 +123,26 @@ const FreshmenPageList = () => {
           }}
         >
           {/* Buttons for adding and importing freshmen */}
-          <ActionButtons
+          {/* <ActionButtons
             onNewClick={() => showModal("createFreshmen")}
             onImportClick={() => showModal("importExcel")}
-          />
+          /> */}
         </div>
 
         {/* Search Input */}
-        <Input.Search
+        {/* <Input.Search
           placeholder="Tìm kiếm sinh viên..."
           allowClear
           // onSearch={handleSearch} // Uncomment and implement the search function if needed
           style={{ width: 400, marginBottom: 16 }}
-        />
+        /> */}
 
         {/* Create Freshmen modal */}
-        <FreshmenCreateForm
+        {/* <FreshmenCreateForm
           isModalVisible={isVisible("createFreshmen")}
           hideModal={() => hideModal("createFreshmen")}
           onStudentCreated={onCreateSuccess}
-        />
+        /> */}
 
         {/* Freshmen Data Table */}
         <FreshmenTable

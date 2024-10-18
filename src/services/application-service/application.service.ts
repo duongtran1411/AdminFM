@@ -79,7 +79,6 @@ class ApplicationService {
     id: number[],
     status: ApplicationStatus,
   ): Promise<Response<Application>> {
-    console.log(id);
     try {
       const response = await axiosInstance.patch<Response<Application>>(
         "/applications/status-multiple",

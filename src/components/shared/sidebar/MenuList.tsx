@@ -38,7 +38,6 @@ const DashBoardMenuList = () => {
     { key: "dashboards", icon: <HomeOutlined />, label: "Dashboards" },
     { key: "users", icon: <FaRegUser />, label: "Users" },
     { key: "teachers", icon: <FaChalkboardTeacher />, label: "Teachers" },
-    { key: "students", icon: <FaChalkboardTeacher />, label: "Students" },
     {
       key: "center", // Dropdown for Center
       label: "Center",
@@ -50,7 +49,7 @@ const DashBoardMenuList = () => {
       ],
     },
     {
-      key: "academic", // Dropdown for Academic
+      key: "academic",
       label: "Academic",
       icon: <HiAcademicCap />,
       children: [
@@ -82,6 +81,7 @@ const DashBoardMenuList = () => {
         },
       ],
     },
+    { key: "students", icon: <FaChalkboardTeacher />, label: "Xét tuyển" },
   ];
 
   return (

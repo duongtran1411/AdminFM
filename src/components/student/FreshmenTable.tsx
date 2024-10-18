@@ -1,7 +1,5 @@
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Table } from "antd";
+import { Table } from "antd";
 import { useEffect, useRef, useState } from "react";
-import { CiMenuKebab } from "react-icons/ci";
 
 interface DataTableProps {
   data: any[];
@@ -10,7 +8,7 @@ interface DataTableProps {
   onDelete: (id: any) => void; // Update to receive studentId
 }
 
-const FreshmenTable = ({ data, columns, onEdit, onDelete }: DataTableProps) => {
+const FreshmenTable = ({ data, columns }: DataTableProps) => {
   const tableRef = useRef<HTMLDivElement>(null);
   const [canScroll, setCanScroll] = useState(false);
 
@@ -30,34 +28,34 @@ const FreshmenTable = ({ data, columns, onEdit, onDelete }: DataTableProps) => {
     };
   }, []);
 
-  const actionMenu = (record) => ({
-    items: [
-      {
-        key: "edit",
-        label: "Edit",
-        icon: <EditOutlined />,
-        onClick: () => onEdit(record.id),
-      },
-      {
-        key: "delete",
-        label: <span style={{ color: "red" }}>Delete</span>,
-        icon: <DeleteOutlined style={{ color: "red" }} />,
-        onClick: () => onDelete(record.id),
-      },
-    ],
-  });
+  // const actionMenu = (record) => ({
+  //   items: [
+  //     {
+  //       key: "edit",
+  //       label: "Edit",
+  //       icon: <EditOutlined />,
+  //       onClick: () => onEdit(record.id),
+  //     },
+  //     {
+  //       key: "delete",
+  //       label: <span style={{ color: "red" }}>Delete</span>,
+  //       icon: <DeleteOutlined style={{ color: "red" }} />,
+  //       onClick: () => onDelete(record.id),
+  //     },
+  //   ],
+  // });
 
   const extendedColumns = [
     ...columns,
-    {
-      title: "Action",
-      key: "action",
-      render: (record) => (
-        <Dropdown menu={actionMenu(record)} trigger={["click"]}>
-          <Button icon={<CiMenuKebab />} type="text" />
-        </Dropdown>
-      ),
-    },
+    // {
+    //   title: "Action",
+    //   key: "action",
+    //   render: (record) => (
+    //     <Dropdown menu={actionMenu(record)} trigger={["click"]}>
+    //       <Button icon={<CiMenuKebab />} type="text" />
+    //     </Dropdown>
+    //   ),
+    // },
   ];
 
   const dataSource = data.map((item) => ({
