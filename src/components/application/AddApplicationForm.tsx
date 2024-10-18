@@ -8,8 +8,9 @@ import { ApplicationStatus } from "../../models/application.status.enum.model";
 import { Application } from "../../models/application.model";
 import { FormInstance } from "antd/es/form";
 import dayjs from "dayjs";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Loading from "../common/loading";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 
 const initialFormData: Application = {
   name: "",
@@ -31,6 +32,7 @@ const AddApplicationForm = () => {
   }>({});
   const [resetUploadKey, setResetUploadKey] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const resetAttachedDocuments = () => {
     setAttachedDocuments({});
@@ -85,6 +87,13 @@ const AddApplicationForm = () => {
         <Loading />
       ) : (
         <>
+          <div
+            onClick={() => navigate(`/admission/${admissionId}`)}
+            className="cursor-pointer mb-4"
+          >
+            <ArrowLeftOutlined />
+          </div>
+
           <AddAttachedDocumentForm
             setAttachedDocument={setAttachedDocuments}
             resetUploadKey={resetUploadKey}
