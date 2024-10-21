@@ -1,11 +1,12 @@
 import { Form, Modal, notification, Radio } from "antd";
 import applicationService from "../../services/application-service/application.service";
+import { useState } from "react";
 
 interface Props {
   isModalVisible: boolean;
   hideModal: () => void;
   onStatusChanged: () => void;
-  selectedIds: number[]; // thêm selectedIds vào props
+  selectedIds: number[];
 }
 
 const ChangeStatusForm = ({
@@ -15,8 +16,12 @@ const ChangeStatusForm = ({
   selectedIds,
 }: Props) => {
   const [form] = Form.useForm();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleOk = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
     Modal.confirm({
       title: "Xác nhận thay đổi trạng thái",
       content: "Bạn có chắc chắn muốn thay đổi trạng thái không?",
@@ -28,9 +33,6 @@ const ChangeStatusForm = ({
 
           if (selectedIds.length === 1) {
             await applicationService.changeStatus(selectedIds[0], status);
-            console.log(
-              await applicationService.changeStatus(selectedIds[0], status),
-            );
           } else if (selectedIds.length > 1) {
             await applicationService.changeStatusMultiple(selectedIds, status);
           }
@@ -46,6 +48,8 @@ const ChangeStatusForm = ({
           notification.error({
             message: "Đã xảy ra lỗi khi thay đổi trạng thái!",
           });
+        } finally {
+          setIsSubmitting(false);
         }
       },
     });

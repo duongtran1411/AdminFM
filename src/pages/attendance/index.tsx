@@ -1,15 +1,17 @@
-import { Layout, Table } from "antd";
+import { Button, Checkbox, Input, Layout, notification, Table } from "antd";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  AttendanceStatus,
-  getAttendanceStatus,
-} from "../../services/attendence-service/attendence.service";
+
 import Loading from "../../components/common/loading";
+import { Attendance } from "../../models/attendance.model";
+import {
+  getAttendanceStatus,
+  markMultipleAttendance,
+} from "../../services/attendence-service/attendence.service";
 
 const AttendancePage = () => {
   const [error, setError] = useState("");
-  const [attendanceData, setAttendanceData] = useState<AttendanceStatus[]>([]);
+  const [attendanceData, setAttendanceData] = useState<Attendance[]>([]);
   const [loading, setLoading] = useState(true);
   const { scheduleId } = useParams();
 
@@ -17,8 +19,7 @@ const AttendancePage = () => {
     try {
       setLoading(true);
       const data = await getAttendanceStatus(scheduleId);
-      console.log(data);
-      setAttendanceData(data.attendances);
+      setAttendanceData(data);
     } catch (error) {
       console.error("Lỗi khi lấy trạng thái điểm danh", error);
       setError("Failed to load attendance status.");
@@ -30,6 +31,63 @@ const AttendancePage = () => {
   useEffect(() => {
     fetchAttendanceStatus(scheduleId!);
   }, [scheduleId]);
+
+  const handleCheckboxChange = (studentId: number, statusType: number) => {
+    const updatedAttendanceData = attendanceData.map((attendance) => {
+      if (attendance.student.id === studentId) {
+        let newStatus;
+
+        if (attendance.status === statusType) {
+          newStatus = 0;
+        } else {
+          newStatus = statusType;
+        }
+
+        return {
+          ...attendance,
+          status: newStatus,
+        };
+      }
+      return attendance;
+    });
+
+    setAttendanceData(updatedAttendanceData);
+  };
+
+  const handleNoteChange = (studentId: number, newNote: string) => {
+    const updatedAttendanceData = attendanceData.map((attendance) => {
+      if (attendance.student.id === studentId) {
+        return { ...attendance, note: newNote };
+      }
+      return attendance;
+    });
+    setAttendanceData(updatedAttendanceData);
+  };
+
+  const handleSubmit = async () => {
+    if (!attendanceData) return;
+
+    setLoading(true); // Bắt đầu loading
+
+    try {
+      const attendanceDataToSubmit = attendanceData.map((attendance) => ({
+        status: attendance.status,
+        note: attendance.note,
+        teacherId: attendance.teacher.id,
+        classId: attendance.class.id,
+        scheduleId: Number(scheduleId),
+        studentId: attendance.student.id,
+      }));
+      await markMultipleAttendance(attendanceDataToSubmit);
+      notification.success({
+        message: "Điểm danh thành công!",
+      });
+    } catch (error) {
+      notification.error({ message: "Lỗi trạng thái khi điểm danh!" });
+    } finally {
+      setLoading(false); 
+    }
+  };
 
   const columns = [
     {
@@ -43,49 +101,69 @@ const AttendancePage = () => {
       key: "name",
     },
     {
-      title: "Trạng Thái Điểm Danh",
+      title: "Đi học",
       dataIndex: "status",
-      key: "status",
-      render: (status: number) => {
-        let text = "";
-        let className = "";
-        switch (status) {
-          case 1:
-            text = "Đi học";
-            className = "text-green-600";
-            break;
-          case 2:
-            text = "Đi muộn";
-            className = "text-yellow-600";
-            break;
-          case 3:
-            text = "Nghỉ CP";
-            className = "text-blue-600";
-            break;
-          case 4:
-            text = "Nghỉ KP";
-            className = "text-red-600";
-            break;
-          default:
-            text = "Không xác định";
-            className = "text-gray-600";
-        }
-        return <span className={className}>{text}</span>;
-      },
+      key: "diHoc",
+      render: (status: number, record: any) => (
+        <Checkbox
+          checked={status === 1}
+          onChange={() => {
+            handleCheckboxChange(record.student.id, 1);
+          }}
+        />
+      ),
+    },
+    {
+      title: "Đi muộn",
+      dataIndex: "status",
+      key: "diMuon",
+      render: (status: number, record: any) => (
+        <Checkbox
+          checked={status === 2}
+          onChange={() => {
+            handleCheckboxChange(record.student.id, 2);
+          }}
+        />
+      ),
+    },
+    {
+      title: "Nghỉ CP",
+      dataIndex: "status",
+      key: "nghiCP",
+      render: (status: number, record: any) => (
+        <Checkbox
+          checked={status === 3}
+          onChange={() => {
+            handleCheckboxChange(record.student.id, 3);
+          }}
+        />
+      ),
+    },
+    {
+      title: "Nghỉ KP",
+      dataIndex: "status",
+      key: "nghiKP",
+      render: (status: number, record: any) => (
+        <Checkbox
+          checked={status === 4}
+          onChange={() => {
+            handleCheckboxChange(record.student.id, 4);
+          }}
+        />
+      ),
+    },
+    {
+      title: "Ghi Chú",
+      dataIndex: "note",
+      key: "note",
+      render: (note: string, record: any) => (
+        <Input
+          value={note}
+          onChange={(e) => handleNoteChange(record.student.id, e.target.value)}
+        />
+      ),
     },
   ];
-
-  // const onCreateSuccess = () => {
-  //   fetchStudents();
-  // };
-
-  // const onUpdateSuccess = () => {
-  //   fetchStudents();
-  // };
-
-  // if (loading) {
-  //   return <p>Đang tải danh sách sinh viên...</p>;
-  // }
 
   if (loading) {
     return <Loading />;
@@ -105,26 +183,17 @@ const AttendancePage = () => {
       }}
     >
       <div className="w-full max-w-6xl">
-        <div className="flex justify-between flex-wrap">
-          {/* <TabsMenu tabItems={[]} />
-          <ActionButtons
-            onNewAiClick={() => showModal("createStudent")}
-            onImportClick={() => showModal("importExcel")}
-          /> */}
+        <Table
+          columns={columns}
+          dataSource={attendanceData}
+          pagination={false}
+        />
+        <div className="flex justify-end mt-4">
+          <Button type="primary" onClick={handleSubmit}>
+            Điểm Danh
+          </Button>
         </div>
-        {/* <CreateStudentForm
-          isModalVisible={isVisible("createStudent")}
-          hideModal={() => hideModal("createStudent")}
-          onStudentCreated={onCreateSuccess}
-        /> */}
-        <Table columns={columns} dataSource={attendanceData} />
       </div>
-      {/* <EditStudentForm
-        isModalVisible={isVisible("editStudent")}
-        hideModal={() => hideModal("editStudent")}
-        student={selectedStudent}
-        onUpdate={onUpdateSuccess}
-      /> */}
     </Layout>
   );
 };

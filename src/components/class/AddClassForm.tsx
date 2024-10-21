@@ -1,5 +1,13 @@
 // components/class/AddClassForm.tsx
-import { Button, Checkbox, Form, Input, Modal, Select } from "antd";
+import {
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  Modal,
+  Select,
+  InputNumber,
+} from "antd";
 import React, { useEffect, useState } from "react";
 import { CoursesFamily } from "../../models/courses.model";
 import { Response } from "../../models/response.model";
@@ -18,6 +26,7 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
   onCancel,
 }) => {
   const [coursesfamily, setCoursesFamily] = useState<CoursesFamily[]>([]);
+  const [autoAddStudents, setAutoAddStudents] = useState<boolean>(false); // State để theo dõi checkbox
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -28,6 +37,7 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
       fetchCourse();
     }
   }, [visible]);
+
   const [form] = Form.useForm();
 
   const handleFinish = (values: any) => {
@@ -35,10 +45,14 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
       ...values,
       coursesFamilyId: values.course_family_name,
       tick: values.isActive || false,
+      studentCount: values.studentCount || 20, // Mặc định là 20 nếu không nhập
     };
-    // console.log(classData);
     onAdd(classData);
     form.resetFields();
+  };
+
+  const handleAutoAddChange = (e: any) => {
+    setAutoAddStudents(e.target.checked); // Cập nhật trạng thái checkbox
   };
 
   return (
@@ -59,12 +73,10 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
         <Form.Item
           name="course_family_name"
           label="Courses Family"
-          rules={[
-            {
-              required: true,
-              message: "Please select the Courses Family!",
-            },
-          ]}
+          rules={[{
+            required: true,
+            message: "Please select the Courses Family!",
+          }]}
         >
           <Select placeholder="Chọn Courses Family">
             {coursesfamily.map((c) => (
@@ -78,8 +90,22 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
           </Select>
         </Form.Item>
         <Form.Item name="isActive" valuePropName="checked">
-          <Checkbox>Tự động thêm 20 sinh viên</Checkbox>
+          <Checkbox onChange={handleAutoAddChange}>Tự động thêm sinh viên</Checkbox>
         </Form.Item>
+        {/* Chỉ hiển thị trường nhập số lượng sinh viên khi tick vào checkbox */}
+        {autoAddStudents && (
+          <Form.Item
+            name="studentCount"
+            label="Số lượng sinh viên"
+            rules={[{ required: true, message: "Vui lòng nhập số lượng sinh viên" }]}
+          >
+            <InputNumber
+              min={1}
+              placeholder="Nhập số lượng sinh viên"
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+        )}
         <Form.Item>
           <Button type="primary" htmlType="submit">
             Thêm

@@ -36,29 +36,6 @@ const DashBoardMenuList = () => {
 
   const menuItems: ItemType<MenuItemType>[] = [
     { key: "dashboards", icon: <HomeOutlined />, label: "Dashboards" },
-    { key: "users", icon: <FaRegUser />, label: "Users" },
-    { key: "teachers", icon: <FaChalkboardTeacher />, label: "Teachers" },
-    {
-      key: "center", // Dropdown for Center
-      label: "Center",
-      icon: <AiFillBank />,
-      children: [
-        { key: "building", icon: <SiGoogleclassroom />, label: "Building" },
-        { key: "classes", icon: <SiGoogleclassroom />, label: "Classes" },
-        // Thêm menulist vào sau nếu cần
-      ],
-    },
-    {
-      key: "academic",
-      label: "Academic",
-      icon: <HiAcademicCap />,
-      children: [
-        { key: "coursefamily", icon: <LuBookCopy />, label: "Courses Family" },
-        { key: "courses", icon: <LuBookMarked />, label: "Courses" },
-        { key: "module", icon: <AiOutlineFolder />, label: "Module" },
-        // Thêm menulist vào sau nếu cần
-      ],
-    },
     {
       key: "tuyensinh",
       label: "Tuyển Sinh",
@@ -79,9 +56,31 @@ const DashBoardMenuList = () => {
           icon: <LuBookCopy />,
           label: "CT Ưu Đãi",
         },
+        { key: "students", icon: <FaChalkboardTeacher />, label: "Xét tuyển" },
       ],
     },
-    { key: "students", icon: <FaChalkboardTeacher />, label: "Xét tuyển" },
+    { key: "users", icon: <FaRegUser />, label: "Users" },
+    { key: "teachers", icon: <FaChalkboardTeacher />, label: "Teachers" },
+    {
+      key: "center",
+      label: "Center",
+      icon: <AiFillBank />,
+      children: [
+        { key: "building", icon: <SiGoogleclassroom />, label: "Building" },
+        { key: "classes", icon: <SiGoogleclassroom />, label: "Classes" },
+      ],
+    },
+    {
+      key: "academic",
+      label: "Academic",
+      icon: <HiAcademicCap />,
+      children: [
+        { key: "coursefamily", icon: <LuBookCopy />, label: "Courses Family" },
+        { key: "courses", icon: <LuBookMarked />, label: "Courses" },
+        { key: "module", icon: <AiOutlineFolder />, label: "Module" },
+        // Thêm menulist vào sau nếu cần
+      ],
+    },
   ];
 
   return (

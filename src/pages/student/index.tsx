@@ -35,23 +35,23 @@ const StudentPage = () => {
 
   const columns = [
     {
-      title: "Student ID",
+      title: "Mã SV",
       dataIndex: "studentId",
       key: "studentId",
     },
     {
-      title: "Name",
+      title: "Họ và tên",
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Birth Date",
+      title: "Ngày sinh",
       dataIndex: "birthdate",
       key: "birthdate",
       render: (date: string) => new Date(date).toLocaleDateString(),
     },
     {
-      title: "Class",
+      title: "Lớp",
       dataIndex: ["class", "name"], // Assuming class has a 'name' field
       key: "class",
     },
@@ -104,7 +104,6 @@ const StudentPage = () => {
       style={{
         background: "white",
         padding: "20px",
-        minHeight: "100vh", // Ensure the layout takes the full height of the screen
       }}
     >
       <div className="w-full ">

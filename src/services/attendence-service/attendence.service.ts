@@ -1,48 +1,34 @@
 // attendence.service.ts
+
+import { Attendance } from "../../models/attendance.model";
 import axiosInstance from "../../utils/axiosInstance";
 
-// Define interface for Student
-export interface Student {
-  id: number;
-  studentId: string;
-  name: string;
-  email: string;
-  gender: string | null;
-  birthdate: string;
-  phone: string | null;
-}
-
-// Define interface for AttendanceStatus
-export interface AttendanceStatus {
-  student: Student;
-  status: number;
-  note: string | null;
-}
-
-// Define interface for AttendanceResponse
-export interface AttendanceResponse {
-  attendances: AttendanceStatus[];
-  total: number;
-}
-
-// Service to get attendance status by schedule
 export const getAttendanceStatus = async (
   scheduleId: string,
-): Promise<AttendanceResponse> => {
+): Promise<Attendance[]> => {
   try {
-    // Send GET request to API to get attendance status by scheduleId
-    const response = await axiosInstance.get<AttendanceResponse>(
+    const response = await axiosInstance.get<Attendance[]>(
       `attendance/schedule/${scheduleId}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
     );
-
     return response.data;
   } catch (error) {
     console.error("Error fetching attendance status:", error);
+    throw error;
+  }
+};
+
+
+export const markMultipleAttendance = async (
+  attendanceStatuses: any[],
+): Promise<any[]> => {
+  try {
+    const response = await axiosInstance.post<any[]>(
+      `attendance/mark/multiple`,
+      attendanceStatuses,
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error marking multiple attendance:", error);
     throw error;
   }
 };

@@ -1,8 +1,8 @@
-import { Col, Row } from "antd";
+import { Col, Row, Empty } from "antd";
 import ClassItem from "./ClassItem";
 
 const ClassList = ({ classes, onSuccess }) => {
-  return (
+  return classes.length > 0 ? (
     <Row gutter={[16, 16]}>
       {classes.map((classItem, index) => (
         <Col
@@ -23,6 +23,8 @@ const ClassList = ({ classes, onSuccess }) => {
         </Col>
       ))}
     </Row>
+  ) : (
+    <Empty description="Không có lớp học nào" />
   );
 };
 

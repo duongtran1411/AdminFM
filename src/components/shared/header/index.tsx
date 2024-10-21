@@ -1,12 +1,11 @@
 import {
   LogoutOutlined,
-  MessageOutlined,
   QuestionCircleOutlined,
   SearchOutlined,
   SettingOutlined,
-  UserOutlined,
+  UserOutlined
 } from "@ant-design/icons";
-import { Button, Dropdown, Input, Layout, MenuProps, Select } from "antd";
+import { Input, Layout, MenuProps, Select } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -129,7 +128,7 @@ const AppHeader = () => {
           />
         </div>
         <div className="flex items-center ">
-          <Select
+          {/* <Select
             value={selectedYear}
             onChange={handleYearChange}
             style={{ width: 150, marginRight: 16 }}
@@ -157,7 +156,7 @@ const AppHeader = () => {
                 color: iconColor,
               }}
             />
-          </Dropdown>
+          </Dropdown> */}
         </div>
       </Header>
       <Profile isModalVisible={isProfileVisible} hideModal={hideProfile} />
