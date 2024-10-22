@@ -10,7 +10,7 @@ const ActionButtons = ({ onNewClick }: Props) => {
       style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}
     >
       <Button type="primary" icon={<PlusOutlined />} onClick={onNewClick}>
-        New Student
+        Thêm mới Sinh viên
       </Button>
     </div>
   );

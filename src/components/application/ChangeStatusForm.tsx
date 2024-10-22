@@ -70,7 +70,7 @@ const ChangeStatusForm = ({
           <Radio.Group>
             {[
               "Chờ tiếp nhận",
-              "Điện ưu tiên",
+              "Diện ưu tiên",
               "Hồ sơ đạt tiêu chí",
               "Không đạt tiêu chí",
             ].map((status, index) => (

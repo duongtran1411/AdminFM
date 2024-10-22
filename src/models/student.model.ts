@@ -10,7 +10,7 @@ export interface StudentClass {
 
 export interface Freshmen {
   id: number;
-  studentId: number;
+  studentId: string;
   name: string;
   birthDate: Date;
   coursesFamily: CoursesFamily;

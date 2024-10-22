@@ -53,7 +53,7 @@ const AddTeacherForm = ({
     };
     await teacherService.create(newTeacher);
     onTeacherCreated();
-    notification.success({ message: "Teacher created successfully!" });
+    notification.success({ message: "Thêm mới giảng viên thành công!" });
     form.resetFields();
     hideModal();
   };

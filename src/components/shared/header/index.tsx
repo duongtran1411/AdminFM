@@ -6,7 +6,7 @@ import {
   SettingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Button, Dropdown, Input, Layout, MenuProps, Select } from "antd";
+import { Button, Dropdown, Input, Layout, MenuProps } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +16,6 @@ import { RootState } from "../../../redux/store";
 import Profile from "../../users/Profile";
 
 const { Header } = Layout;
-const { Option } = Select;
 
 const items: MenuProps["items"] = [
   {
@@ -81,12 +80,7 @@ const AppHeader = () => {
     }
   };
 
-  const [selectedYear, setSelectedYear] = useState<string>("2019 - 2020");
-
-  const handleYearChange = (value: string) => {
-    setSelectedYear(value);
-    // You can add additional logic here, such as fetching data for the selected year
-  };
+ 
 
   useEffect(() => {
     const handleScroll = () => {
@@ -129,7 +123,7 @@ const AppHeader = () => {
           />
         </div>
         <div className="flex items-center ">
-          <Select
+          {/* <Select
             value={selectedYear}
             onChange={handleYearChange}
             style={{ width: 150, marginRight: 16 }}
@@ -138,7 +132,7 @@ const AppHeader = () => {
             <Option value="2020 - 2021">2020 - 2021</Option>
             <Option value="2021 - 2022">2021 - 2022</Option>
             <Option value="2022 - 2023">2022 - 2023</Option>
-          </Select>
+          </Select> */}
           <Button
             icon={<MessageOutlined />}
             type="text"

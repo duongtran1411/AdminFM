@@ -1,5 +1,5 @@
 import { EditOutlined } from "@ant-design/icons";
-import { Button } from "antd";
+import { Button, Checkbox } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AddApplicationButton from "../../components/application/AddApplicationButton";
@@ -59,8 +59,7 @@ const ApplicationPage = () => {
   const columns = [
     {
       title: (
-        <input
-          type="checkbox"
+        <Checkbox
           onChange={() => {
             if (
               selectedApplicationIds.length === applicationResponse?.data.length
@@ -82,8 +81,7 @@ const ApplicationPage = () => {
       dataIndex: "select",
       key: "select",
       render: (_, record) => (
-        <input
-          type="checkbox"
+        <Checkbox
           checked={selectedApplicationIds.includes(record.id)}
           onChange={() => handleSelect(record.id)}
         />

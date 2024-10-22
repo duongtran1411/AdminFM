@@ -35,10 +35,12 @@ const ClassPage = () => {
   }
 
   return (
-    <>
-      <ClassList classes={classesData} onSuccess={fetchClasses} />
-      <FloatButtonGroup onSuccess={fetchClasses} />
-    </>
+    <div style={{ position: "relative" }}>
+      <FloatButtonGroup onSuccess={fetchClasses} /> 
+      <div style={{ marginTop: 24 }}>
+        <ClassList classes={classesData} onSuccess={fetchClasses} />
+      </div>
+    </div>
   );
 };
 

@@ -1,15 +1,15 @@
-import { FileExcelOutlined, FormOutlined } from "@ant-design/icons";
-import { FloatButton, message, Tooltip } from "antd";
+import { FileExcelOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import { Button, message, Tooltip } from "antd";
 import { RcFile } from "antd/es/upload";
-import { FaPlus } from "react-icons/fa";
 import useModals from "../../hooks/useModal";
+import { Response } from "../../models/response.model";
 import classService, {
   ClassResponse,
 } from "../../services/class-service/class.service";
 import { uploadFile } from "../../services/upload-service/upload.service";
 import ImportForm from "../shared/ImportForm";
 import AddClassForm from "./AddClassForm";
-import { Response } from "../../models/response.model";
+
 const FloatButtonGroup = ({ onSuccess }: { onSuccess: () => void }) => {
   const handleUpload = async (file: RcFile) => {
     try {
@@ -35,27 +35,30 @@ const FloatButtonGroup = ({ onSuccess }: { onSuccess: () => void }) => {
   };
 
   const { showModal, hideModal, isVisible } = useModals();
+
   return (
     <>
-      <FloatButton.Group
-        trigger="click"
-        type="primary"
-        style={{ insetInlineEnd: 24 }}
-        icon={<FaPlus />}
-      >
-        <Tooltip title="Import Excel" placement="left">
-          <FloatButton
+      <div style={{ position: "fixed", top: 100, right: 24, zIndex: 1000 }}>
+        <Tooltip>
+          <Button
+            type="primary"
             icon={<FileExcelOutlined />}
             onClick={() => showModal("importClassExcel")}
-          />
+            style={{ marginRight: 8 }}
+          >
+            Import Excel
+          </Button>
         </Tooltip>
-        <Tooltip title="Add" placement="left">
-          <FloatButton
-            icon={<FormOutlined />}
+        <Tooltip>
+          <Button
+            type="primary"
+            icon={<PlusCircleOutlined />}
             onClick={() => showModal("addClassModal")}
-          />
+          >
+            Thêm lớp
+          </Button>
         </Tooltip>
-      </FloatButton.Group>
+      </div>
 
       <ImportForm
         isModalVisible={isVisible("importClassExcel")}

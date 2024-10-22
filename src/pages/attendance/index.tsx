@@ -1,4 +1,12 @@
-import { Button, Checkbox, Input, Layout, notification, Table } from "antd";
+import {
+  Button,
+  Checkbox,
+  Input,
+  Layout,
+  notification,
+  Table,
+  Modal,
+} from "antd";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -65,28 +73,51 @@ const AttendancePage = () => {
   };
 
   const handleSubmit = async () => {
-    if (!attendanceData) return;
+    // Hiển thị modal xác nhận
+    Modal.confirm({
+      title: "Xác nhận lưu điểm danh",
+      content: "Bạn có chắc chắn muốn lưu trạng thái điểm danh này?",
+      onOk: async () => {
+        if (!attendanceData) return;
 
-    setLoading(true); // Bắt đầu loading
+        setLoading(true); // Bắt đầu loading
 
-    try {
-      const attendanceDataToSubmit = attendanceData.map((attendance) => ({
-        status: attendance.status,
-        note: attendance.note,
-        teacherId: attendance.teacher.id,
-        classId: attendance.class.id,
-        scheduleId: Number(scheduleId),
-        studentId: attendance.student.id,
-      }));
-      await markMultipleAttendance(attendanceDataToSubmit);
-      notification.success({
-        message: "Điểm danh thành công!",
-      });
-    } catch (error) {
-      notification.error({ message: "Lỗi trạng thái khi điểm danh!" });
-    } finally {
-      setLoading(false); 
-    }
+        try {
+          const attendanceDataToSubmit = attendanceData.map((attendance) => ({
+            status: attendance.status,
+            note: attendance.note,
+            teacherId: attendance.teacher.id,
+            classId: attendance.class.id,
+            scheduleId: Number(scheduleId),
+            studentId: attendance.student.id,
+          }));
+          await markMultipleAttendance(attendanceDataToSubmit);
+          notification.success({
+            message: "Điểm danh thành công!",
+          });
+        } catch (error) {
+          notification.error({ message: "Lỗi trạng thái khi điểm danh!" });
+        } finally {
+          setLoading(false);
+        }
+      },
+      onCancel() {
+        console.log("Đã hủy lưu điểm danh.");
+      },
+    });
+  };
+
+  const markAllAsPresent = () => {
+    const areAllPresent = attendanceData.every(
+      (attendance) => attendance.status === 1,
+    );
+
+    const updatedAttendanceData = attendanceData.map((attendance) => ({
+      ...attendance,
+      status: areAllPresent ? 0 : 1,
+    }));
+
+    setAttendanceData(updatedAttendanceData);
   };
 
   const columns = [
@@ -189,8 +220,15 @@ const AttendancePage = () => {
           pagination={false}
         />
         <div className="flex justify-end mt-4">
+          <Button
+            type="default"
+            onClick={markAllAsPresent}
+            style={{ marginRight: 8 }}
+          >
+            Điểm danh tất cả
+          </Button>
           <Button type="primary" onClick={handleSubmit}>
-            Điểm Danh
+            Lưu
           </Button>
         </div>
       </div>

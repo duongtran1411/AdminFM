@@ -4,7 +4,6 @@ import { Freshmen, Student } from "../../models/student.model";
 import { Response } from "../../models/response.model";
 
 class StudentService {
-  // Tạo một student mới
   async create(studentList: Student): Promise<Response<Student>> {
     try {
       const response: AxiosResponse<Response<Student>> =
@@ -12,16 +11,6 @@ class StudentService {
       return response.data;
     } catch (error: any) {
       throw new Error("Error creating student: " + error.message);
-    }
-  }
-
-  async createFreshmen(freshmen: Freshmen): Promise<Response<Freshmen>> {
-    try {
-      const response: AxiosResponse<Response<Freshmen>> =
-        await axiosInstance.post("/students", freshmen);
-      return response.data;
-    } catch (error: any) {
-      throw new Error("Error creating freshmen: " + error.message);
     }
   }
 
@@ -47,17 +36,6 @@ class StudentService {
     }
   }
 
-  // Lấy một student theo ID
-  async findOne(id: number): Promise<Response<Student>> {
-    try {
-      const response: AxiosResponse<Response<Student>> =
-        await axiosInstance.get(`/students/${id}`);
-      return response.data;
-    } catch (error: any) {
-      throw new Error("Error fetching student: " + error.message);
-    }
-  }
-
   // Cập nhật một student theo ID
   async update(id: number, studentList: Student): Promise<Response<Student>> {
     try {
@@ -77,6 +55,22 @@ class StudentService {
       return response.data;
     } catch (error: any) {
       throw new Error("Error deleting student: " + error.message);
+    }
+  }
+
+  async createStudentWithClass(
+    classId: number,
+    studentIds: number[],
+  ): Promise<Response<Student[]>> {
+    try {
+      const response: AxiosResponse<Response<Student[]>> =
+        await axiosInstance.post("/students/assign-class", {
+          classId,
+          studentId: studentIds,
+        });
+      return response.data;
+    } catch (error: any) {
+      throw new Error("Lỗi khi gán sinh viên vào lớp: " + error.message);
     }
   }
 }

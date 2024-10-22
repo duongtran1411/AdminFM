@@ -1,13 +1,13 @@
 import { HomeOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
 import { ItemType, MenuItemType } from "antd/es/menu/interface";
+import { AiFillBank, AiOutlineFolder } from "react-icons/ai";
 import { FaChalkboardTeacher, FaRegUser } from "react-icons/fa";
-import { SiGoogleclassroom } from "react-icons/si";
 import { HiAcademicCap } from "react-icons/hi2";
+import { LuBookCopy, LuBookMarked } from "react-icons/lu";
+import { SiGoogleclassroom } from "react-icons/si";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "../../../contexts/ThemeContext";
-import { AiFillBank, AiOutlineFolder } from "react-icons/ai";
-import { LuBookCopy, LuBookMarked } from "react-icons/lu";
 
 const DashBoardMenuList = () => {
   const { theme, colorBgContainer } = useTheme();
@@ -36,6 +36,7 @@ const DashBoardMenuList = () => {
 
   const menuItems: ItemType<MenuItemType>[] = [
     { key: "dashboards", icon: <HomeOutlined />, label: "Dashboards" },
+    { key: "users", icon: <FaRegUser />, label: "Users" },
     {
       key: "tuyensinh",
       label: "Tuyển Sinh",
@@ -56,18 +57,17 @@ const DashBoardMenuList = () => {
           icon: <LuBookCopy />,
           label: "CT Ưu Đãi",
         },
-        { key: "students", icon: <FaChalkboardTeacher />, label: "Xét tuyển" },
+        { key: "students", icon: <FaChalkboardTeacher />, label: "DS Nhập học" },
       ],
     },
-    { key: "users", icon: <FaRegUser />, label: "Users" },
-    { key: "teachers", icon: <FaChalkboardTeacher />, label: "Teachers" },
     {
       key: "center",
       label: "Center",
       icon: <AiFillBank />,
       children: [
-        { key: "building", icon: <SiGoogleclassroom />, label: "Building" },
-        { key: "classes", icon: <SiGoogleclassroom />, label: "Classes" },
+        { key: "building", icon: <SiGoogleclassroom />, label: "Toà nhà" },
+        { key: "classes", icon: <SiGoogleclassroom />, label: "Lớp học" },
+        { key: "teachers", icon: <FaChalkboardTeacher />, label: "Giảng viên" },
       ],
     },
     {

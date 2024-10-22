@@ -1,9 +1,9 @@
-import { DatePicker, Form, Input, Modal, notification } from "antd";
-import dayjs from "dayjs";
-import { useEffect } from "react";
+import { Form, Modal, notification, Select } from "antd";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Freshmen } from "../../models/student.model";
 import { studentService } from "../../services/student-service/student.service";
-import { Student } from "../../models/student.model";
+import Loading from "../common/loading";
 
 interface Props {
   isModalVisible: boolean;
@@ -18,76 +18,90 @@ const CreateStudentForm = ({
 }: Props) => {
   const [form] = Form.useForm();
   const { classId } = useParams();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [freshman, setFreshman] = useState<Freshmen[]>([]);
+  const [filteredFreshman, setFilteredFreshman] = useState<Freshmen[]>([]);
 
-  // Xử lý khi nhấn nút "OK"
-  const handleOk = async () => {
+  const fetchFreshman = async () => {
     try {
-      const values = await form.validateFields();
-      const birthDate = dayjs(values.birthDate).format("DD-MM-YYYY");
-      const newStudent: Student = {
-        ...values,
-        birthDate,
-        class: classId,
-      };
-      await studentService.create(newStudent);
-      // Cập nhật danh sách sinh viên bằng cách thêm sinh viên mới
-      onStudentCreated(); // Gọi hàm callback từ `StudentPage` để thêm sinh viên mới vào danh sách
-      notification.success({ message: "Student created successfully!" });
-      form.resetFields();
-      hideModal();
-    } catch (info) {
-      console.log("Validate Failed:", info);
+      const data = await studentService.findStudentsWithoutClass();
+      setFreshman(data.data);
+      setFilteredFreshman(data.data);
+    } catch (error) {
+      setError("Lỗi khi lọc sinh viên");
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    // Set giá trị cho trường `classId` khi form mở
+    fetchFreshman();
+  }, []);
+
+  useEffect(() => {
     form.setFieldsValue({ classId });
   }, [classId, form]);
 
+  const handleSearch = (value: string) => {
+    const searchResult = freshman.filter(
+      (f) =>
+        f.name.toLowerCase().includes(value.toLowerCase()) ||
+        f.studentId.toLowerCase().includes(value.toLowerCase()),
+    );
+    setFilteredFreshman(searchResult);
+  };
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
+
+  const handleSubmit = async () => {
+    try {
+      const selectedStudentIds = form.getFieldValue("students");
+      await studentService.createStudentWithClass(
+        Number(classId),
+        selectedStudentIds,
+      );
+      notification.success({ message: "Thêm mới sinh viên thành công!" });
+      form.resetFields();
+      onStudentCreated();
+      hideModal();
+    } catch (error) {
+      setError("Lỗi khi tạo sinh viên trong lớp: " + error);
+    }
+  };
+
   return (
     <Modal
-      title="Create New Student"
+      title="Thêm mới sinh viên"
       open={isModalVisible}
-      onOk={handleOk}
       onCancel={hideModal}
-      okText="Create"
-      cancelText="Cancel"
+      okText="Tạo mới"
+      onOk={handleSubmit}
+      cancelText="Huỷ"
       centered
     >
       <Form form={form} layout="vertical">
-        <Form.Item
-          name="studentId"
-          label="Student ID"
-          rules={[{ required: true, message: "Please input the student ID!" }]}
-        >
-          <Input placeholder="Enter student ID" />
-        </Form.Item>
-
-        <Form.Item
-          name="name"
-          label="Name"
-          rules={[
-            { required: true, message: "Please input the student's name!" },
-          ]}
-        >
-          <Input placeholder="Enter student's name" />
-        </Form.Item>
-
-        <Form.Item
-          name="birthDate"
-          label="Birth Date"
-          rules={[
-            {
-              required: true,
-              message: "Please input the student's birth date!",
-            },
-          ]}
-        >
-          <DatePicker
-            format="YYYY-MM-DD"
-            style={{ width: "100%" }} // Full width
-          />
+        <Form.Item name="students" label="Chọn Sinh Viên">
+          <Select
+            mode="multiple"
+            placeholder="Tìm kiếm và chọn Sinh Viên"
+            style={{ width: "100%", marginTop: "10px" }}
+            showSearch
+            onSearch={handleSearch}
+            filterOption={false}
+          >
+            {filteredFreshman.map((f) => (
+              <Select.Option key={f.id} value={f.id}>
+                {f.name} - {f.studentId}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
       </Form>
     </Modal>

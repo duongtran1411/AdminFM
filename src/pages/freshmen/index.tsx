@@ -5,6 +5,7 @@ import FreshmenTable from "../../components/student/FreshmenTable";
 import useModals from "../../hooks/useModal";
 import { Freshmen } from "../../models/student.model";
 import { studentService } from "../../services/student-service/student.service";
+import Loading from "../../components/common/loading";
 
 const FreshmenPageList = () => {
   const { isVisible, showModal, hideModal } = useModals();
@@ -81,7 +82,6 @@ const FreshmenPageList = () => {
     const student = students.find((s) => s.id === id);
     if (student) {
       setSelectedStudent(student);
-      console.log(student);
       showModal("editFreshmen");
     }
   };
@@ -95,16 +95,13 @@ const FreshmenPageList = () => {
   };
 
   if (loading) {
-    return <p>Loading students...</p>;
+    return <Loading />;
   }
 
   if (error) {
     return <p>{error}</p>;
   }
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
   return (
     <div
       style={{

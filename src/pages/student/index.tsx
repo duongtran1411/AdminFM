@@ -117,7 +117,7 @@ const StudentPage = () => {
         <CreateStudentForm
           isModalVisible={isVisible("createStudent")}
           hideModal={() => hideModal("createStudent")}
-          onStudentCreated={onCreateSuccess} // Truyền hàm callback
+          onStudentCreated={onCreateSuccess} 
         />
         <StudentTable
           columns={columns}
