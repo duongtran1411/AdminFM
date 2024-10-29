@@ -42,6 +42,21 @@ class AttachedDocumentService {
       throw error;
     }
   }
+
+  async viewFileByApplicationId(applicationId: number): Promise<Blob> {
+    try {
+      const response = await axiosInstance.get<Blob>(
+        `/attacheddocuments/view/${applicationId}`,
+        {
+          responseType: "blob",
+        },
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error viewing file by application ID:", error);
+      throw error;
+    }
+  }
 }
 
 export default new AttachedDocumentService();
