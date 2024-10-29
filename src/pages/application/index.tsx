@@ -1,18 +1,18 @@
-import { EditOutlined } from "@ant-design/icons";
-import { Button, Checkbox } from "antd";
+import { Checkbox } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AddApplicationButton from "../../components/application/AddApplicationButton";
 import ApplicationTable from "../../components/application/ApplicationTable";
+import ButtonChangeStatus from "../../components/application/ButtonChangeStatus";
+import ChangeStatusForm from "../../components/application/ChangeStatusForm";
+import EditApplicationForm from "../../components/application/EditApplicationForm";
 import Loading from "../../components/common/loading";
 import TabsMenu from "../../components/student/TabsMenu";
+import useModals from "../../hooks/useModal";
 import { Application } from "../../models/application.model";
 import { Response } from "../../models/response.model";
 import applicationService from "../../services/application-service/application.service";
-import useModals from "../../hooks/useModal";
-import EditApplicationForm from "../../components/application/EditApplicationForm";
-import ButtonChangeStatus from "../../components/application/ButtonChangeStatus";
-import ChangeStatusForm from "../../components/application/ChangeStatusForm";
+import attachedDocumentService from "../../services/attached-document-service/attached.document.service";
 
 const ApplicationPage = () => {
   const navigate = useNavigate();
@@ -55,6 +55,14 @@ const ApplicationPage = () => {
       }
     });
   };
+
+  // const handleViewDocument = (id: number) => {
+  //   const application = applicationResponse?.data.find((s) => s.id === id);
+  //   if (application) {
+  //     setSelectedApplication(application);
+  //     showModal("viewDocument");
+  //   }
+  // };
 
   const columns = [
     {
@@ -123,13 +131,6 @@ const ApplicationPage = () => {
       dataIndex: "status",
       key: "status",
     },
-    {
-      title: "",
-      key: "actions",
-      render: (_, record) => (
-        <Button icon={<EditOutlined />} onClick={() => handleEdit(record.id)} />
-      ),
-    },
   ];
 
   const handleEdit = (id: number) => {
@@ -140,6 +141,15 @@ const ApplicationPage = () => {
     }
   };
 
+  const handleDownload = async () => {
+    try {
+      await attachedDocumentService.downloadFilesByApplicationId(
+        selectedApplication?.id,
+      );
+    } catch (error) {
+      console.error("Error downloading files:", error);
+    }
+  };
   const onUpdateSuccess = () => {
     fetchApplication();
     setSelectedApplicationIds([]);
@@ -189,6 +199,9 @@ const ApplicationPage = () => {
         <ApplicationTable
           data={applicationResponse?.data || []}
           columns={columns}
+          // onView={handleViewDocument}
+          onEdit={handleEdit}
+          onDownload={handleDownload}
         />
       </div>
       <ChangeStatusForm
@@ -203,6 +216,11 @@ const ApplicationPage = () => {
         application={selectedApplication}
         onUpdate={onUpdateSuccess}
       />
+      {/* <ViewDocumentModal
+        applicationId={selectedApplication?.id}
+        hideModal={() => hideModal("viewDocument")}
+        visible={isVisible("viewDocument")}
+      /> */}
     </div>
   );
 };

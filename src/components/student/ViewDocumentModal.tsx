@@ -3,15 +3,15 @@ import React, { useEffect, useState } from "react";
 import attachedDocumentService from "../../services/attached-document-service/attached.document.service";
 
 interface ViewDocumentModalProps {
-  applicationId: number;
+  applicationId: number | undefined;
   visible: boolean;
-  onClose: () => void;
+  hideModal: () => void;
 }
 
 const ViewDocumentModal: React.FC<ViewDocumentModalProps> = ({
   applicationId,
   visible,
-  onClose,
+  hideModal,
 }) => {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
@@ -38,7 +38,7 @@ const ViewDocumentModal: React.FC<ViewDocumentModalProps> = ({
     <Modal
       title="View PDF Document"
       visible={visible}
-      onCancel={onClose}
+      onCancel={hideModal}
       footer={null}
       width="80%"
     >

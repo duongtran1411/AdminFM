@@ -1,17 +1,13 @@
 import { useEffect, useState } from "react";
 import Loading from "../../components/common/loading";
 import FreshmenTable from "../../components/student/FreshmenTable";
-import useModals from "../../hooks/useModal";
 import { Freshmen } from "../../models/student.model";
 import { studentService } from "../../services/student-service/student.service";
-import ViewDocumentModal from "../../components/student/ViewDocumentModal";
 
 const FreshmenPageList = () => {
-  const { isVisible, showModal, hideModal } = useModals();
   const [students, setStudents] = useState<Freshmen[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedStudent, setSelectedStudent] = useState<Freshmen | null>(null);
 
   const fetchStudents = async () => {
     try {
@@ -62,14 +58,6 @@ const FreshmenPageList = () => {
     },
   ];
 
-  const handleViewDocument = (id: number) => {
-    const student = students.find((s) => s.id === id);
-    if (student) {
-      setSelectedStudent(student);
-      showModal("viewDocument");
-    }
-  };
-
   if (loading) {
     return <Loading />;
   }
@@ -97,20 +85,7 @@ const FreshmenPageList = () => {
         ></div>
 
         {/* Freshmen Data Table */}
-        <FreshmenTable
-          columns={columns}
-          data={students}
-          onView={handleViewDocument}
-        />
-
-        {/* View Document Modal */}
-        {selectedStudent && (
-          <ViewDocumentModal
-            applicationId={selectedStudent.id}
-            visible={isVisible("viewDocument")}
-            onClose={() => hideModal("viewDocument")}
-          />
-        )}
+        <FreshmenTable columns={columns} data={students} />
       </div>
     </div>
   );

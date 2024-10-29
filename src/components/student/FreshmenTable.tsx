@@ -1,15 +1,12 @@
-import { EyeOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Table } from "antd";
+import { Table } from "antd";
 import { useEffect, useRef, useState } from "react";
-import { CiMenuKebab } from "react-icons/ci";
 
 interface DataTableProps {
   data: any[];
   columns: any[];
-  onView: (id: any) => void;
 }
 
-const FreshmenTable = ({ data, columns, onView }: DataTableProps) => {
+const FreshmenTable = ({ data, columns }: DataTableProps) => {
   const tableRef = useRef<HTMLDivElement>(null);
   const [canScroll, setCanScroll] = useState(false);
 
@@ -29,30 +26,6 @@ const FreshmenTable = ({ data, columns, onView }: DataTableProps) => {
     };
   }, []);
 
-  const actionMenu = (record) => ({
-    items: [
-      {
-        key: "view",
-        label: <span>View</span>,
-        icon: <EyeOutlined />,
-        onClick: () => onView(record.id),
-      },
-    ],
-  });
-
-  const extendedColumns = [
-    ...columns,
-    {
-      title: "Action",
-      key: "action",
-      render: (record) => (
-        <Dropdown menu={actionMenu(record)} trigger={["click"]}>
-          <Button icon={<CiMenuKebab />} type="text" />
-        </Dropdown>
-      ),
-    },
-  ];
-
   const dataSource = data.map((item) => ({
     ...item,
     key: item.id,
@@ -65,11 +38,7 @@ const FreshmenTable = ({ data, columns, onView }: DataTableProps) => {
         canScroll ? "scrollbar-thin" : "scrollbar-none"
       } overflow-x-auto`}
     >
-      <Table
-        columns={extendedColumns}
-        dataSource={dataSource}
-        pagination={false}
-      />
+      <Table columns={columns} dataSource={dataSource} pagination={false} />
     </div>
   );
 };

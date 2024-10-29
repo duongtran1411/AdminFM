@@ -43,7 +43,9 @@ class AttachedDocumentService {
     }
   }
 
-  async viewFileByApplicationId(applicationId: number): Promise<Blob> {
+  async viewFileByApplicationId(
+    applicationId: number | undefined,
+  ): Promise<Blob> {
     try {
       const response = await axiosInstance.get<Blob>(
         `/attacheddocuments/view/${applicationId}`,
@@ -55,6 +57,29 @@ class AttachedDocumentService {
     } catch (error) {
       console.error("Error viewing file by application ID:", error);
       throw error;
+    }
+  }
+
+  async downloadFilesByApplicationId(
+    applicationId: number | undefined,
+  ): Promise<void> {
+    try {
+      const response = await axiosInstance.get(
+        `/attacheddocuments/download/${applicationId}`,
+        {
+          responseType: "blob",
+        },
+      );
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `document_${applicationId}.zip`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error downloading files:", error);
     }
   }
 }

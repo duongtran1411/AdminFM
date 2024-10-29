@@ -1,12 +1,23 @@
-import { Table } from "antd";
+import { DownloadOutlined, EditOutlined } from "@ant-design/icons";
+import { Button, Dropdown, Table } from "antd";
 import { useEffect, useRef, useState } from "react";
+import { CiMenuKebab } from "react-icons/ci";
 
 interface DataApplicationProps {
   data: any[];
   columns: any[];
+  // onView: (id: any) => void;
+  onEdit: (id: any) => void;
+  onDownload: (id: any) => void;
 }
 
-const ApplicationTable = ({ data, columns }: DataApplicationProps) => {
+const ApplicationTable = ({
+  data,
+  columns,
+  // onView,
+  onEdit,
+  onDownload,
+}: DataApplicationProps) => {
   const tableRef = useRef<HTMLDivElement>(null);
   const [canScroll, setCanScroll] = useState(false);
 
@@ -26,6 +37,42 @@ const ApplicationTable = ({ data, columns }: DataApplicationProps) => {
     };
   }, []);
 
+  const actionMenu = (record) => ({
+    items: [
+      // {
+      //   key: "view",
+      //   label: <span>View</span>,
+      //   icon: <EyeOutlined />,
+      //   onClick: () => onView(record.id),
+      // },
+      {
+        key: "edit",
+        label: <span>Edit</span>,
+        icon: <EditOutlined />,
+        onClick: () => onEdit(record.id),
+      },
+      {
+        key: "download",
+        label: <span>Download</span>,
+        icon: <DownloadOutlined />,
+        onClick: () => onDownload(record.id),
+      },
+    ],
+  });
+
+  const extendedColumns = [
+    ...columns,
+    {
+      title: "Action",
+      key: "action",
+      render: (record) => (
+        <Dropdown menu={actionMenu(record)} trigger={["click"]}>
+          <Button icon={<CiMenuKebab />} type="text" />
+        </Dropdown>
+      ),
+    },
+  ];
+
   const dataSource = data.map((item) => ({
     ...item,
     key: item.id,
@@ -41,8 +88,9 @@ const ApplicationTable = ({ data, columns }: DataApplicationProps) => {
       <Table
         dataSource={dataSource}
         pagination={false}
-        columns={columns.map((col) => ({
+        columns={extendedColumns.map((col) => ({
           ...col,
+
           className: "border border-gray-300",
         }))}
         rowClassName={(_, index) =>
