@@ -50,7 +50,7 @@ const FreshmenPageList = () => {
       key: "coursesFamily",
     },
     {
-      title: "Hộ khẩu thường chú",
+      title: "Hộ khẩu thường trú",
       dataIndex: "permanentResidence",
       key: "permanentResidence",
     },
