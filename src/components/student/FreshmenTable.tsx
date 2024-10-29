@@ -1,14 +1,15 @@
-import { Table } from "antd";
+import { EyeOutlined } from "@ant-design/icons";
+import { Button, Dropdown, Table } from "antd";
 import { useEffect, useRef, useState } from "react";
+import { CiMenuKebab } from "react-icons/ci";
 
 interface DataTableProps {
   data: any[];
   columns: any[];
-  onEdit: (id: any) => void; // Update to receive studentId
-  onDelete: (id: any) => void; // Update to receive studentId
+  onView: (id: any) => void;
 }
 
-const FreshmenTable = ({ data, columns }: DataTableProps) => {
+const FreshmenTable = ({ data, columns, onView }: DataTableProps) => {
   const tableRef = useRef<HTMLDivElement>(null);
   const [canScroll, setCanScroll] = useState(false);
 
@@ -28,34 +29,28 @@ const FreshmenTable = ({ data, columns }: DataTableProps) => {
     };
   }, []);
 
-  // const actionMenu = (record) => ({
-  //   items: [
-  //     {
-  //       key: "edit",
-  //       label: "Edit",
-  //       icon: <EditOutlined />,
-  //       onClick: () => onEdit(record.id),
-  //     },
-  //     {
-  //       key: "delete",
-  //       label: <span style={{ color: "red" }}>Delete</span>,
-  //       icon: <DeleteOutlined style={{ color: "red" }} />,
-  //       onClick: () => onDelete(record.id),
-  //     },
-  //   ],
-  // });
+  const actionMenu = (record) => ({
+    items: [
+      {
+        key: "view",
+        label: <span>View</span>,
+        icon: <EyeOutlined />,
+        onClick: () => onView(record.id),
+      },
+    ],
+  });
 
   const extendedColumns = [
     ...columns,
-    // {
-    //   title: "Action",
-    //   key: "action",
-    //   render: (record) => (
-    //     <Dropdown menu={actionMenu(record)} trigger={["click"]}>
-    //       <Button icon={<CiMenuKebab />} type="text" />
-    //     </Dropdown>
-    //   ),
-    // },
+    {
+      title: "Action",
+      key: "action",
+      render: (record) => (
+        <Dropdown menu={actionMenu(record)} trigger={["click"]}>
+          <Button icon={<CiMenuKebab />} type="text" />
+        </Dropdown>
+      ),
+    },
   ];
 
   const dataSource = data.map((item) => ({

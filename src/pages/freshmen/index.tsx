@@ -1,11 +1,10 @@
-import { Modal, notification } from "antd";
 import { useEffect, useState } from "react";
-import EditFreshmenForm from "../../components/student/EditFreshmenForm";
+import Loading from "../../components/common/loading";
 import FreshmenTable from "../../components/student/FreshmenTable";
 import useModals from "../../hooks/useModal";
 import { Freshmen } from "../../models/student.model";
 import { studentService } from "../../services/student-service/student.service";
-import Loading from "../../components/common/loading";
+import ViewDocumentModal from "../../components/student/ViewDocumentModal";
 
 const FreshmenPageList = () => {
   const { isVisible, showModal, hideModal } = useModals();
@@ -13,6 +12,7 @@ const FreshmenPageList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedStudent, setSelectedStudent] = useState<Freshmen | null>(null);
+
   const fetchStudents = async () => {
     try {
       const data = await studentService.findStudentsWithoutClass();
@@ -23,6 +23,7 @@ const FreshmenPageList = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchStudents();
   }, []);
@@ -61,37 +62,12 @@ const FreshmenPageList = () => {
     },
   ];
 
-  const handleDelete = async (id: number) => {
-    Modal.confirm({
-      title: "Are you sure you want to delete this student?",
-      okText: "Delete",
-      okType: "danger",
-      onOk: async () => {
-        try {
-          await studentService.remove(id);
-          setStudents(students.filter((student) => student.id !== id));
-          notification.success({ message: "Student deleted successfully" });
-        } catch (error) {
-          notification.error({ message: "Error deleting student" });
-        }
-      },
-    });
-  };
-
-  const handleEdit = (id: number) => {
+  const handleViewDocument = (id: number) => {
     const student = students.find((s) => s.id === id);
     if (student) {
       setSelectedStudent(student);
-      showModal("editFreshmen");
+      showModal("viewDocument");
     }
-  };
-
-  // const onCreateSuccess = () => {
-  //   fetchStudents();
-  // };
-
-  const onUpdateSuccess = () => {
-    fetchStudents();
   };
 
   if (loading) {
@@ -118,44 +94,23 @@ const FreshmenPageList = () => {
             justifyContent: "flex-end",
             marginBottom: "16px",
           }}
-        >
-          {/* Buttons for adding and importing freshmen */}
-          {/* <ActionButtons
-            onNewClick={() => showModal("createFreshmen")}
-            onImportClick={() => showModal("importExcel")}
-          /> */}
-        </div>
-
-        {/* Search Input */}
-        {/* <Input.Search
-          placeholder="Tìm kiếm sinh viên..."
-          allowClear
-          // onSearch={handleSearch} // Uncomment and implement the search function if needed
-          style={{ width: 400, marginBottom: 16 }}
-        /> */}
-
-        {/* Create Freshmen modal */}
-        {/* <FreshmenCreateForm
-          isModalVisible={isVisible("createFreshmen")}
-          hideModal={() => hideModal("createFreshmen")}
-          onStudentCreated={onCreateSuccess}
-        /> */}
+        ></div>
 
         {/* Freshmen Data Table */}
         <FreshmenTable
           columns={columns}
           data={students}
-          onDelete={handleDelete}
-          onEdit={handleEdit}
+          onView={handleViewDocument}
         />
 
-        {/* Edit Freshmen modal */}
-        <EditFreshmenForm
-          isModalVisible={isVisible("editFreshmen")}
-          hideModal={() => hideModal("editFreshmen")}
-          freshmen={selectedStudent}
-          onUpdate={onUpdateSuccess}
-        />
+        {/* View Document Modal */}
+        {selectedStudent && (
+          <ViewDocumentModal
+            applicationId={selectedStudent.id}
+            visible={isVisible("viewDocument")}
+            onClose={() => hideModal("viewDocument")}
+          />
+        )}
       </div>
     </div>
   );
