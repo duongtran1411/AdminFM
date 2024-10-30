@@ -43,11 +43,6 @@ const DashBoardMenuList = () => {
       icon: <HiAcademicCap />,
       children: [
         {
-          key: "applicationdocument",
-          icon: <AiOutlineFolder />,
-          label: "Thành phần hồ sơ",
-        },
-        {
           key: "admission",
           icon: <LuBookCopy />,
           label: "CT Tuyển Sinh",
@@ -57,7 +52,16 @@ const DashBoardMenuList = () => {
           icon: <LuBookCopy />,
           label: "CT Ưu Đãi",
         },
-        { key: "students", icon: <FaChalkboardTeacher />, label: "DS Nhập học" },
+        {
+          key: "students",
+          icon: <FaChalkboardTeacher />,
+          label: "DS Nhập học",
+        },
+        {
+          key: "applicationdocument",
+          icon: <AiOutlineFolder />,
+          label: "Thành phần hồ sơ",
+        },
       ],
     },
     {

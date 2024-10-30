@@ -69,10 +69,9 @@ class AdmissionService {
     documentIds: number[],
   ): Promise<void> {
     try {
-      await axiosInstance.put(
-        `/admission-program/${admissionId}/documents`,
-        { applicationDocumentIds: documentIds },
-      );
+      await axiosInstance.put(`/admission-program/${admissionId}/documents`, {
+        applicationDocumentIds: documentIds,
+      });
     } catch (error) {
       console.error("Error updating documents in admission program:", error);
       throw error;

@@ -37,8 +37,10 @@ const AddAdmissionProgramForm: React.FC<AddAdmissionProgramFormProps> = ({
 
   useEffect(() => {
     const fetchApplicationDocuments = async () => {
-      const applicationDocuments = await applicationDocumentsService.getAll();
-      setApplicationDocuments(applicationDocuments.data);
+      const response = await applicationDocumentsService.getAll();
+      const documents = response.data;
+      setApplicationDocuments(documents);
+      setSelectedAdmissionProgram(documents.map((doc) => doc.id)); // Set all IDs as selected by default
     };
 
     if (open) {
@@ -155,7 +157,11 @@ const AddAdmissionProgramForm: React.FC<AddAdmissionProgramFormProps> = ({
           ]}
           valuePropName="checked"
         >
-          <Checkbox.Group onChange={handleChange} style={{ width: "100%" }}>
+          <Checkbox.Group
+            onChange={handleChange}
+            style={{ width: "100%" }}
+            value={selectedAdmissionProgram}
+          >
             {applicationDocuments.map((applicationDocument) => (
               <Checkbox
                 key={applicationDocument.id}

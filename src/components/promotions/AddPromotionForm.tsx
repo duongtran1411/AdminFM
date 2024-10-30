@@ -5,7 +5,6 @@ import {
   InputNumber,
   Modal,
   notification,
-  Select,
 } from "antd";
 import { Promotion } from "../../models/promotions.model";
 import PromotionsService from "../../services/promotions-service/promotions.service";
@@ -76,16 +75,6 @@ const AddPromotionForm: React.FC<AddPromotionFormProps> = ({
           <RangePicker />
         </Form.Item>
         <Form.Item
-          name="discountType"
-          label="Loại ưu đãi"
-          rules={[{ required: true }]}
-        >
-          <Select>
-            <Select.Option value="percentage">Giảm giá theo phần trăm</Select.Option>
-            <Select.Option value="fixed">Giảm giá cố định</Select.Option>
-          </Select>
-        </Form.Item>
-        <Form.Item
           name="discount"
           label="Mức ưu đãi"
           rules={[{ required: true }]}
@@ -99,13 +88,7 @@ const AddPromotionForm: React.FC<AddPromotionFormProps> = ({
         >
           <InputNumber min={0} />
         </Form.Item>
-        <Form.Item
-          name="condition"
-          label="Điều kiện"
-          rules={[{ required: true }]}
-        >
-          <Input />
-        </Form.Item>
+
         <Form.Item
           name="maxQuantity"
           label="Số lượng tối đa"
@@ -116,13 +99,6 @@ const AddPromotionForm: React.FC<AddPromotionFormProps> = ({
         <Form.Item
           name="registrationMethod"
           label="Phương thức đăng ký"
-          rules={[{ required: true }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="requiredDocument"
-          label="Hồ sơ yêu cầu"
           rules={[{ required: true }]}
         >
           <Input />

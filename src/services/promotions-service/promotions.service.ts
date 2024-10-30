@@ -5,7 +5,9 @@ import axiosInstance from "../../utils/axiosInstance";
 class PromotionsService {
   async getPromotions(): Promise<Response<Promotion[]>> {
     try {
-      const response = await axiosInstance.get<Response<Promotion[]>>("/promotions");
+      const response = await axiosInstance.get<Response<Promotion[]>>(
+        "/promotions",
+      );
       return response.data;
     } catch (error) {
       console.error("Error fetching promotions:", error);
@@ -13,9 +15,9 @@ class PromotionsService {
     }
   }
 
-  async getPromotionById(promotionId: number): Promise<Promotion> {
+  async getPromotionById(promotionId: number): Promise<Response<Promotion>> {
     try {
-      const response = await axiosInstance.get<Promotion>(
+      const response = await axiosInstance.get<Response<Promotion>>(
         `/promotions/${promotionId}`,
       );
       return response.data;

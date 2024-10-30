@@ -1,26 +1,16 @@
 import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
-import {
-  Button,
-  Dropdown,
-  Menu,
-  Modal,
-  notification,
-  Tag,
-  Tooltip,
-  Typography,
-} from "antd";
+import { Button, Modal, notification, Tag, Tooltip, Typography } from "antd";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { AiOutlineMore } from "react-icons/ai";
 import Loading from "../../components/common/loading";
 import AddPromotionButton from "../../components/promotions/AddPromotionButton";
 import AddPromotionForm from "../../components/promotions/AddPromotionForm";
+import EditPromotionForm from "../../components/promotions/EditPromotionForm";
 import PromotionsTable from "../../components/promotions/PromotionsTable";
 import useModals from "../../hooks/useModal";
 import { Promotion } from "../../models/promotions.model";
 import { Response } from "../../models/response.model";
 import PromotionsService from "../../services/promotions-service/promotions.service";
-import EditPromotionForm from "../../components/promotions/EditPromotionForm";
 
 const { Title, Paragraph } = Typography;
 
@@ -49,33 +39,6 @@ const PromotionPage = () => {
   useEffect(() => {
     fetchPromotions();
   }, []);
-
-  const menu = (promotion: Promotion) => (
-    <Menu>
-      <Menu.Item
-        key="view"
-        icon={<EyeOutlined />}
-        onClick={() => handleView(promotion)}
-      >
-        View Details
-      </Menu.Item>
-      <Menu.Item
-        key="edit"
-        icon={<EditOutlined />}
-        onClick={() => handleEdit(promotion.id)}
-      >
-        Edit
-      </Menu.Item>
-      <Menu.Item
-        style={{ color: "red" }}
-        key="delete"
-        icon={<DeleteOutlined style={{ color: "red" }} />}
-        onClick={() => handleDelete(promotion.id)}
-      >
-        Delete
-      </Menu.Item>
-    </Menu>
-  );
 
   const columns = [
     {
@@ -119,12 +82,29 @@ const PromotionPage = () => {
       title: "Actions",
       key: "actions",
       render: (_, record: Promotion) => (
-        <Dropdown overlay={menu(record)} trigger={["click"]}>
-          <Button
-            type="text"
-            icon={<AiOutlineMore style={{ fontSize: "20px" }} />}
-          />
-        </Dropdown>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <Tooltip title="View Details">
+            <Button
+              type="text"
+              icon={<EyeOutlined />}
+              onClick={() => handleView(record)}
+            />
+          </Tooltip>
+          <Tooltip title="Edit">
+            <Button
+              type="text"
+              icon={<EditOutlined />}
+              onClick={() => handleEdit(record.id)}
+            />
+          </Tooltip>
+          <Tooltip title="Delete">
+            <Button
+              type="text"
+              icon={<DeleteOutlined style={{ color: "red" }} />}
+              onClick={() => handleDelete(record.id)}
+            />
+          </Tooltip>
+        </div>
       ),
     },
   ];
@@ -157,7 +137,7 @@ const PromotionPage = () => {
   const handleEdit = (id: number) => {
     const promotion = promotionsResponse?.data.find((p) => p.id === id);
     if (promotion) {
-      setSelectedPromotion(promotion);  // Uncomment this line
+      setSelectedPromotion(promotion); // Uncomment this line
       showModal("editPromotion");
     }
   };
@@ -233,15 +213,12 @@ const PromotionPage = () => {
                   <strong>Mô tả: </strong> {selectedPromotion.description}
                 </Paragraph>
                 <Paragraph>
-                  <strong>Loại ưu đãi: </strong>
-                  {selectedPromotion.discountType}
-                </Paragraph>
-                <Paragraph>
                   <strong>Ưu đãi: </strong> {selectedPromotion.discount}%
                 </Paragraph>
                 <Paragraph>
                   <strong>Thời gian: </strong>
-                  {moment(selectedPromotion.startDate).format("DD/MM/YYYY")} -{"  "}
+                  {moment(selectedPromotion.startDate).format("DD/MM/YYYY")} -
+                  {"  "}
                   {moment(selectedPromotion.endDate).format("DD/MM/YYYY")}
                 </Paragraph>
                 <Paragraph>
@@ -252,13 +229,6 @@ const PromotionPage = () => {
                 <Paragraph>
                   <strong>Cách thức đăng ký: </strong>
                   {selectedPromotion.registrationMethod}
-                </Paragraph>
-                <Paragraph>
-                  <strong>Điều kiện: </strong> {selectedPromotion.condition}
-                </Paragraph>
-                <Paragraph>
-                  <strong>Hồ sơ yêu cầu: </strong>
-                  {selectedPromotion.requiredDocument}
                 </Paragraph>
               </Typography>
             )}

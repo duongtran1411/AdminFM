@@ -1,17 +1,19 @@
 import { DeleteOutlined, EyeOutlined } from "@ant-design/icons";
-import { Button, Dropdown, MenuProps, Modal, notification, Tooltip } from "antd";
+import { Button, Modal, notification, Tooltip } from "antd";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { AiOutlineMore } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import AddAdmissionProgramButton from "../../components/admission/AddAdmissionProgramButton";
 import AddAdmissionProgramForm from "../../components/admission/AddAdmissionProgramForm";
 import AdmissionProgramTable from "../../components/admission/AdmissionProgramTable";
+import PromotionDetail from "../../components/admission/PromotionDetail";
 import Loading from "../../components/common/loading";
 import useModals from "../../hooks/useModal";
 import { AdmissionProgram } from "../../models/admission.model";
+import { Promotion } from "../../models/promotions.model";
 import { Response } from "../../models/response.model";
 import admissionService from "../../services/admission-program-service/admission.service";
+import promotionsService from "../../services/promotions-service/promotions.service";
 
 const AdmissionPage = () => {
   const { isVisible, showModal, hideModal } = useModals();
@@ -21,11 +23,15 @@ const AdmissionPage = () => {
   const [error, setError] = useState("");
   useState<Response<AdmissionProgram> | null>(null);
   const navigate = useNavigate();
+  const [selectedPromotion, setSelectedPromotion] = useState<Promotion | null>(
+    null,
+  );
+  const [isPromotionDetailVisible, setIsPromotionDetailVisible] =
+    useState(false);
 
   const fetchAdmissionPrograms = async () => {
     try {
       const response = await admissionService.getAll();
-      console.log(response);
       setAdmissionProgramsResponse(response);
     } catch (error) {
       setError("Error loading admission programs");
@@ -37,27 +43,6 @@ const AdmissionPage = () => {
   useEffect(() => {
     fetchAdmissionPrograms();
   }, []);
-
-  const menu = (admissionProgram: AdmissionProgram): MenuProps => ({
-    items: [
-      {
-        key: 'view',
-        label: 'View Details',
-        icon: <EyeOutlined />,
-        onClick: () => handleView(admissionProgram.id),
-      },
-      {
-        key: 'delete',
-        label: (
-          <span style={{ color: "red" }}>
-            <DeleteOutlined style={{ color: "red" }} /> Delete
-          </span>
-        ),
-        onClick: () => handleDelete(admissionProgram.id),
-      },
-    ],
-  });
-  
 
   const columns = [
     {
@@ -97,15 +82,41 @@ const AdmissionPage = () => {
       key: "quota",
     },
     {
-      title: "",
+      title: "Khuyến mãi",
+      key: "promotions",
+      render: (record: AdmissionProgram) => {
+        return record.promotions.map((promo, index) => (
+          <span
+            key={promo.id}
+            onClick={() => handlePromotionClick(promo.id)}
+            style={{ cursor: "pointer", color: "#1E90FF" }}
+          >
+            {promo.name}
+            {index < record.promotions.length - 1 && ", "}
+          </span>
+        ));
+      },
+    },
+    {
+      title: "Hành động",
       key: "actions",
       render: (_, record: AdmissionProgram) => (
-        <Dropdown menu={menu(record)} trigger={["click"]}>
-          <Button
-            type="text"
-            icon={<AiOutlineMore style={{ fontSize: "20px" }} />}
-          />
-        </Dropdown>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <Tooltip title="View Details">
+            <Button
+              type="text"
+              icon={<EyeOutlined />}
+              onClick={() => handleView(record.id)}
+            />
+          </Tooltip>
+          <Tooltip title="Delete">
+            <Button
+              type="text"
+              icon={<DeleteOutlined style={{ color: "red" }} />}
+              onClick={() => handleDelete(record.id)}
+            />
+          </Tooltip>
+        </div>
       ),
     },
   ];
@@ -142,6 +153,23 @@ const AdmissionPage = () => {
 
   const onCreateSuccess = () => {
     fetchAdmissionPrograms();
+  };
+
+  const handlePromotionClick = async (promotionId: number) => {
+    try {
+      const promotionDetails = await promotionsService.getPromotionById(
+        promotionId,
+      );
+      setSelectedPromotion(promotionDetails.data);
+      setIsPromotionDetailVisible(true);
+    } catch (error) {
+      notification.error({ message: "Error fetching promotion details" });
+    }
+  };
+
+  const handlePromotionDetailClose = () => {
+    setIsPromotionDetailVisible(false);
+    setSelectedPromotion(null);
   };
 
   if (loading) {
@@ -183,6 +211,11 @@ const AdmissionPage = () => {
           />
         </div>
       </div>
+      <PromotionDetail
+        promotion={selectedPromotion}
+        isModalVisible={isPromotionDetailVisible}
+        hideModal={handlePromotionDetailClose}
+      />
     </>
   );
 };

@@ -1,5 +1,5 @@
 import { ApplicationDocument } from "./applicationdocument.model";
-
+import { Promotion } from "./promotions.model";
 export interface AdmissionProgram {
   id: number;
   name: string;
@@ -10,4 +10,5 @@ export interface AdmissionProgram {
   endRegistration: Date;
   quota: number;
   applicationDocuments: ApplicationDocument[];
+  promotions: Promotion[];
 }
