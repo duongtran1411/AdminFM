@@ -1,3 +1,5 @@
+import { ClassStatus } from "./class.status.model";
+
 export interface Class {
   id: number;
   name: string;
@@ -5,6 +7,8 @@ export interface Class {
   tick: boolean;
   totalStudent: number;
   studentCount: number;
+  status: ClassStatus;
+  admissionDate: string;
 }
 
 export interface Classroom {

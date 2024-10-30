@@ -7,26 +7,28 @@ import {
   Modal,
   Select,
   InputNumber,
+  DatePicker,
 } from "antd";
 import React, { useEffect, useState } from "react";
 import { CoursesFamily } from "../../models/courses.model";
 import { Response } from "../../models/response.model";
 import { ClassResponse } from "../../services/class-service/class.service";
 import courseFamilyService from "../../services/course-family-service/course.family.service";
+import { ClassStatus } from "../../models/class.status.model";
+import moment from "moment";
 
 interface AddClassFormProps {
   visible: boolean;
   onAdd: (values: Response<ClassResponse>) => void;
   onCancel: () => void;
 }
-
 const AddClassForm: React.FC<AddClassFormProps> = ({
   visible,
   onAdd,
   onCancel,
 }) => {
   const [coursesfamily, setCoursesFamily] = useState<CoursesFamily[]>([]);
-  const [autoAddStudents, setAutoAddStudents] = useState<boolean>(false); // State để theo dõi checkbox
+  const [autoAddStudents, setAutoAddStudents] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -45,14 +47,19 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
       ...values,
       coursesFamilyId: values.course_family_name,
       tick: values.isActive || false,
-      studentCount: values.studentCount || 20, // Mặc định là 20 nếu không nhập
+      studentCount: values.studentCount || 20,
+      admissionDate: moment(values.admissionDate).format("YYYY-MM-DD"),
     };
     onAdd(classData);
     form.resetFields();
   };
 
   const handleAutoAddChange = (e: any) => {
-    setAutoAddStudents(e.target.checked); // Cập nhật trạng thái checkbox
+    setAutoAddStudents(e.target.checked);
+  };
+
+  const disabledDate = (current: any) => {
+    return current && current < moment().startOf("day");
   };
 
   return (
@@ -73,10 +80,12 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
         <Form.Item
           name="course_family_name"
           label="Courses Family"
-          rules={[{
-            required: true,
-            message: "Please select the Courses Family!",
-          }]}
+          rules={[
+            {
+              required: true,
+              message: "Please select the Courses Family!",
+            },
+          ]}
         >
           <Select placeholder="Chọn Courses Family">
             {coursesfamily.map((c) => (
@@ -89,15 +98,43 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
             ))}
           </Select>
         </Form.Item>
-        <Form.Item name="isActive" valuePropName="checked">
-          <Checkbox onChange={handleAutoAddChange}>Tự động thêm sinh viên</Checkbox>
+        <Form.Item
+          name="status"
+          label="Trạng thái"
+          rules={[
+            {
+              required: true,
+              message: "Please select the status!",
+            },
+          ]}
+        >
+          <Select placeholder="Chọn trạng thái">
+            {Object.values(ClassStatus).map((status) => (
+              <Select.Option key={status} value={status}>
+                {status}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
-        {/* Chỉ hiển thị trường nhập số lượng sinh viên khi tick vào checkbox */}
+        <Form.Item
+          name="admissionDate"
+          label="Ngày nhập học"
+          rules={[{ required: true }]}
+        >
+          <DatePicker disabledDate={disabledDate} />
+        </Form.Item>
+        <Form.Item name="isActive" valuePropName="checked">
+          <Checkbox onChange={handleAutoAddChange}>
+            Tự động thêm sinh viên
+          </Checkbox>
+        </Form.Item>
         {autoAddStudents && (
           <Form.Item
             name="studentCount"
             label="Số lượng sinh viên"
-            rules={[{ required: true, message: "Vui lòng nhập số lượng sinh viên" }]}
+            rules={[
+              { required: true, message: "Vui lòng nhập số lượng sinh viên" },
+            ]}
           >
             <InputNumber
               min={1}
