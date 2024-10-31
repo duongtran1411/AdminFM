@@ -1,5 +1,5 @@
 import { Application } from "../../models/application.model";
-import { ApplicationStatus } from "../../models/application.status.enum.model";
+import { ApplicationStatus } from "../../models/enum/application.status.enum";
 import { Response } from "../../models/response.model";
 import axiosInstance from "../../utils/axiosInstance";
 

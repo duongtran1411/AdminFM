@@ -53,7 +53,7 @@ const DashBoardMenuList = () => {
           label: "CT Ưu Đãi",
         },
         {
-          key: "students",
+          key: "freshmens",
           icon: <FaChalkboardTeacher />,
           label: "DS Nhập học",
         },
@@ -69,9 +69,11 @@ const DashBoardMenuList = () => {
       label: "Center",
       icon: <AiFillBank />,
       children: [
-        { key: "building", icon: <SiGoogleclassroom />, label: "Toà nhà" },
+        { key: "students", icon: <SiGoogleclassroom />, label: "Sinh viên" },
         { key: "classes", icon: <SiGoogleclassroom />, label: "Lớp học" },
         { key: "teachers", icon: <FaChalkboardTeacher />, label: "Giảng viên" },
+        { key: "building", icon: <SiGoogleclassroom />, label: "Toà nhà" },
+        { key: "cohort", icon: <SiGoogleclassroom />, label: "Niên khóa" },
       ],
     },
     {

@@ -14,7 +14,7 @@ import {
   ScheduleData,
   scheduleService,
 } from "../../services/schedule-service/schedule.service";
-import StudentPage from "../student";
+import StudentInClassPage from "../student/StudentInClass";
 
 const ScheduleList: React.FC = () => {
   const navigate = useNavigate();
@@ -230,7 +230,7 @@ const ScheduleList: React.FC = () => {
           </div>
         </Layout>
       ) : (
-        <StudentPage />
+        <StudentInClassPage />
       )}
       {/* Modal cho form tạo hoặc chỉnh sửa lịch học */}
       <UpdateScheduleForm

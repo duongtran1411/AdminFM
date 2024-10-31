@@ -9,7 +9,12 @@ interface DataTableProps {
   onDelete: (id: any) => void; // Update to receive studentId
 }
 
-const StudentTable = ({ data, columns, onEdit, onDelete }: DataTableProps) => {
+const StudentInClassTable = ({
+  data,
+  columns,
+  onEdit,
+  onDelete,
+}: DataTableProps) => {
   const tableRef = useRef<HTMLDivElement>(null);
   const [canScroll, setCanScroll] = useState(false);
 
@@ -31,6 +36,11 @@ const StudentTable = ({ data, columns, onEdit, onDelete }: DataTableProps) => {
 
   const extendedColumns = [
     ...columns,
+    {
+      title: "View",
+      key: "view",
+      render: (_) => <div>View</div>,
+    },
     {
       title: "Action",
       key: "action",
@@ -72,4 +82,4 @@ const StudentTable = ({ data, columns, onEdit, onDelete }: DataTableProps) => {
   );
 };
 
-export default StudentTable;
+export default StudentInClassTable;

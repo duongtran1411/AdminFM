@@ -7,7 +7,7 @@ import AddApplicationDocumentForm from "../../components/applicationdocuments/Ad
 import ApplicationDocumentTable from "../../components/applicationdocuments/ApplicationDocumentTable";
 import EditApplicationDocumentForm from "../../components/applicationdocuments/EditApplicationDocumentForm";
 import Loading from "../../components/common/loading";
-import TabsMenu from "../../components/student/TabsMenu";
+import TabsMenu from "../../components/student-in-class/TabsMenu";
 import useModals from "../../hooks/useModal";
 import { ApplicationDocument } from "../../models/applicationdocument.model";
 import { Response } from "../../models/response.model";

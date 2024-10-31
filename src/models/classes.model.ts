@@ -1,4 +1,4 @@
-import { ClassStatus } from "./class.status.model";
+import { ClassStatus } from "./enum/class.status.enum";
 
 export interface Class {
   id: number;

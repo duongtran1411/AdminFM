@@ -5,7 +5,7 @@ import { AiOutlineMore } from "react-icons/ai";
 import AddClassroomButton from "../../components/classroom/AddClassroomButton";
 import AddClassroomForm from "../../components/classroom/AddClassroomForm";
 import ClassroomTable from "../../components/classroom/ClassroomTable";
-import TabsMenu from "../../components/student/TabsMenu";
+import TabsMenu from "../../components/student-in-class/TabsMenu";
 import useModals from "../../hooks/useModal";
 import { Classroom } from "../../models/classes.model";
 import classRoomService from "../../services/class-room-service/class.room.service";

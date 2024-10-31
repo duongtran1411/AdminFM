@@ -44,10 +44,13 @@ const DashBoardPage = lazy(() => import("../pages/dashboard"));
 const ErrorPage = lazy(() => import("../pages/errors"));
 const ClassPage = lazy(() => import("../pages/classes"));
 const MainPage = lazy(() => import("../pages"));
-const StudentPage = lazy(() => import("../pages/student"));
+const StudentInClassPage = lazy(
+  () => import("../pages/student/StudentInClass"),
+);
 const TeacherPage = lazy(() => import("../pages/teacher"));
 const UserPage = lazy(() => import("../pages/users"));
 const FreshmenPageList = lazy(() => import("../pages/freshmen"));
+const StudentPage = lazy(() => import("../pages/student"));
 const PromotionPage = lazy(() => import("../pages/promotions"));
 const AdmissionPage = lazy(() => import("../pages/admission"));
 const AddApplicationForm = lazy(
@@ -57,6 +60,7 @@ const ApplicationDocumentPage = lazy(
   () => import("../pages/applicationdocument"),
 );
 const AdmissionDetail = lazy(() => import("../pages/admission/detail"));
+const CohortPage = lazy(() => import("../pages/cohort"));
 const getTitleFromLocation = (pathname: string) => {
   if (
     matchPath({ path: "/student-list/class/:classId", end: false }, pathname)
@@ -82,6 +86,8 @@ const getTitleFromLocation = (pathname: string) => {
       return "Quản lý lớp học";
     case "/building":
       return "Quản lý toà nhà";
+    case "/cohort":
+      return "Quản lý Niên khóa";
     default:
       return "404 - Không Tìm Thấy Trang";
   }
@@ -179,11 +185,21 @@ function MainRoutes() {
           ),
         },
         {
+          path: "cohort",
+          element: (
+            <PageWithTitle title={title}>
+              <Suspense fallback={<LoadingSkeleton />}>
+                <CohortPage />
+              </Suspense>
+            </PageWithTitle>
+          ),
+        },
+        {
           path: "student-list/class/:classId",
           element: (
             <PageWithTitle title={title}>
               <Suspense fallback={<LoadingSkeleton />}>
-                <StudentPage />
+                <StudentInClassPage />
               </Suspense>
             </PageWithTitle>
           ),
@@ -199,11 +215,21 @@ function MainRoutes() {
           ),
         },
         {
-          path: "students",
+          path: "freshmens",
           element: (
             <PageWithTitle title={title}>
               <Suspense fallback={<LoadingSkeleton />}>
                 <FreshmenPageList />
+              </Suspense>
+            </PageWithTitle>
+          ),
+        },
+        {
+          path: "students",
+          element: (
+            <PageWithTitle title={title}>
+              <Suspense fallback={<LoadingSkeleton />}>
+                <StudentPage />
               </Suspense>
             </PageWithTitle>
           ),

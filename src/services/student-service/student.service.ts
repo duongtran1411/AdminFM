@@ -1,9 +1,19 @@
 import { AxiosResponse } from "axios";
-import axiosInstance from "../../utils/axiosInstance";
-import { Freshmen, Student } from "../../models/student.model";
 import { Response } from "../../models/response.model";
+import { Student } from "../../models/student.model";
+import axiosInstance from "../../utils/axiosInstance";
 
 class StudentService {
+  async findAll(): Promise<Response<Student[]>> {
+    try {
+      const response: AxiosResponse<Response<Student[]>> =
+        await axiosInstance.get(`/students`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error("Error fetching students: " + error.message);
+    }
+  }
+
   async create(studentList: Student): Promise<Response<Student>> {
     try {
       const response: AxiosResponse<Response<Student>> =
@@ -14,7 +24,7 @@ class StudentService {
     }
   }
 
-  async findAll(classId?: string): Promise<Response<Student[]>> {
+  async findByClassId(classId?: string): Promise<Response<Student[]>> {
     try {
       const response: AxiosResponse<Response<Student[]>> =
         await axiosInstance.get(`/students/class/${classId}`);
@@ -24,9 +34,9 @@ class StudentService {
     }
   }
 
-  async findStudentsWithoutClass(): Promise<Response<Freshmen[]>> {
+  async findStudentsWithoutClass(): Promise<Response<Student[]>> {
     try {
-      const response: AxiosResponse<Response<Freshmen[]>> =
+      const response: AxiosResponse<Response<Student[]>> =
         await axiosInstance.get("/students/without-class");
       return response.data;
     } catch (error: any) {

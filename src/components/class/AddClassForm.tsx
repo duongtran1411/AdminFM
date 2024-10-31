@@ -14,7 +14,7 @@ import { CoursesFamily } from "../../models/courses.model";
 import { Response } from "../../models/response.model";
 import { ClassResponse } from "../../services/class-service/class.service";
 import courseFamilyService from "../../services/course-family-service/course.family.service";
-import { ClassStatus } from "../../models/class.status.model";
+import { ClassStatus } from "../../models/enum/class.status.enum";
 import moment from "moment";
 
 interface AddClassFormProps {

@@ -4,7 +4,7 @@ import AddBuildingButton from "../../components/building/AddBuildingButton";
 import AddBuildingForm from "../../components/building/AddBuildingForm";
 import BuildingTable from "../../components/building/BuildingTable";
 import EditBuildingForm from "../../components/building/EditBuildingForm";
-import TabsMenu from "../../components/student/TabsMenu";
+import TabsMenu from "../../components/student-in-class/TabsMenu";
 import useModals from "../../hooks/useModal";
 import { Building } from "../../models/building.model";
 import buildingService from "../../services/building-service/building.service";

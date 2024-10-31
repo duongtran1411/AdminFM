@@ -7,12 +7,12 @@ import ButtonChangeStatus from "../../components/application/ButtonChangeStatus"
 import ChangeStatusForm from "../../components/application/ChangeStatusForm";
 import EditApplicationForm from "../../components/application/EditApplicationForm";
 import Loading from "../../components/common/loading";
-import TabsMenu from "../../components/student/TabsMenu";
 import useModals from "../../hooks/useModal";
 import { Application } from "../../models/application.model";
 import { Response } from "../../models/response.model";
 import applicationService from "../../services/application-service/application.service";
 import attachedDocumentService from "../../services/attached-document-service/attached.document.service";
+import TabsMenu from "../../components/student-in-class/TabsMenu";
 
 const ApplicationPage = () => {
   const navigate = useNavigate();

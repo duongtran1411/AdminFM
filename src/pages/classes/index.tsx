@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import ClassList from "../../components/class/ClassList";
 import FloatButtonGroup from "../../components/class/FloatButtonGroup";
 import Loading from "../../components/common/loading";
-import { ClassStatus } from "../../models/class.status.model";
+import { ClassStatus } from "../../models/enum/class.status.enum";
 import { Class } from "../../models/classes.model";
 import ClassService from "../../services/class-service/class.service";
 import courseFamilyService from "../../services/course-family-service/course.family.service";

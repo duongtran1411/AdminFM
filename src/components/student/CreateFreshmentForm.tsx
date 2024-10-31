@@ -10,22 +10,22 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { studentService } from "../../services/student-service/student.service";
 import { CoursesFamily } from "../../models/courses.model";
 import courseFamilyService from "../../services/course-family-service/course.family.service";
+import { studentService } from "../../services/student-service/student.service";
 import { StudentStatus } from "../../models/enum/student.status.enum";
 
-interface CreateStudentFormProps {
+interface CreateFreshmentFormProps {
   isModalVisible: boolean;
   hideModal: () => void;
   onCreate: () => void;
 }
 
-const CreateStudentForm = ({
+const CreateFreshmentForm = ({
   isModalVisible,
   hideModal,
   onCreate,
-}: CreateStudentFormProps) => {
+}: CreateFreshmentFormProps) => {
   const [form] = Form.useForm();
   const [coursesFamily, setCoursesFamily] = useState<CoursesFamily[]>([]);
 
@@ -188,4 +188,4 @@ const CreateStudentForm = ({
   );
 };
 
-export default CreateStudentForm;
+export default CreateFreshmentForm;

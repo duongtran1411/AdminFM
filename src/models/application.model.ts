@@ -1,4 +1,5 @@
-import { ApplicationStatus } from "./application.status.enum.model";
+import { AdmissionProgram } from "./admission.model";
+import { ApplicationStatus } from "./enum/application.status.enum";
 
 export interface Application {
   id?: number;
@@ -9,5 +10,5 @@ export interface Application {
   phone: string;
   status: ApplicationStatus;
   permanentResidence: string;
-  admissionProgramId: number;
+  admissionProgram: AdmissionProgram;
 }

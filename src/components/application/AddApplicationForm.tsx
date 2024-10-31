@@ -4,13 +4,14 @@ import AddInformationApplication from "./AddInformationApplication";
 import { useState, useRef } from "react";
 import applicationService from "../../services/application-service/application.service";
 import attachedDocumentService from "../../services/attached-document-service/attached.document.service";
-import { ApplicationStatus } from "../../models/application.status.enum.model";
 import { Application } from "../../models/application.model";
 import { FormInstance } from "antd/es/form";
 import dayjs from "dayjs";
 import { useNavigate, useParams } from "react-router-dom";
 import Loading from "../common/loading";
 import { ArrowLeftOutlined } from "@ant-design/icons";
+import { ApplicationStatus } from "../../models/enum/application.status.enum";
+import { AdmissionProgram } from "../../models/admission.model";
 
 const initialFormData: Application = {
   name: "",
@@ -20,7 +21,7 @@ const initialFormData: Application = {
   phone: "",
   status: ApplicationStatus.WAITING,
   permanentResidence: "",
-  admissionProgramId: 0,
+  admissionProgram: {} as AdmissionProgram,
 };
 
 const AddApplicationForm = () => {
