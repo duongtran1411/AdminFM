@@ -9,7 +9,6 @@ import admissionService from "../../services/admission-program-service/admission
 import Loading from "../common/loading";
 
 const AddAttachedDocumentForm = ({ setAttachedDocument, resetUploadKey }) => {
-  // Nhận thêm prop resetUploadKey
   const [loading, setLoading] = useState(true);
   const [applicationDocument, setApplicationDocument] = useState<
     ApplicationDocument[]
@@ -31,11 +30,10 @@ const AddAttachedDocumentForm = ({ setAttachedDocument, resetUploadKey }) => {
     fetchAdmissionProgram();
   }, [admissionId]);
 
-  // Reset attached files when resetUploadKey changes
   useEffect(() => {
     setAttachedFiles({});
     setAttachedDocument({});
-  }, [resetUploadKey]); // Reset tệp đính kèm khi resetUploadKey thay đổi
+  }, [resetUploadKey]);
 
   if (loading) {
     return <Loading />;
@@ -192,19 +190,16 @@ const AddAttachedDocumentForm = ({ setAttachedDocument, resetUploadKey }) => {
   function handleFilePreview(file: File) {
     const fileURL = URL.createObjectURL(file);
 
-    // Kiểm tra định dạng file
     const extension = file.name.split(".")?.pop()?.toLowerCase();
 
     if (extension === "doc" || extension === "docx") {
-      // Tạo một link để tải xuống
       const a = document.createElement("a");
       a.href = fileURL;
-      a.download = file.name; // Đặt tên file tải xuống là tên file đã upload
+      a.download = file.name;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
     } else {
-      // Nếu không phải là file doc, mở trong tab mới
       window.open(fileURL, "_blank");
     }
   }

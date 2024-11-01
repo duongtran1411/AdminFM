@@ -40,9 +40,46 @@ const PromotionPage = () => {
     fetchPromotions();
   }, []);
 
-  const columns = [
+  const handleDelete = async (id: number) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this Promotion?",
+      okText: "Delete",
+      okType: "danger",
+      onOk: async () => {
+        try {
+          await PromotionsService.deletePromotion(id);
+          setPromotionsResponse((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  data: prev.data.filter((promotion) => promotion.id !== id),
+                }
+              : null,
+          );
+          notification.success({ message: "Promotion deleted successfully" });
+        } catch (error) {
+          notification.error({ message: "Error deleting Promotion" });
+        }
+      },
+    });
+  };
+
+  const handleEdit = (id: number) => {
+    const promotion = promotionsResponse?.data.find((p) => p.id === id);
+    if (promotion) {
+      setSelectedPromotion(promotion);
+      showModal("editPromotion");
+    }
+  };
+
+  const handleView = (promotion: Promotion) => {
+    setSelectedPromotion(promotion);
+    showModal("viewPromotion");
+  };
+
+  const renderColumns = () => [
     {
-      title: "Name",
+      title: "Tên",
       dataIndex: "name",
       key: "name",
       ellipsis: true,
@@ -53,7 +90,7 @@ const PromotionPage = () => {
       ),
     },
     {
-      title: "Period",
+      title: "Khoảng thời gian",
       key: "period",
       render: (_: string, record: Promotion) => (
         <span>
@@ -63,23 +100,30 @@ const PromotionPage = () => {
       ),
     },
     {
-      title: "Status",
+      title: "Giảm giá",
+      dataIndex: "discount",
+      key: "discount",
+    },
+    {
+      title: "Số lượng",
+      dataIndex: "scholarshipQuantity",
+      key: "scholarshipQuantity",
+    },
+    {
+      title: "Trạng thái",
       key: "status",
       render: (_: string, record: Promotion) => {
         const now = moment();
         const start = moment(record.startDate);
         const end = moment(record.endDate);
-        if (now.isBefore(start)) {
-          return <Tag color="blue">Upcoming</Tag>;
-        } else if (now.isAfter(end)) {
-          return <Tag color="red">Expired</Tag>;
-        } else {
-          return <Tag color="green">Active</Tag>;
-        }
+
+        if (now.isBefore(start)) return <Tag color="blue">Upcoming</Tag>;
+        if (now.isAfter(end)) return <Tag color="red">Expired</Tag>;
+        return <Tag color="green">Active</Tag>;
       },
     },
     {
-      title: "Actions",
+      title: "Hành động",
       key: "actions",
       render: (_, record: Promotion) => (
         <div style={{ display: "flex", gap: "10px" }}>
@@ -109,140 +153,87 @@ const PromotionPage = () => {
     },
   ];
 
-  const handleDelete = async (id: number) => {
-    Modal.confirm({
-      title: "Are you sure you want to delete this Promotion?",
-      okText: "Delete",
-      okType: "danger",
-      onOk: async () => {
-        try {
-          await PromotionsService.deletePromotion(id);
-          if (promotionsResponse) {
-            const updatedPromotions = promotionsResponse.data.filter(
-              (p) => p.id !== id,
-            );
-            setPromotionsResponse({
-              ...promotionsResponse,
-              data: updatedPromotions,
-            });
-          }
-          notification.success({ message: "Promotion deleted successfully" });
-        } catch (error) {
-          notification.error({ message: "Error deleting Promotion" });
-        }
-      },
-    });
-  };
-
-  const handleEdit = (id: number) => {
-    const promotion = promotionsResponse?.data.find((p) => p.id === id);
-    if (promotion) {
-      setSelectedPromotion(promotion); // Uncomment this line
-      showModal("editPromotion");
-    }
-  };
-
-  const onCreateSuccess = () => {
-    fetchPromotions();
-  };
-
-  const onUpdateSuccess = () => {
-    fetchPromotions();
-  };
-
-  const handleView = (promotion: Promotion) => {
-    setSelectedPromotion(promotion);
-    showModal("viewPromotion");
-  };
-
-  if (loading) {
-    return <Loading />;
-  }
-
-  if (error) {
-    return <p>{error}</p>;
-  }
+  if (loading) return <Loading />;
+  if (error) return <p>{error}</p>;
 
   return (
-    <>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          padding: "20px",
-        }}
-      >
-        <div style={{ width: "100%", maxWidth: "100%" }}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginBottom: "16px",
-            }}
-          >
-            <AddPromotionButton
-              onPromotionCreated={() => showModal("createPromotion")}
-            />
-          </div>
-
-          <AddPromotionForm
-            visible={isVisible("createPromotion")}
-            hideModal={() => hideModal("createPromotion")}
-            onPromotionCreated={onCreateSuccess}
-          />
-
-          <PromotionsTable
-            columns={columns}
-            data={promotionsResponse ? promotionsResponse.data : []}
-          />
-
-          <Modal
-            title={<Title level={3}>Details</Title>}
-            open={isVisible("viewPromotion")}
-            onCancel={() => hideModal("viewPromotion")}
-            footer={null}
-            width={600}
-          >
-            {selectedPromotion && (
-              <Typography>
-                <Paragraph>
-                  <strong>Tên: </strong> {selectedPromotion.name}
-                </Paragraph>
-                <Paragraph>
-                  <strong>Mô tả: </strong> {selectedPromotion.description}
-                </Paragraph>
-                <Paragraph>
-                  <strong>Ưu đãi: </strong> {selectedPromotion.discount}%
-                </Paragraph>
-                <Paragraph>
-                  <strong>Thời gian: </strong>
-                  {moment(selectedPromotion.startDate).format("DD/MM/YYYY")} -
-                  {"  "}
-                  {moment(selectedPromotion.endDate).format("DD/MM/YYYY")}
-                </Paragraph>
-                <Paragraph>
-                  <strong>Số lượng: </strong>
-                  {selectedPromotion.scholarshipQuantity} /{" "}
-                  {selectedPromotion.maxQuantity}
-                </Paragraph>
-                <Paragraph>
-                  <strong>Cách thức đăng ký: </strong>
-                  {selectedPromotion.registrationMethod}
-                </Paragraph>
-              </Typography>
-            )}
-          </Modal>
-
-          <EditPromotionForm
-            isModalVisible={isVisible("editPromotion")}
-            hideModal={() => hideModal("editPromotion")}
-            promotion={selectedPromotion}
-            onUpdate={onUpdateSuccess}
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        padding: "20px",
+      }}
+    >
+      <div style={{ width: "100%", maxWidth: "100%" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginBottom: "16px",
+          }}
+        >
+          <AddPromotionButton
+            onPromotionCreated={() => showModal("createPromotion")}
           />
         </div>
+
+        <AddPromotionForm
+          visible={isVisible("createPromotion")}
+          hideModal={() => hideModal("createPromotion")}
+          onPromotionCreated={fetchPromotions}
+        />
+
+        <PromotionsTable
+          columns={renderColumns()}
+          data={promotionsResponse?.data || []}
+        />
+
+        <Modal
+          title={<Title level={3}>Details</Title>}
+          open={isVisible("viewPromotion")}
+          onCancel={() => hideModal("viewPromotion")}
+          footer={null}
+          width={600}
+        >
+          {selectedPromotion && (
+            <Typography>
+              <Paragraph>
+                <strong>Tên: </strong> {selectedPromotion.name}
+              </Paragraph>
+              <Paragraph>
+                <strong>Mô tả: </strong> {selectedPromotion.description}
+              </Paragraph>
+              <Paragraph>
+                <strong>Giảm giá: </strong> {selectedPromotion.discount}%
+              </Paragraph>
+              <Paragraph>
+                <strong>Khoảng thời gian: </strong>
+                {moment(selectedPromotion.startDate).format(
+                  "DD/MM/YYYY",
+                )} - {moment(selectedPromotion.endDate).format("DD/MM/YYYY")}
+              </Paragraph>
+              <Paragraph>
+                <strong>Số lượng: </strong>
+                {selectedPromotion.scholarshipQuantity} /
+                {selectedPromotion.maxQuantity}
+              </Paragraph>
+              <Paragraph>
+                <strong>Phương thức đăng ký: </strong>
+                {selectedPromotion.registrationMethod}
+              </Paragraph>
+            </Typography>
+          )}
+        </Modal>
+
+        <EditPromotionForm
+          isModalVisible={isVisible("editPromotion")}
+          hideModal={() => hideModal("editPromotion")}
+          promotion={selectedPromotion}
+          onUpdate={fetchPromotions}
+        />
       </div>
-    </>
+    </div>
   );
 };
 

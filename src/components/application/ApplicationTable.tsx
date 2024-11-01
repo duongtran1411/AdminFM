@@ -6,7 +6,6 @@ import { CiMenuKebab } from "react-icons/ci";
 interface DataApplicationProps {
   data: any[];
   columns: any[];
-  // onView: (id: any) => void;
   onEdit: (id: any) => void;
   onDownload: (id: any) => void;
 }
@@ -14,7 +13,6 @@ interface DataApplicationProps {
 const ApplicationTable = ({
   data,
   columns,
-  // onView,
   onEdit,
   onDownload,
 }: DataApplicationProps) => {
@@ -39,12 +37,6 @@ const ApplicationTable = ({
 
   const actionMenu = (record) => ({
     items: [
-      // {
-      //   key: "view",
-      //   label: <span>View</span>,
-      //   icon: <EyeOutlined />,
-      //   onClick: () => onView(record.id),
-      // },
       {
         key: "edit",
         label: <span>Edit</span>,

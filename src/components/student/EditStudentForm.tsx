@@ -15,6 +15,8 @@ import { Student } from "../../models/student.model";
 import { CoursesFamily } from "../../models/courses.model";
 import courseFamilyService from "../../services/course-family-service/course.family.service";
 import { StudentStatus } from "../../models/enum/student.status.enum";
+import { Cohort } from "../../models/cohort.model";
+import cohortService from "../../services/cohort-service/cohort.service";
 
 interface EditStudentFormProps {
   isModalVisible: boolean;
@@ -31,6 +33,7 @@ const EditStudentForm = ({
 }: EditStudentFormProps) => {
   const [form] = Form.useForm();
   const [coursesFamily, setCoursesFamily] = useState<CoursesFamily[]>([]);
+  const [cohorts, setCohorts] = useState<Cohort[]>([]);
 
   useEffect(() => {
     const fetchCourseFamily = async () => {
@@ -38,6 +41,11 @@ const EditStudentForm = ({
       setCoursesFamily(cfm);
     };
     fetchCourseFamily();
+    const fetchCohorts = async () => {
+      const response = await cohortService.getAllCohort();
+      setCohorts(response.data);
+    };
+    fetchCohorts();
     if (student) {
       form.setFieldsValue({
         studentId: student.studentId,
@@ -181,10 +189,16 @@ const EditStudentForm = ({
           <Col span={12}>
             <Form.Item
               name="cohort"
-              label="Cohort"
-              rules={[{ required: false, message: "Vui lòng nhập cohort!" }]}
+              label="Niên khóa"
+              rules={[{ required: false, message: "Vui lòng nhập niên khóa!" }]}
             >
-              <Input placeholder="Nhập cohort" />
+              <Select placeholder="Chọn niên khóa">
+                {cohorts.map((c) => (
+                  <Select.Option key={c.id} value={c.name}>
+                    {c.name}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
           </Col>
         </Row>

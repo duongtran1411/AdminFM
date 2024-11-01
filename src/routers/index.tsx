@@ -88,6 +88,20 @@ const getTitleFromLocation = (pathname: string) => {
       return "Quản lý toà nhà";
     case "/cohort":
       return "Quản lý Niên khóa";
+    case "/schedule":
+      return "Quản lý Lịch Học";
+    case "/courses":
+      return "Quản lý Khóa Học";
+    case "/module":
+      return "Quản lý Mô Đun";
+    case "/promotions":
+      return "Quản lý Chương Trình Khuyến Mãi";
+    case "/admission":
+      return "Quản Lý Tuyển Sinh";
+    case "/applicationdocument":
+      return "Quản lý Tài Liệu Ứng Tuyển";
+    case "/freshmens":
+      return "Quản lý Sinh viên Nhập học";
     default:
       return "404 - Không Tìm Thấy Trang";
   }

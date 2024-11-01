@@ -1,13 +1,19 @@
 import { HomeOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
 import { ItemType, MenuItemType } from "antd/es/menu/interface";
-import { AiFillBank, AiOutlineFolder } from "react-icons/ai";
-import { FaChalkboardTeacher, FaRegUser } from "react-icons/fa";
+import {
+  AiFillBank,
+  AiOutlineFolder,
+  AiOutlineNotification,
+} from "react-icons/ai";
+import { FaChalkboardTeacher, FaRegUser, FaRegBuilding } from "react-icons/fa";
+import { GoPeople } from "react-icons/go";
 import { HiAcademicCap } from "react-icons/hi2";
 import { LuBookCopy, LuBookMarked } from "react-icons/lu";
 import { SiGoogleclassroom } from "react-icons/si";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "../../../contexts/ThemeContext";
+import { PiStudent } from "react-icons/pi";
 
 const DashBoardMenuList = () => {
   const { theme, colorBgContainer } = useTheme();
@@ -49,7 +55,7 @@ const DashBoardMenuList = () => {
         },
         {
           key: "promotions",
-          icon: <LuBookCopy />,
+          icon: <AiOutlineNotification />,
           label: "CT Ưu Đãi",
         },
         {
@@ -69,11 +75,11 @@ const DashBoardMenuList = () => {
       label: "Center",
       icon: <AiFillBank />,
       children: [
-        { key: "students", icon: <SiGoogleclassroom />, label: "Sinh viên" },
+        { key: "students", icon: <PiStudent />, label: "Sinh viên" },
         { key: "classes", icon: <SiGoogleclassroom />, label: "Lớp học" },
         { key: "teachers", icon: <FaChalkboardTeacher />, label: "Giảng viên" },
-        { key: "building", icon: <SiGoogleclassroom />, label: "Toà nhà" },
-        { key: "cohort", icon: <SiGoogleclassroom />, label: "Niên khóa" },
+        { key: "building", icon: <FaRegBuilding />, label: "Toà nhà" },
+        { key: "cohort", icon: <GoPeople />, label: "Niên khóa" },
       ],
     },
     {

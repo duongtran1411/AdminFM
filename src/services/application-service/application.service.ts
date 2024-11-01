@@ -62,11 +62,12 @@ class ApplicationService {
   async changeStatus(
     applicationId: number,
     status: ApplicationStatus,
+    cohortName: string,
   ): Promise<Response<Application>> {
     try {
       const response = await axiosInstance.put<Response<Application>>(
         `/applications/${applicationId}/status`,
-        { status },
+        { status, cohortName },
       );
       return response.data;
     } catch (error) {
@@ -78,11 +79,12 @@ class ApplicationService {
   async changeStatusMultiple(
     id: number[],
     status: ApplicationStatus,
+    cohortName: string,
   ): Promise<Response<Application>> {
     try {
       const response = await axiosInstance.patch<Response<Application>>(
         "/applications/status-multiple",
-        { id, status },
+        { id, status, cohortName },
       );
       return response.data;
     } catch (error) {

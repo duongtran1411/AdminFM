@@ -1,4 +1,4 @@
-import { Checkbox, Layout, Modal, notification, Tag } from "antd";
+import { Checkbox, Layout, Modal, notification, Tag, Typography } from "antd";
 import { useEffect, useState } from "react";
 import Loading from "../../components/common/loading";
 import ActionButtons from "../../components/student-in-class/ActionButtons";
@@ -216,7 +216,8 @@ const FreshmenPageList = () => {
       title: "Niên khóa",
       dataIndex: ["cohort", "name"],
       key: "cohort",
-      render: (cohortName: string | null) => <Tag>{cohortName || "N/A"}</Tag>,
+      render: (cohortName: string | null) =>
+        cohortName ? cohortName : <Tag>N/A</Tag>,
     },
   ];
 
@@ -226,9 +227,13 @@ const FreshmenPageList = () => {
   return (
     <Layout
       className="rounded-lg flex justify-center items-center"
-      style={{ background: "white", padding: "20px" }}
+      style={{ background: "white", padding: "10px" }}
     >
       <div className="w-full">
+        <Typography.Text type="danger" className="block italic">
+          * Vui lòng điền đầy đủ Mã SV cho mỗi sinh viên.
+        </Typography.Text>
+
         <div className="flex justify-between flex-wrap mb-2">
           <TabsMenu tabItems={[]} />
           <ActionButtons

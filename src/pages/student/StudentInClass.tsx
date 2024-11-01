@@ -1,11 +1,11 @@
-import { Layout, Modal, notification } from "antd";
+import { Layout, Modal, notification, Tag } from "antd";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Loading from "../../components/common/loading";
+import ActionButtons from "../../components/student-in-class/ActionButtons";
 import AddStudentToClassForm from "../../components/student-in-class/AddStudentToClassForm";
 import StudentInClassTable from "../../components/student-in-class/StudentInClassTable";
 import TabsMenu from "../../components/student-in-class/TabsMenu";
-import ActionButtons from "../../components/student-in-class/ActionButtons";
 import EditStudentForm from "../../components/student/EditStudentForm";
 import useModals from "../../hooks/useModal";
 import { Student } from "../../models/student.model";
@@ -22,7 +22,6 @@ const StudentInClassPage = () => {
     setLoading(true);
     try {
       const data = await studentService.findByClassId(classId);
-      console.log(data);
       setStudents(data.data);
     } catch (error) {
       setError("Error loading students");
@@ -39,6 +38,8 @@ const StudentInClassPage = () => {
       title: "Mã SV",
       dataIndex: "studentId",
       key: "studentId",
+      render: (studentId: number | null) =>
+        studentId ? studentId : <Tag>N/A</Tag>,
     },
     {
       title: "Họ và tên",
@@ -46,15 +47,39 @@ const StudentInClassPage = () => {
       key: "name",
     },
     {
-      title: "Ngày Sinh",
-      dataIndex: "birthdate",
-      key: "birthdate",
-      render: (date: string) => new Date(date).toLocaleDateString(),
+      title: "Courses Family",
+      dataIndex: ["coursesFamily", "course_family_name"],
+      key: "coursesFamily",
+      render: (coursesFamilyName: string | undefined) =>
+        coursesFamilyName || "N/A",
     },
     {
       title: "Lớp",
       dataIndex: ["class", "name"],
       key: "class",
+      render: (className: string | null) =>
+        className ? className : <Tag>N/A</Tag>,
+    },
+    {
+      title: "Ngày sinh",
+      dataIndex: "birthdate",
+      key: "birthdate",
+      render: (date: string) => new Date(date).toLocaleDateString(),
+    },
+    {
+      title: "Giới tính",
+      dataIndex: "gender",
+      key: "gender",
+    },
+    {
+      title: "Số điện thoại",
+      dataIndex: "phone",
+      key: "phone",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
     },
   ];
 
@@ -119,6 +144,7 @@ const StudentInClassPage = () => {
           isModalVisible={isVisible("createStudent")}
           hideModal={() => hideModal("createStudent")}
           onStudentCreated={onCreateSuccess}
+          classId={classId}
         />
         <StudentInClassTable
           columns={columns}

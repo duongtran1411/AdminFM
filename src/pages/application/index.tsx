@@ -56,14 +56,6 @@ const ApplicationPage = () => {
     });
   };
 
-  // const handleViewDocument = (id: number) => {
-  //   const application = applicationResponse?.data.find((s) => s.id === id);
-  //   if (application) {
-  //     setSelectedApplication(application);
-  //     showModal("viewDocument");
-  //   }
-  // };
-
   const columns = [
     {
       title: (
@@ -199,7 +191,6 @@ const ApplicationPage = () => {
         <ApplicationTable
           data={applicationResponse?.data || []}
           columns={columns}
-          // onView={handleViewDocument}
           onEdit={handleEdit}
           onDownload={handleDownload}
         />
