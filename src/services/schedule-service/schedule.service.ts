@@ -3,45 +3,41 @@ import { Shifts } from "../../models/shifts";
 import { Teachers } from "../../models/teacher.model";
 import axiosInstance from "../../utils/axiosInstance";
 
-// Interface cho dữ liệu lịch học
-// Interface for schedule data
 export interface ScheduleData {
   id: number;
   date: string;
-  class: { id: number; name: string }; // Update with actual data type
-  shift: { id: number; name: string; startTime: string; endTime: string }; // Update with actual data type
-  teacher: { id: number; name: string }; // Update with actual data type
-  module: { module_id: number; module_name: string }; // Update with actual data type
-  classroom: { id: number; name: string }; // Update with actual data type
+  class: { id: number; name: string };
+  shift: { id: number; name: string; startTime: string; endTime: string };
+  teacher: { id: number; name: string };
+  module: { module_id: number; module_name: string };
+  classroom: { id: number; name: string };
 }
 
 export interface CreateScheduleData {
   id: number;
   date: string;
-  classId: string | undefined; // Update with actual data type
-  shiftId: number; // Update with actual data type
-  teacherId: number; // Update with actual data type
-  moduleId: number; // Update with actual data type
-  classroomId: number; // Update with actual data type
+  classId: string | undefined;
+  shiftId: number;
+  teacherId: number;
+  moduleId: number;
+  classroomId: number;
 }
 
-// New DTO for auto-generated schedule
 export interface AutoGenerateScheduleDto {
   schedules: {
     createScheduleDto: {
-      shiftId: number;
       classId: number;
       classroomId: number;
       teacherId: number;
       moduleId: number;
       startDate: string;
+      shiftIds: number[];
     };
     selectedDays: string[];
   }[];
 }
 
 class ScheduleService {
-  // Lấy danh sách lịch học
   async findAll(): Promise<ScheduleData[]> {
     try {
       const response = await axiosInstance.get<ScheduleData[]>("/schedules");
@@ -52,7 +48,6 @@ class ScheduleService {
     }
   }
 
-  // Lấy thông tin chi tiết một lịch học
   async findOne(id: number): Promise<ScheduleData> {
     try {
       const response = await axiosInstance.get<ScheduleData>(
@@ -65,7 +60,6 @@ class ScheduleService {
     }
   }
 
-  // Thêm lịch học mới
   async create(schedule: CreateScheduleData): Promise<ScheduleData> {
     try {
       const response = await axiosInstance.post<ScheduleData>(
@@ -95,7 +89,6 @@ class ScheduleService {
     }
   }
 
-  // Cập nhật thông tin lịch học
   async update(
     id: number,
     schedule: Partial<CreateScheduleData>,
@@ -117,7 +110,6 @@ class ScheduleService {
     }
   }
 
-  // Xóa lịch học
   async delete(id: number): Promise<void> {
     try {
       await axiosInstance.delete(`/schedules/${id}`);
@@ -127,23 +119,6 @@ class ScheduleService {
     }
   }
 
-  // Lấy số lượng lịch học theo ngày trong tháng
-  async getScheduleCountByDayInMonth(
-    date: string,
-  ): Promise<{ day: number; count: number }[]> {
-    try {
-      const response = await axiosInstance.get<
-        { day: number; count: number }[]
-      >(`/schedule/count-by-day`, { params: { date } });
-      return response.data;
-    } catch (error) {
-      console.error(
-        `Error fetching schedule count by day in month for date ${date}:`,
-        error,
-      );
-      throw error;
-    }
-  }
   async findByClassId(id: string): Promise<ScheduleData[]> {
     try {
       const response = await axiosInstance.get<ScheduleData[]>(
@@ -152,6 +127,32 @@ class ScheduleService {
       return response.data;
     } catch (error) {
       console.error("Error fetching schedules:", error);
+      throw error;
+    }
+  }
+
+  async findSchedulesByClassAndDateRange(
+    classId: number,
+    startDate: string,
+    endDate: string,
+  ): Promise<ScheduleData[]> {
+    try {
+      const response = await axiosInstance.get<ScheduleData[]>(
+        `/schedules/class/${classId}/schedules`,
+        {
+          params: {
+            startDate,
+            endDate,
+          },
+        },
+      );
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      console.error(
+        `Error fetching schedules for class ${classId} between ${startDate} and ${endDate}:`,
+        error,
+      );
       throw error;
     }
   }

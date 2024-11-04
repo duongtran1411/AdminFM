@@ -127,6 +127,7 @@ const AddStudentToClassForm = ({
       title: "Khóa",
       dataIndex: ["cohort", "name"],
       key: "cohort",
+      render: (cohort: Cohort | null) => <Tag>{cohort?.name || "N/A"}</Tag>,
     },
     {
       title: "Trạng thái",

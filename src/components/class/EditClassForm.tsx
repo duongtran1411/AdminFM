@@ -19,7 +19,6 @@ const EditClassForm: React.FC<EditClassFormProps> = ({
 
   useEffect(() => {
     if (initialValues) {
-      console.log(initialValues);
       form.setFieldsValue(initialValues);
     }
   }, [initialValues, form]);
@@ -44,7 +43,6 @@ const EditClassForm: React.FC<EditClassFormProps> = ({
         >
           <Input placeholder="Nhập tên lớp" />
         </Form.Item>
-
         <Form.Item>
           <Button type="primary" htmlType="submit">
             Cập Nhật

@@ -16,22 +16,17 @@ const AddClassroomForm = ({
   buildingId,
 }: Props) => {
   const [form] = Form.useForm();
-  // Xử lý khi nhấn nút "OK"
   const handleOk = async () => {
-    try {
-      const values = await form.validateFields();
-      const newClassroom: Classroom = {
-        ...values,
-        buildingId,
-      };
-      await classRoomService.add(newClassroom);
-      onClassroomCreated();
-      notification.success({ message: "Classroom created successfully!" });
-      form.resetFields();
-      hideModal();
-    } catch (info) {
-      console.log("Validate Failed:", info);
-    }
+    const values = await form.validateFields();
+    const newClassroom: Classroom = {
+      ...values,
+      buildingId,
+    };
+    await classRoomService.add(newClassroom);
+    onClassroomCreated();
+    notification.success({ message: "Classroom created successfully!" });
+    form.resetFields();
+    hideModal();
   };
 
   return (

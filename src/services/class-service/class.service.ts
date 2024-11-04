@@ -36,9 +36,11 @@ class ClassService {
     }
   }
 
-  async getClassById(classId: number): Promise<Class> {
+  async getClassById(classId: number): Promise<Response<Class>> {
     try {
-      const response = await axiosInstance.get<Class>(`/classes/${classId}`);
+      const response = await axiosInstance.get<Response<Class>>(
+        `/classes/${classId}`,
+      );
       return response.data;
     } catch (error) {
       console.error("Error fetching classes:", error);

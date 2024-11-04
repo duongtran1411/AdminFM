@@ -10,6 +10,7 @@ import EditStudentForm from "../../components/student/EditStudentForm";
 import useModals from "../../hooks/useModal";
 import { Student } from "../../models/student.model";
 import { studentService } from "../../services/student-service/student.service";
+import NavigateBack from "../../components/shared/NavigateBack";
 
 const StudentInClassPage = () => {
   const { isVisible, showModal, hideModal } = useModals();
@@ -18,6 +19,7 @@ const StudentInClassPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+
   const fetchStudents = async () => {
     setLoading(true);
     try {
@@ -126,20 +128,23 @@ const StudentInClassPage = () => {
 
   return (
     <Layout
-      className="rounded-lg flex justify-center items-center"
+      className="rounded-lg"
       style={{
         background: "white",
         padding: "20px",
+        minHeight: "100vh",
+        position: "relative",
       }}
     >
-      <div className="w-full ">
-        <div className="flex justify-between flex-wrap">
-          <TabsMenu tabItems={[]} />
+      <div className="w-full">
+        <div className="flex justify-between items-center mb-4">
+          <NavigateBack />
           <ActionButtons
             onNewClick={() => showModal("createStudent")}
             onImportClick={() => showModal("importExcel")}
           />
         </div>
+        <TabsMenu tabItems={[]} />
         <AddStudentToClassForm
           isModalVisible={isVisible("createStudent")}
           hideModal={() => hideModal("createStudent")}

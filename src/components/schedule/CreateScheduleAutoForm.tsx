@@ -34,6 +34,7 @@ const CreateScheduleAutoForm: React.FC<{
         selectedDays: [],
         availableClassrooms: [],
         availableTeachers: [],
+        shiftIds: [], // Updated to an array for multiple selection
       }));
       setTableData(initialTableData);
     };
@@ -42,19 +43,23 @@ const CreateScheduleAutoForm: React.FC<{
   }, [classId]);
 
   const fetchAvailableData = debounce(async (record: any) => {
-    if (record.startDate && record.shiftId && record.selectedDays.length > 0) {
+    if (
+      record.startDate &&
+      record.shiftIds.length > 0 &&
+      record.selectedDays.length > 0
+    ) {
       try {
         const selectedDaysString = JSON.stringify(record.selectedDays);
         const [classrooms, teachers] = await Promise.all([
           scheduleService.getAvailableClassrooms(
             record.moduleId,
-            record.shiftId,
+            record.shiftIds, // Pass array of shift IDs
             record.startDate,
             selectedDaysString,
           ),
           scheduleService.getAvailableTeachers(
             record.moduleId,
-            record.shiftId,
+            record.shiftIds, // Pass array of shift IDs
             record.startDate,
             selectedDaysString,
           ),
@@ -84,7 +89,7 @@ const CreateScheduleAutoForm: React.FC<{
       prevData.map((item) => {
         if (item.key === key) {
           const updatedItem = { ...item, [dataIndex]: value };
-          if (["startDate", "shiftId", "selectedDays"].includes(dataIndex)) {
+          if (["startDate", "shiftIds", "selectedDays"].includes(dataIndex)) {
             fetchAvailableData(updatedItem);
           }
           return updatedItem;
@@ -115,7 +120,6 @@ const CreateScheduleAutoForm: React.FC<{
             handleTableChange(record.key, "startDate", dateString)
           }
           disabledDate={(current) => {
-            // Vô hiệu hóa các ngày trước hôm nay
             return current && current < moment().endOf("day");
           }}
           style={{ width: "100%" }}
@@ -153,13 +157,14 @@ const CreateScheduleAutoForm: React.FC<{
     },
     {
       title: "Ca học",
-      dataIndex: "shiftId",
-      key: "shiftId",
+      dataIndex: "shiftIds",
+      key: "shiftIds",
       render: (_: any, record: any) => (
         <Select
+          mode="multiple" // Enable multiple selection for shifts
           dropdownStyle={{ minWidth: "150px" }}
-          value={record.shiftId}
-          onChange={(value) => handleTableChange(record.key, "shiftId", value)}
+          value={record.shiftIds}
+          onChange={(value) => handleTableChange(record.key, "shiftIds", value)}
           style={{ width: "100%" }}
         >
           {shifts.map((shift) => (
@@ -220,7 +225,7 @@ const CreateScheduleAutoForm: React.FC<{
     try {
       const scheduleData = tableData.map((item) => ({
         createScheduleDto: {
-          shiftId: item.shiftId,
+          shiftIds: item.shiftIds, // Store array of shift IDs
           classId: Number(classId),
           classroomId: item.classroomId,
           teacherId: item.teacherId,
@@ -229,7 +234,6 @@ const CreateScheduleAutoForm: React.FC<{
         },
         selectedDays: item.selectedDays || [],
       }));
-      console.log(scheduleData);
       const result = await scheduleService.autoGenerateSchedule(
         Number(classId),
         { schedules: scheduleData },

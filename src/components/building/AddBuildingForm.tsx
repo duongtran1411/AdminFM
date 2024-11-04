@@ -17,19 +17,15 @@ const AddBuildingForm = ({
 
   // Xử lý khi nhấn nút "OK"
   const handleOk = async () => {
-    try {
-      const values = await form.validateFields();
-      const newBuilding: Building = {
-        ...values,
-      };
-      await buildingService.addBuilding(newBuilding);
-      onBuildingCreated();
-      notification.success({ message: "Building created successfully!" });
-      form.resetFields();
-      hideModal();
-    } catch (info) {
-      console.log("Validate Failed:", info);
-    }
+    const values = await form.validateFields();
+    const newBuilding: Building = {
+      ...values,
+    };
+    await buildingService.addBuilding(newBuilding);
+    onBuildingCreated();
+    notification.success({ message: "Building created successfully!" });
+    form.resetFields();
+    hideModal();
   };
 
   return (

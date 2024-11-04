@@ -3,14 +3,14 @@ import {
   Checkbox,
   Input,
   Layout,
+  Modal,
   notification,
   Table,
-  Modal,
 } from "antd";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
 import Loading from "../../components/common/loading";
+import NavigateBack from "../../components/shared/NavigateBack";
 import { Attendance } from "../../models/attendance.model";
 import {
   getAttendanceStatus,
@@ -73,7 +73,6 @@ const AttendancePage = () => {
   };
 
   const handleSubmit = async () => {
-    // Hiển thị modal xác nhận
     Modal.confirm({
       title: "Xác nhận lưu điểm danh",
       content: "Bạn có chắc chắn muốn lưu trạng thái điểm danh này?",
@@ -211,9 +210,11 @@ const AttendancePage = () => {
         background: "white",
         padding: "20px",
         minHeight: "100vh",
+        position: "relative",
       }}
     >
       <div className="w-full max-w-6xl">
+        <NavigateBack />
         <Table
           columns={columns}
           dataSource={attendanceData}

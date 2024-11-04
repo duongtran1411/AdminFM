@@ -16,19 +16,15 @@ const AddModuleForm = ({
   const [form] = Form.useForm();
 
   const handleOk = async () => {
-    try {
-      const values = await form.validateFields();
-      const newModule: Module = {
-        ...values,
-      };
-      await moduleService.add(newModule);
-      onModuleCreated();
-      notification.success({ message: "Module created successfully!" });
-      form.resetFields();
-      hideModal();
-    } catch (info) {
-      console.log("Validate Failed:", info);
-    }
+    const values = await form.validateFields();
+    const newModule: Module = {
+      ...values,
+    };
+    await moduleService.add(newModule);
+    onModuleCreated();
+    notification.success({ message: "Module created successfully!" });
+    form.resetFields();
+    hideModal();
   };
 
   return (

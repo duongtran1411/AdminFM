@@ -15,23 +15,17 @@ const AddApplicationDocumentForm = ({
 }: Props) => {
   const [form] = Form.useForm();
   const handleOk = async () => {
-    try {
-      const values = await form.validateFields();
-      const newApplicationDocument: ApplicationDocument = {
-        ...values,
-      };
-      await applicationDocumentsService.add(
-        newApplicationDocument,
-      );
-      onApplicationDocumentCreated();
-      notification.success({
-        message: "Thành phần hồ sơ được tạo thành công!",
-      });
-      form.resetFields();
-      hideModal();
-    } catch (info) {
-      console.log("Validate Failed:", info);
-    }
+    const values = await form.validateFields();
+    const newApplicationDocument: ApplicationDocument = {
+      ...values,
+    };
+    await applicationDocumentsService.add(newApplicationDocument);
+    onApplicationDocumentCreated();
+    notification.success({
+      message: "Thành phần hồ sơ được tạo thành công!",
+    });
+    form.resetFields();
+    hideModal();
   };
 
   return (

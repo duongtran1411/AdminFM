@@ -35,21 +35,17 @@ const AddCourseForm = ({
   };
 
   const handleOk = async () => {
-    try {
-      const values = await form.validateFields();
-      const newCourse: Courses = {
-        ...values,
-        modules: selectedModules,
-      };
-      await courseService.addCourse(newCourse);
-      onCourseCreated();
-      notification.success({ message: "Course created successfully!" });
-      form.resetFields();
-      setSelectedModules([]); // Clear selected modules after submission
-      hideModal();
-    } catch (info) {
-      console.log("Validate Failed:", info);
-    }
+    const values = await form.validateFields();
+    const newCourse: Courses = {
+      ...values,
+      modules: selectedModules,
+    };
+    await courseService.addCourse(newCourse);
+    onCourseCreated();
+    notification.success({ message: "Course created successfully!" });
+    form.resetFields();
+    setSelectedModules([]); // Clear selected modules after submission
+    hideModal();
   };
 
   return (

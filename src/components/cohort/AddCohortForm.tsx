@@ -17,19 +17,15 @@ const AddCohortForm = ({
 
   // Xử lý khi nhấn nút "OK"
   const handleOk = async () => {
-    try {
-      const values = await form.validateFields();
-      const newCohort: Cohort = {
-        ...values,
-      };
-      await cohortService.addCohort(newCohort);
-      onCohortCreated();
-      notification.success({ message: "Cohort created successfully!" });
-      form.resetFields();
-      hideModal();
-    } catch (info) {
-      console.log("Validate Failed:", info);
-    }
+    const values = await form.validateFields();
+    const newCohort: Cohort = {
+      ...values,
+    };
+    await cohortService.addCohort(newCohort);
+    onCohortCreated();
+    notification.success({ message: "Cohort created successfully!" });
+    form.resetFields();
+    hideModal();
   };
 
   return (

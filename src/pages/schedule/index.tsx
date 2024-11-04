@@ -1,14 +1,19 @@
-import { EllipsisOutlined } from "@ant-design/icons";
-import { Alert, Dropdown, Layout, Modal, notification, Table } from "antd";
+import { Alert, DatePicker, Empty, Layout, Modal, notification } from "antd";
+import dayjs, { Dayjs } from "dayjs";
+import isoWeek from "dayjs/plugin/isoWeek";
+import weekday from "dayjs/plugin/weekday";
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Loading from "../../components/common/loading";
 import ActionButtons from "../../components/schedule/ActionButton";
 import CreateScheduleAutoForm from "../../components/schedule/CreateScheduleAutoForm";
 import CreateScheduleForm from "../../components/schedule/CreateScheduleForm";
 import ScheduleTabsMenu from "../../components/schedule/TabsMenu";
+import Timetable from "../../components/schedule/TimeTable";
 import UpdateScheduleForm from "../../components/schedule/UpdateScheduleForm";
+import NavigateBack from "../../components/shared/NavigateBack";
 import useModals from "../../hooks/useModal";
+import classService from "../../services/class-service/class.service";
 import {
   CreateScheduleData,
   ScheduleData,
@@ -16,24 +21,60 @@ import {
 } from "../../services/schedule-service/schedule.service";
 import StudentInClassPage from "../student/StudentInClass";
 
+dayjs.extend(weekday);
+dayjs.extend(isoWeek);
+
 const ScheduleList: React.FC = () => {
-  const navigate = useNavigate();
   const { isVisible, showModal, hideModal } = useModals();
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [scheduleInClass, setScheduleInClass] = useState<ScheduleData[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<string>("1");
+  const [activeTab, setActiveTab] = useState("1");
   const [selectedSchedule, setSelectedSchedule] = useState<ScheduleData>();
   const { classId } = useParams<{ classId: string }>();
+  const [className, setClassName] = useState<string | null>(null);
+  const [selectedDateRange, setSelectedDateRange] = useState<
+    [Dayjs, Dayjs] | null
+  >([dayjs().startOf("isoWeek"), dayjs().endOf("isoWeek")]);
 
   useEffect(() => {
-    fetchSchedules();
-  }, []);
+    const fetchData = async () => {
+      await fetchClassName();
+      await fetchSchedules();
+      await fetchSchedulesInClass();
+    };
+    fetchData();
+  }, [selectedDateRange, classId]);
 
-  const fetchSchedules = async () => {
-    setLoading(true);
+  const fetchSchedulesInClass = async () => {
     try {
       const data = await scheduleService.findByClassId(classId!);
+      setScheduleInClass(data);
+    } catch (err) {
+      console.error("Error fetching schedules in class:", err);
+    }
+  };
+
+  const fetchClassName = async () => {
+    try {
+      const { data } = await classService.getClassById(+classId!);
+      setClassName(data.name);
+    } catch (err) {
+      console.error("Error fetching class name:", err);
+    }
+  };
+
+  const fetchSchedules = async () => {
+    if (!selectedDateRange) return;
+    setLoading(true);
+    try {
+      const [startDate, endDate] = selectedDateRange;
+      const data = await scheduleService.findSchedulesByClassAndDateRange(
+        +classId!,
+        startDate.format("YYYY-MM-DD"),
+        endDate.format("YYYY-MM-DD"),
+      );
       setSchedules(data);
     } catch (err) {
       console.error("Error fetching schedules:", err);
@@ -64,9 +105,9 @@ const ScheduleList: React.FC = () => {
       },
     });
   };
-  const onSubmitAutoSchedule = async (values: any) => {
+
+  const onSubmitAutoSchedule = async () => {
     try {
-      console.log(values);
       await fetchSchedules();
       notification.success({ message: "Tạo lịch học tự động thành công!" });
       hideModal("createScheduleAuto");
@@ -96,110 +137,22 @@ const ScheduleList: React.FC = () => {
   };
 
   const handleAddSchedule = () => {
-    if (schedules.length === 0) {
-      showModal("createScheduleAuto");
+    showModal(schedules.length === 0 ? "createScheduleAuto" : "createSchedule");
+  };
+
+  const handleDateChange = (dates: (Dayjs | null)[] | null) => {
+    if (dates && dates[0]) {
+      const startOfWeek = dates[0].startOf("isoWeek");
+      setSelectedDateRange([startOfWeek, startOfWeek.add(6, "day")]);
     } else {
-      showModal("createSchedule");
+      setSelectedDateRange(null);
     }
   };
-  const handleRowClick = (schedule: ScheduleData) => {
-    navigate(`/schedule/attendance/${schedule.id}`);
-  };
 
-  const menu = (schedule: ScheduleData) => ({
-    items: [
-      {
-        key: "1",
-        label: (
-          <span
-            onClick={() => {
-              // e.stopPropagation();
-              handleEdit(schedule);
-            }}
-          >
-            Sửa
-          </span>
-        ),
-      },
-      {
-        key: "2",
-        label: (
-          <span
-            onClick={() => {
-              // e.stopPropagation();
-              handleDelete(schedule);
-            }}
-          >
-            Xóa
-          </span>
-        ),
-      },
-    ],
-  });
+  const disabledDate = (current: Dayjs) => current.day() !== 1;
 
-  const columns = [
-    {
-      title: "Ngày",
-      dataIndex: "date",
-      key: "date",
-    },
-    {
-      title: "Tên Lớp",
-      dataIndex: ["class", "name"],
-      key: "name",
-    },
-    {
-      title: "Tên Ca",
-      dataIndex: ["shift", "name"],
-      key: "shiftName",
-    },
-    {
-      title: "Thời Gian Bắt Đầu Ca",
-      dataIndex: ["shift", "startTime"],
-      key: "shiftStartTime",
-    },
-    {
-      title: "Thời Gian Kết Thúc Ca",
-      dataIndex: ["shift", "endTime"],
-      key: "shiftEndTime",
-    },
-    {
-      title: "Tên Phòng Học",
-      dataIndex: ["classroom", "name"],
-      key: "classroomName",
-    },
-    {
-      title: "Giảng Viên",
-      dataIndex: ["teacher", "name"],
-      key: "username",
-    },
-    {
-      title: "Môn học",
-      dataIndex: ["module", "module_name"],
-      key: "module_name",
-    },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (_: any, schedule: ScheduleData) => (
-        <div onClick={(e) => e.stopPropagation()}>
-          <Dropdown menu={menu(schedule)} trigger={["click"]}>
-            <EllipsisOutlined
-              style={{ padding: "10px", fontSize: "24px", cursor: "pointer" }}
-            />
-          </Dropdown>
-        </div>
-      ),
-    },
-  ];
-
-  if (loading) {
-    return <Loading />;
-  }
-
-  if (error) {
-    return <Alert message={error} type="error" showIcon />;
-  }
+  if (loading) return <Loading />;
+  if (error) return <Alert message={error} type="error" showIcon />;
 
   return (
     <div>
@@ -214,25 +167,55 @@ const ScheduleList: React.FC = () => {
             position: "relative",
           }}
         >
-          <ActionButtons
-            onNewClick={handleAddSchedule}
-            isEmpty={schedules.length === 0}
-          />
-          <div style={{ marginTop: "20px" }}>
-            <Table
-              columns={columns}
-              dataSource={schedules}
-              rowKey="id"
-              onRow={(schedule) => ({
-                onClick: () => handleRowClick(schedule),
-              })}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: "10px",
+            }}
+          >
+            <NavigateBack />
+            <ActionButtons
+              onNewClick={handleAddSchedule}
+              isEmpty={schedules.length === 0}
             />
           </div>
+
+          <div style={{ marginBottom: "10px" }}>
+            <DatePicker.RangePicker
+              value={selectedDateRange}
+              onChange={handleDateChange}
+              disabledDate={disabledDate}
+              style={{ width: 300 }}
+            />
+          </div>
+
+          {scheduleInClass.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "20px" }}>
+              <Empty
+                description={
+                  <>
+                    Chưa có lịch học cho lớp{" "}
+                    <strong>
+                      <em>{className || ""}</em>
+                    </strong>
+                  </>
+                }
+              />
+            </div>
+          ) : (
+            <Timetable
+              scheduleData={schedules}
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+              selectedDateRange={selectedDateRange}
+            />
+          )}
         </Layout>
       ) : (
         <StudentInClassPage />
       )}
-      {/* Modal cho form tạo hoặc chỉnh sửa lịch học */}
       <UpdateScheduleForm
         initialValues={selectedSchedule}
         onSubmit={onSubmit}

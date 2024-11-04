@@ -37,17 +37,14 @@ const ImportForm = ({
   };
 
   const handleUploadClick = async () => {
-    console.log(file);
     if (!file) {
       console.error("Chưa chọn file");
       return;
     }
 
-    console.log("Đang tải lên file:", file.name);
     setLoading(true);
     try {
-      await handleUpload(file); // Gọi hàm handleUpload và truyền file vào
-      console.log("Tải lên thành công");
+      await handleUpload(file);
     } catch (error) {
       console.error("Tải lên thất bại:", error);
     } finally {

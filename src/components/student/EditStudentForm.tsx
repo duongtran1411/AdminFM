@@ -55,7 +55,7 @@ const EditStudentForm = ({
         phone: student.phone,
         email: student.email,
         coursesFamilyName: student.coursesFamily.course_family_id,
-        cohort: student.cohort?.name,
+        cohort: student.cohort?.id,
         permanentResidence: student.permanentResidence,
         status: student.status,
       });
@@ -64,8 +64,8 @@ const EditStudentForm = ({
 
   const handleOk = async () => {
     Modal.confirm({
-      title: "Are you sure you want to update this student?",
-      okText: "Update",
+      title: "Bạn có chắc chắn muốn cập nhật sinh viên này không?",
+      okText: "Cập nhật",
       okType: "danger",
       onOk: async () => {
         try {
@@ -80,9 +80,9 @@ const EditStudentForm = ({
           form.resetFields();
           hideModal();
           onUpdate();
-          notification.success({ message: "Student updated successfully" });
+          notification.success({ message: "Cập nhật sinh viên thành công" });
         } catch (error) {
-          notification.error({ message: "Error updating student" });
+          notification.error({ message: "Lỗi cập nhật sinh viên" });
         }
       },
     });
@@ -90,14 +90,14 @@ const EditStudentForm = ({
 
   return (
     <Modal
-      title="Tạo sinh viên mới"
+      title="Chỉnh sửa sinh viên"
       open={isModalVisible}
       onOk={handleOk}
       onCancel={hideModal}
-      okText="Create"
-      cancelText="Cancel"
+      okText="Cập nhật"
+      cancelText="Hủy"
       centered
-      width={700} // Increase modal width to match EditStudentForm
+      width={700}
     >
       <Form form={form} layout="vertical">
         <Row gutter={16}>
@@ -194,7 +194,7 @@ const EditStudentForm = ({
             >
               <Select placeholder="Chọn niên khóa">
                 {cohorts.map((c) => (
-                  <Select.Option key={c.id} value={c.name}>
+                  <Select.Option key={c.id} value={c.id}>
                     {c.name}
                   </Select.Option>
                 ))}

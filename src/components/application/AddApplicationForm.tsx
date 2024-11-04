@@ -1,17 +1,17 @@
 import { Button, notification } from "antd";
-import AddAttachedDocumentForm from "./AddAttachedDocumentForm";
-import AddInformationApplication from "./AddInformationApplication";
-import { useState, useRef } from "react";
-import applicationService from "../../services/application-service/application.service";
-import attachedDocumentService from "../../services/attached-document-service/attached.document.service";
-import { Application } from "../../models/application.model";
 import { FormInstance } from "antd/es/form";
 import dayjs from "dayjs";
+import { useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Loading from "../common/loading";
-import { ArrowLeftOutlined } from "@ant-design/icons";
-import { ApplicationStatus } from "../../models/enum/application.status.enum";
 import { AdmissionProgram } from "../../models/admission.model";
+import { Application } from "../../models/application.model";
+import { ApplicationStatus } from "../../models/enum/application.status.enum";
+import applicationService from "../../services/application-service/application.service";
+import attachedDocumentService from "../../services/attached-document-service/attached.document.service";
+import Loading from "../common/loading";
+import NavigateBack from "../shared/NavigateBack";
+import AddAttachedDocumentForm from "./AddAttachedDocumentForm";
+import AddInformationApplication from "./AddInformationApplication";
 
 const initialFormData: Application = {
   name: "",
@@ -92,7 +92,7 @@ const AddApplicationForm = () => {
             onClick={() => navigate(`/admission/${admissionId}`)}
             className="cursor-pointer mb-4"
           >
-            <ArrowLeftOutlined />
+            <NavigateBack />
           </div>
 
           <AddAttachedDocumentForm

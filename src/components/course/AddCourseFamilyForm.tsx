@@ -35,21 +35,17 @@ const AddCourseFamilyForm = ({
   };
 
   const handleOk = async () => {
-    try {
-      const values = await form.validateFields();
-      const newCourseFmaily: CoursesFamily = {
-        ...values,
-        courses: selectedCourses,
-      };
-      await courseFamilyService.add(newCourseFmaily);
-      onCourseCreated();
-      notification.success({ message: "Course Family created successfully!" });
-      form.resetFields();
-      setSelectedCourses([]);
-      hideModal();
-    } catch (info) {
-      console.log("Validate Failed:", info);
-    }
+    const values = await form.validateFields();
+    const newCourseFmaily: CoursesFamily = {
+      ...values,
+      courses: selectedCourses,
+    };
+    await courseFamilyService.add(newCourseFmaily);
+    onCourseCreated();
+    notification.success({ message: "Course Family created successfully!" });
+    form.resetFields();
+    setSelectedCourses([]);
+    hideModal();
   };
 
   return (

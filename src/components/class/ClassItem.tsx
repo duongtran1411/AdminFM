@@ -24,7 +24,6 @@ const ClassItem = ({
   classId,
   onSucess,
 }: ClassItemProps) => {
-  // Colors array for random background
   const colors = ["#FF4D4F", "#FFEC3D", "#52C41A"];
   const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
@@ -36,21 +35,18 @@ const ClassItem = ({
     navigate(`/schedule/class/${classId}`);
   };
 
-  // Edit action0.
   const handleEdit = async () => {
     const classEdit = await classService.getClassById(classId);
     if (classEdit) {
-      setEditingClass(classEdit);
+      setEditingClass(classEdit.data);
       showModal("editClassModal");
     }
   };
 
-  // Delete action
   const handleDelete = async () => {
     try {
       await ClassService.deleteClass(classId);
-      // Refresh the class list or handle UI update
-      message.success("Delete successfully");
+      message.success("Xóa lớp học thành công");
       onSucess();
     } catch (error) {
       message.error("Failed to delete class");
@@ -141,7 +137,6 @@ const ClassItem = ({
         </div>
       </Card>
 
-      {/* Edit modal */}
       {editingClass && (
         <EditClassForm
           visible={isVisible("editClassModal")}
