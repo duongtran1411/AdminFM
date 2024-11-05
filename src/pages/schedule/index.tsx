@@ -14,12 +14,9 @@ import UpdateScheduleForm from "../../components/schedule/UpdateScheduleForm";
 import NavigateBack from "../../components/shared/NavigateBack";
 import useModals from "../../hooks/useModal";
 import classService from "../../services/class-service/class.service";
-import {
-  CreateScheduleData,
-  ScheduleData,
-  scheduleService,
-} from "../../services/schedule-service/schedule.service";
+import { scheduleService } from "../../services/schedule-service/schedule.service";
 import StudentInClassPage from "../student/StudentInClass";
+import { CreateScheduleData, ScheduleData } from "../../models/schedules.model";
 
 dayjs.extend(weekday);
 dayjs.extend(isoWeek);
@@ -109,6 +106,7 @@ const ScheduleList: React.FC = () => {
   const onSubmitAutoSchedule = async () => {
     try {
       await fetchSchedules();
+      await fetchSchedulesInClass();
       notification.success({ message: "Tạo lịch học tự động thành công!" });
       hideModal("createScheduleAuto");
     } catch (error) {
@@ -122,14 +120,23 @@ const ScheduleList: React.FC = () => {
   const onSubmit = async (values: CreateScheduleData) => {
     try {
       if (selectedSchedule) {
-        await scheduleService.update(selectedSchedule.id, values);
-        notification.success({ message: "Cập nhật lịch thành công!" });
+        try {
+          await scheduleService.update(selectedSchedule.id, values);
+          notification.success({ message: "Cập nhật lịch thành công!" });
+        } catch (error: any) {
+          notification.error({ message: error.response.data.message });
+        }
       } else {
-        await scheduleService.create(values);
-        notification.success({ message: "Thêm mới lịch thành công!" });
+        try {
+          await scheduleService.create(values);
+          notification.success({ message: "Thêm mới lịch thành công!" });
+        } catch (error: any) {
+          notification.error({ message: error.response.data.message });
+        }
       }
       fetchSchedules();
       hideModal("editSchedule");
+      hideModal("createSchedule");
     } catch (error) {
       console.error("Error submitting schedule:", error);
       notification.error({ message: "Có lỗi xảy ra! Vui lòng thử lại." });
@@ -137,7 +144,9 @@ const ScheduleList: React.FC = () => {
   };
 
   const handleAddSchedule = () => {
-    showModal(schedules.length === 0 ? "createScheduleAuto" : "createSchedule");
+    showModal(
+      scheduleInClass.length === 0 ? "createScheduleAuto" : "createSchedule",
+    );
   };
 
   const handleDateChange = (dates: (Dayjs | null)[] | null) => {
@@ -178,22 +187,26 @@ const ScheduleList: React.FC = () => {
             <NavigateBack />
             <ActionButtons
               onNewClick={handleAddSchedule}
-              isEmpty={schedules.length === 0}
+              isEmpty={scheduleInClass.length === 0}
             />
           </div>
-
-          <div style={{ marginBottom: "10px" }}>
-            <DatePicker.RangePicker
-              value={selectedDateRange}
-              onChange={handleDateChange}
-              disabledDate={disabledDate}
-              style={{ width: 300 }}
-            />
-          </div>
-
+          {scheduleInClass.length === 0 ? (
+            <></>
+          ) : (
+            <div style={{ marginBottom: "10px" }}>
+              <DatePicker.RangePicker
+                value={selectedDateRange}
+                onChange={handleDateChange}
+                disabledDate={disabledDate}
+                style={{ width: 300 }}
+                allowClear={false}
+              />
+            </div>
+          )}
           {scheduleInClass.length === 0 ? (
             <div style={{ textAlign: "center", padding: "20px" }}>
               <Empty
+                style={{ fontSize: "16px", marginTop: "150px" }}
                 description={
                   <>
                     Chưa có lịch học cho lớp{" "}

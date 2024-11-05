@@ -22,49 +22,50 @@ const AddModuleForm = ({
     };
     await moduleService.add(newModule);
     onModuleCreated();
-    notification.success({ message: "Module created successfully!" });
+    notification.success({ message: "Thêm mới môn học thành công!" });
     form.resetFields();
     hideModal();
   };
 
   return (
     <Modal
-      title="Create New Module"
+      title="Thêm mới môn học"
       open={isModalVisible}
       onOk={handleOk}
       onCancel={hideModal}
-      okText="Create"
-      cancelText="Cancel"
+      okText="Thêm mới"
+      cancelText="Hủy"
       centered
     >
       <Form form={form} layout="vertical">
         <Form.Item
           name="module_name"
-          label="Module Name"
-          rules={[
-            { required: true, message: "Please input the Module's name!" },
-          ]}
+          label="Tên môn học"
+          rules={[{ required: true, message: "Vui lòng nhập tên môn học!" }]}
         >
-          <Input placeholder="Enter Module's name" />
+          <Input placeholder="Nhập tên môn học" />
         </Form.Item>
         <Form.Item
           name="exam_type"
-          label="Exam Type"
-          rules={[{ required: true, message: "Please input the Exam" }]}
+          label="Loại thi"
+          rules={[{ required: true, message: "Vui lòng nhập loại thi!" }]}
         >
-          <Input placeholder="Enter Exam Type" />
+          <Input placeholder="Nhập loại thi" />
         </Form.Item>
         <Form.Item
           name="number_of_classes"
-          label="Number of Classes"
+          label="Số buổi học"
           rules={[
             {
               required: true,
-              message: "Please input the Number of Classes!",
+              message: "Vui lòng nhập số buổi học!",
             },
           ]}
         >
-          <InputNumber placeholder="Enter the Number of Classes" />
+          <InputNumber
+            placeholder="Nhập số buổi học"
+            style={{ width: "50%" }}
+          />
         </Form.Item>
       </Form>
     </Modal>

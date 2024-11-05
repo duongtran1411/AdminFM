@@ -25,13 +25,8 @@ const ChangeStatusForm = ({
 
   useEffect(() => {
     const fetchCohorts = async () => {
-      try {
-        const response = await cohortService.getAllCohort();
-        setCohorts(response.data);
-      } catch (error) {
-        console.error("Failed to fetch cohorts:", error);
-        notification.error({ message: "Không thể tải danh sách Cohort" });
-      }
+      const response = await cohortService.getAllCohort();
+      setCohorts(response.data);
     };
     fetchCohorts();
   }, []);

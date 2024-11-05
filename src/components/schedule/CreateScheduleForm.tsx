@@ -43,11 +43,11 @@ const CreateScheduleForm: React.FC<{
   const onFinish = (values: CreateScheduleData) => {
     const updatedValues = {
       ...values,
-      classId, // Thêm classId từ useParams
+      classId,
     };
     onSubmit(updatedValues);
     form.resetFields();
-    hideModal(); // Ẩn modal sau khi submit
+    hideModal();
   };
 
   return (

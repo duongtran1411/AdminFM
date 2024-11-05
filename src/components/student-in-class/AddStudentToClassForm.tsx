@@ -7,6 +7,7 @@ import { Student } from "../../models/student.model";
 import cohortService from "../../services/cohort-service/cohort.service";
 import courseFamilyService from "../../services/course-family-service/course.family.service";
 import { studentService } from "../../services/student-service/student.service";
+import admissionService from "../../services/admission-program-service/admission.service";
 
 interface Props {
   isModalVisible: boolean;
@@ -28,6 +29,7 @@ const AddStudentToClassForm = ({
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [coursesFamily, setCoursesFamily] = useState<CoursesFamily[]>([]);
   const [cohort, setCohort] = useState<Cohort[]>([]);
+  const [admissionPrograms, setAdmissionPrograms] = useState<any[]>([]);
   const [searchValue, setSearchValue] = useState("");
 
   const fetchStudents = async () => {
@@ -36,10 +38,12 @@ const AddStudentToClassForm = ({
       const data = await studentService.findStudentsWithoutClass();
       const coursesFamilyData = await courseFamilyService.getAll();
       const cohortData = await cohortService.getAllCohort();
+      const admissionProgramsData = await admissionService.getAll();
       setStudents(data.data);
-      setFilteredStudents(data.data); // Set initial filtered students
+      setFilteredStudents(data.data);
       setCoursesFamily(coursesFamilyData);
       setCohort(cohortData.data);
+      setAdmissionPrograms(admissionProgramsData.data);
     } catch (error) {
       notification.error({ message: "Error loading students" });
     } finally {
@@ -61,7 +65,7 @@ const AddStudentToClassForm = ({
           s.studentId
             ?.toString()
             .toLowerCase()
-            .includes(searchValue.toLowerCase()), // Handle potential null
+            .includes(searchValue.toLowerCase()),
       );
     }
 
@@ -75,6 +79,12 @@ const AddStudentToClassForm = ({
     }
     if (filterValues.status) {
       result = result.filter((s) => s.status === filterValues.status);
+    }
+    if (filterValues.admissionProgram) {
+      result = result.filter(
+        (s) =>
+          s.application?.admissionProgram.id === filterValues.admissionProgram,
+      );
     }
 
     setFilteredStudents(result);
@@ -182,7 +192,7 @@ const AddStudentToClassForm = ({
             marginBottom: 16,
           }}
         >
-          <Form.Item name="coursesFamily" style={{ width: "30%" }}>
+          <Form.Item name="coursesFamily" style={{ width: "23%" }}>
             <Select placeholder="Ngành học" allowClear>
               {coursesFamily.map((cf) => (
                 <Select.Option
@@ -194,7 +204,7 @@ const AddStudentToClassForm = ({
               ))}
             </Select>
           </Form.Item>
-          <Form.Item name="cohort" style={{ width: "30%" }}>
+          <Form.Item name="cohort" style={{ width: "23%" }}>
             <Select placeholder="Khóa" allowClear>
               {cohort.map((c) => (
                 <Select.Option key={c.id} value={c.id}>
@@ -203,11 +213,20 @@ const AddStudentToClassForm = ({
               ))}
             </Select>
           </Form.Item>
-          <Form.Item name="status" style={{ width: "30%" }}>
+          <Form.Item name="status" style={{ width: "23%" }}>
             <Select placeholder="Trạng thái" allowClear>
               {Object.values(StudentStatus).map((status) => (
                 <Select.Option key={status} value={status}>
                   {status}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item name="admissionProgram" style={{ width: "23%" }}>
+            <Select placeholder="Chương trình nhập học" allowClear>
+              {admissionPrograms.map((program) => (
+                <Select.Option key={program.id} value={program.id}>
+                  {program.name}
                 </Select.Option>
               ))}
             </Select>
@@ -228,6 +247,7 @@ const AddStudentToClassForm = ({
         dataSource={filteredStudents}
         rowKey="id"
         loading={loading}
+        pagination={{ pageSize: 20 }}
       />
     </Modal>
   );

@@ -14,6 +14,8 @@ import { studentService } from "../../services/student-service/student.service";
 import { CoursesFamily } from "../../models/courses.model";
 import courseFamilyService from "../../services/course-family-service/course.family.service";
 import { StudentStatus } from "../../models/enum/student.status.enum";
+import { Cohort } from "../../models/cohort.model";
+import cohortService from "../../services/cohort-service/cohort.service";
 
 interface CreateStudentFormProps {
   isModalVisible: boolean;
@@ -28,6 +30,15 @@ const CreateStudentForm = ({
 }: CreateStudentFormProps) => {
   const [form] = Form.useForm();
   const [coursesFamily, setCoursesFamily] = useState<CoursesFamily[]>([]);
+  const [cohorts, setCohorts] = useState<Cohort[]>([]);
+
+  useEffect(() => {
+    const fetchCohorts = async () => {
+      const data = await cohortService.getAllCohort();
+      setCohorts(data.data);
+    };
+    fetchCohorts();
+  }, []);
 
   useEffect(() => {
     const fetchCourseFamily = async () => {
@@ -46,9 +57,9 @@ const CreateStudentForm = ({
       form.resetFields();
       hideModal();
       onCreate();
-      notification.success({ message: "Student created successfully" });
-    } catch (error) {
-      notification.error({ message: "Error creating student" });
+      notification.success({ message: "Tạo sinh viên thành công" });
+    } catch (error: any) {
+      notification.error({ message: error?.response?.data?.message });
     }
   };
 
@@ -151,12 +162,14 @@ const CreateStudentForm = ({
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item
-              name="cohort"
-              label="Cohort"
-              rules={[{ required: false, message: "Vui lòng nhập cohort!" }]}
-            >
-              <Input placeholder="Nhập cohort" />
+            <Form.Item name="cohort" label="Niên khóa">
+              <Select placeholder="Chọn Niên khóa">
+                {cohorts.map((cohort) => (
+                  <Select.Option key={cohort.id} value={cohort.name}>
+                    {cohort.name}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
           </Col>
         </Row>

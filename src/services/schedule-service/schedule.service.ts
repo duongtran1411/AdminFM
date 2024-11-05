@@ -1,41 +1,13 @@
 import { Classroom } from "../../models/classes.model";
+import {
+  AutoGenerateScheduleDto,
+  ClassDay,
+  CreateScheduleData,
+  ScheduleData,
+} from "../../models/schedules.model";
 import { Shifts } from "../../models/shifts";
 import { Teachers } from "../../models/teacher.model";
 import axiosInstance from "../../utils/axiosInstance";
-
-export interface ScheduleData {
-  id: number;
-  date: string;
-  class: { id: number; name: string };
-  shift: { id: number; name: string; startTime: string; endTime: string };
-  teacher: { id: number; name: string };
-  module: { module_id: number; module_name: string };
-  classroom: { id: number; name: string };
-}
-
-export interface CreateScheduleData {
-  id: number;
-  date: string;
-  classId: string | undefined;
-  shiftId: number;
-  teacherId: number;
-  moduleId: number;
-  classroomId: number;
-}
-
-export interface AutoGenerateScheduleDto {
-  schedules: {
-    createScheduleDto: {
-      classId: number;
-      classroomId: number;
-      teacherId: number;
-      moduleId: number;
-      startDate: string;
-      shiftIds: number[];
-    };
-    selectedDays: string[];
-  }[];
-}
 
 class ScheduleService {
   async findAll(): Promise<ScheduleData[]> {
@@ -84,7 +56,6 @@ class ScheduleService {
       );
       return response.data;
     } catch (error) {
-      console.error("Error auto-generating schedule:", error);
       throw error;
     }
   }
@@ -146,7 +117,6 @@ class ScheduleService {
           },
         },
       );
-      console.log(response);
       return response.data;
     } catch (error) {
       console.error(
@@ -199,59 +169,68 @@ class ScheduleService {
 
   async getAvailableClassrooms(
     moduleId: number,
-    shiftId: number,
     startDate: string,
-    selectedDays: string,
+    classDay: ClassDay[],
   ): Promise<Classroom[]> {
-    const response = await axiosInstance.get(
-      `/schedules/available-classrooms`,
-      {
-        params: {
-          moduleId,
-          shiftId,
-          startDate,
-          selectedDays: selectedDays, // This is already a JSON string
+    try {
+      const response = await axiosInstance.get<Classroom[]>(
+        `/schedules/available-classrooms`,
+        {
+          params: {
+            moduleId,
+            startDate,
+            classDay: JSON.stringify(classDay),
+          },
+          paramsSerializer: (params) => {
+            return Object.entries(params)
+              .map(([key, value]) => {
+                if (key === "classDay") {
+                  return `${key}=${encodeURIComponent(value)}`;
+                }
+                return `${key}=${value}`;
+              })
+              .join("&");
+          },
         },
-        paramsSerializer: (params) => {
-          return Object.entries(params)
-            .map(([key, value]) => {
-              if (key === "selectedDays") {
-                return `${key}=${encodeURIComponent(value)}`;
-              }
-              return `${key}=${value}`;
-            })
-            .join("&");
-        },
-      },
-    );
-    return response.data;
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching available classrooms:", error);
+      throw error;
+    }
   }
 
   async getAvailableTeachers(
     moduleId: number,
-    shiftId: number,
     startDate: string,
-    selectedDays: string,
+    classDay: ClassDay[],
   ): Promise<Teachers[]> {
-    const response = await axiosInstance.get(`/schedules/available-teachers`, {
-      params: {
-        moduleId,
-        shiftId,
-        startDate,
-        selectedDays: selectedDays,
-      },
-      paramsSerializer: (params) => {
-        return Object.entries(params)
-          .map(([key, value]) => {
-            if (key === "selectedDays") {
-              return `${key}=${encodeURIComponent(value)}`;
-            }
-            return `${key}=${value}`;
-          })
-          .join("&");
-      },
-    });
-    return response.data;
+    try {
+      const response = await axiosInstance.get<Teachers[]>(
+        `/schedules/available-teachers`,
+        {
+          params: {
+            moduleId,
+            startDate,
+            classDay: JSON.stringify(classDay),
+          },
+          paramsSerializer: (params) => {
+            return Object.entries(params)
+              .map(([key, value]) => {
+                if (key === "classDay") {
+                  return `${key}=${encodeURIComponent(value)}`;
+                }
+                return `${key}=${value}`;
+              })
+              .join("&");
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching available teachers:", error);
+      throw error;
+    }
   }
 }
 

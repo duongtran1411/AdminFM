@@ -2,8 +2,8 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Table, Tag } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Import Link
-import { ScheduleData } from "../../services/schedule-service/schedule.service";
+import { Link, useNavigate } from "react-router-dom";
+import { ScheduleData } from "../../models/schedules.model";
 
 interface TimetableProps {
   scheduleData: ScheduleData[];
@@ -64,7 +64,7 @@ const Timetable: React.FC<TimetableProps> = ({
           <div>
             <div>{day}</div>
             <div style={{ fontSize: "0.8em", color: "gray" }}>
-              {currentDay.format("YYYY-MM-DD")}
+              {currentDay.format("DD-MM-YYYY")}
             </div>
           </div>
         ),

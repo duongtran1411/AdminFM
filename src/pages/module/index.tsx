@@ -2,13 +2,14 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Input, Menu, Modal, notification } from "antd";
 import { useEffect, useState } from "react";
 import { AiOutlineMore } from "react-icons/ai";
+import Loading from "../../components/common/loading";
 import AddModuleBotton from "../../components/module/AddModuleButton";
+import AddModuleForm from "../../components/module/AddModuleForm";
+import EditModuleForm from "../../components/module/EditModuleForm";
 import ModuleTable from "../../components/module/ModuleTable";
 import useModals from "../../hooks/useModal";
 import { Module } from "../../models/courses.model";
 import { moduleService } from "../../services/module-serice/module.service";
-import AddModuleForm from "../../components/module/AddModuleForm";
-import EditModuleForm from "../../components/module/EditModuleForm";
 
 const ModulePage = () => {
   const { isVisible, showModal, hideModal } = useModals();
@@ -58,12 +59,12 @@ const ModulePage = () => {
       key: "module_id",
     },
     {
-      title: "Module Name",
+      title: "Tên môn học",
       dataIndex: "module_name",
       key: "module_name",
     },
     {
-      title: "Exam Type",
+      title: "Loại thi",
       dataIndex: "exam_type",
       key: "exam_type",
     },
@@ -91,16 +92,16 @@ const ModulePage = () => {
 
   const handleDelete = async (mid: number) => {
     Modal.confirm({
-      title: "Are you sure you want to delete this Module?",
-      okText: "Delete",
+      title: "Bạn có chắc chắn muốn xóa môn học này?",
+      okText: "Xóa",
       okType: "danger",
       onOk: async () => {
         try {
           await moduleService.delete(mid);
           setModule(module.filter((c) => c.module_id !== mid));
-          notification.success({ message: "Module deleted successfully" });
+          notification.success({ message: "Xóa môn học thành công!" });
         } catch (error) {
-          notification.error({ message: "Error deleting Module" });
+          notification.error({ message: "Lỗi xóa môn học" });
         }
       },
     });
@@ -122,16 +123,12 @@ const ModulePage = () => {
     fetchModule();
   };
 
-  if (loading) {
-    return <p>Loading module...</p>;
-  }
-
   if (error) {
     return <p>{error}</p>;
   }
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
   return (
     <>

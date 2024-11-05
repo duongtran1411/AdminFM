@@ -81,8 +81,8 @@ const EditStudentForm = ({
           hideModal();
           onUpdate();
           notification.success({ message: "Cập nhật sinh viên thành công" });
-        } catch (error) {
-          notification.error({ message: "Lỗi cập nhật sinh viên" });
+        } catch (error: any) {
+          notification.error({ message: error?.response?.data?.message });
         }
       },
     });
