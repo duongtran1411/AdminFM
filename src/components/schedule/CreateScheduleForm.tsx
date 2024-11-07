@@ -1,10 +1,8 @@
-import { Button, Form, Input, Select, Modal } from "antd";
+import { Button, Form, Input, Modal, Select } from "antd";
 import React, { useEffect, useState } from "react";
-import {
-  CreateScheduleData,
-  scheduleService,
-} from "../../services/schedule-service/schedule.service";
 import { useParams } from "react-router-dom";
+import { CreateScheduleData } from "../../models/schedules.model";
+import { scheduleService } from "../../services/schedule-service/schedule.service";
 
 const CreateScheduleForm: React.FC<{
   isModalVisible: boolean;
@@ -116,7 +114,7 @@ const CreateScheduleForm: React.FC<{
           <Select>
             {modules.map((module) => (
               <Select.Option key={module.module_id} value={module.module_id}>
-                {module.module_name}
+                {module.code}
               </Select.Option>
             ))}
           </Select>

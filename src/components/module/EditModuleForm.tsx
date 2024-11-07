@@ -20,21 +20,20 @@ const EditModuleForm = ({
 
   useEffect(() => {
     if (module) {
-      // Đặt giá trị của form khi mở modal với dữ liệu của giang vien
       form.setFieldsValue({
         module_id: module.module_id,
         module_name: module.module_name,
+        code: module.code,
         exam_type: module.exam_type,
         number_of_classes: module.number_of_classes,
       });
     }
   }, [module, form]);
 
-  // Xử lý khi nhấn nút "OK"
   const handleOk = async () => {
     Modal.confirm({
-      title: "Are you sure you want to update this module?",
-      okText: "Update",
+      title: "Bạn có chắc chắn muốn cập nhật môn học này không?",
+      okText: "Cập nhật",
       okType: "danger",
       onOk: async () => {
         try {
@@ -80,6 +79,18 @@ const EditModuleForm = ({
           ]}
         >
           <Input placeholder="Enter the Module Name" />
+        </Form.Item>
+        <Form.Item
+          name="code"
+          label="Code"
+          rules={[
+            {
+              required: true,
+              message: "Please input the Code!",
+            },
+          ]}
+        >
+          <Input placeholder="Enter the Code" />
         </Form.Item>
         <Form.Item
           name="exam_type"

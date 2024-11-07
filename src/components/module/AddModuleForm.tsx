@@ -46,6 +46,18 @@ const AddModuleForm = ({
           <Input placeholder="Nhập tên môn học" />
         </Form.Item>
         <Form.Item
+          name="code"
+          label="Code"
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng nhập code!",
+            },
+          ]}
+        >
+          <Input placeholder="Nhập code" />
+        </Form.Item>
+        <Form.Item
           name="exam_type"
           label="Loại thi"
           rules={[{ required: true, message: "Vui lòng nhập loại thi!" }]}

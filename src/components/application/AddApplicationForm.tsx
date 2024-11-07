@@ -12,6 +12,9 @@ import Loading from "../common/loading";
 import NavigateBack from "../shared/NavigateBack";
 import AddAttachedDocumentForm from "./AddAttachedDocumentForm";
 import AddInformationApplication from "./AddInformationApplication";
+import AddInformationParent from "./AddInfomationParent";
+import { Parent } from "../../models/parent.model";
+import parentService from "../../services/parent-service/parent.service";
 
 const initialFormData: Application = {
   name: "",
@@ -28,6 +31,7 @@ const AddApplicationForm = () => {
   const { admissionId } = useParams();
   const formRef = useRef<FormInstance>(null);
   const [formData, setFormData] = useState<Application>(initialFormData);
+  const [parentData, setParentData] = useState<Parent>();
   const [attachedDocuments, setAttachedDocuments] = useState<{
     [key: string]: File;
   }>({});
@@ -58,12 +62,17 @@ const AddApplicationForm = () => {
         setLoading(true);
 
         await formRef.current.validateFields();
+        const newParentData = {
+          ...parentData,
+        };
+        await parentService.add(newParentData);
 
         const newFormData = {
           ...formData,
           admissionProgramId: admissionId ? Number(admissionId) : 0,
           birthdate: dayjs(formData.birthdate).format("YYYY-MM-DD"),
         };
+
         const newApplication = await applicationService.add(newFormData);
         await saveDocuments(newApplication.data.id!);
 
@@ -103,6 +112,7 @@ const AddApplicationForm = () => {
             setFormData={setFormData}
             formRef={formRef}
           />
+          <AddInformationParent setFormData={setParentData} formRef={formRef} />
           <div className="flex justify-end mt-4">
             <Button
               onClick={handleSave}

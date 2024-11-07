@@ -4,6 +4,7 @@ import { Class } from "./classes.model";
 import { Cohort } from "./cohort.model";
 import { CoursesFamily } from "./courses.model";
 import { StudentStatus } from "./enum/student.status.enum";
+import { Parent } from "./parent.model";
 import { Shifts } from "./shifts";
 
 export interface Freshmen {
@@ -35,4 +36,5 @@ export interface Student {
   cohort?: Cohort;
   application?: Application;
   permanentResidence?: string;
+  parent?: Parent;
 }

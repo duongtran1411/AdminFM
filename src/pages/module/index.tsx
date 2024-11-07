@@ -64,6 +64,11 @@ const ModulePage = () => {
       key: "module_name",
     },
     {
+      title: "Code",
+      dataIndex: "code",
+      key: "code",
+    },
+    {
       title: "Loại thi",
       dataIndex: "exam_type",
       key: "exam_type",

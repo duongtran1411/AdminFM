@@ -198,9 +198,7 @@ const CreateScheduleAutoForm: React.FC<{
       render: (_: any, record: TableDataItem) => {
         const module = modules.find((m) => m.module_id === record.moduleId);
         return (
-          <div style={{ fontWeight: 500 }}>
-            {module ? module.module_name : "N/A"}
-          </div>
+          <div style={{ fontWeight: 500 }}>{module ? module.code : "N/A"}</div>
         );
       },
     },

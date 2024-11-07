@@ -95,7 +95,7 @@ const Timetable: React.FC<TimetableProps> = ({
                 style={{ flex: 1 }}
               >
                 <Tag color="cyan" style={{ fontWeight: "500" }}>
-                  {data.module.module_name}
+                  {data.module.code}
                 </Tag>
                 <Link
                   to={`/material/${data.id}`}

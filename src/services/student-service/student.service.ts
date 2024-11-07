@@ -10,6 +10,13 @@ class StudentService {
     return response.data;
   }
 
+  async findOne(id: number): Promise<Response<Student>> {
+    const response: AxiosResponse<Response<Student>> = await axiosInstance.get(
+      `/students/${id}`,
+    );
+    return response.data;
+  }
+
   async create(studentList: Student): Promise<Student> {
     const response: AxiosResponse<Student> = await axiosInstance.post(
       "/students",

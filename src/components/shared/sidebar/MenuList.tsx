@@ -54,14 +54,14 @@ const DashBoardMenuList = () => {
           label: "CT Tuyển Sinh",
         },
         {
-          key: "promotions",
-          icon: <AiOutlineNotification />,
-          label: "CT Ưu Đãi",
-        },
-        {
           key: "freshmens",
           icon: <FaChalkboardTeacher />,
           label: "DS Nhập học",
+        },
+        {
+          key: "promotions",
+          icon: <AiOutlineNotification />,
+          label: "CT Ưu Đãi",
         },
         {
           key: "applicationdocument",

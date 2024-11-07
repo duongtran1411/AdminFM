@@ -85,15 +85,15 @@ const EditTeacherForm = ({
 
   return (
     <Modal
-      title="Edit Teacher"
+      title="Chỉnh sửa giảng viên"
       open={isModalVisible}
       onOk={handleOk}
       onCancel={() => {
         form.resetFields(); // Reset các trường form khi đóng modal
         hideModal();
       }}
-      okText="Update"
-      cancelText="Cancel"
+      okText="Cập nhật"
+      cancelText="Hủy"
       centered
     >
       <Form form={form} layout="vertical">
@@ -103,7 +103,7 @@ const EditTeacherForm = ({
           rules={[
             {
               required: true,
-              message: "Please input the name!",
+              message: "Vui lòng nhập tên giảng viên!",
             },
           ]}
         >
@@ -115,7 +115,7 @@ const EditTeacherForm = ({
           rules={[
             {
               required: true,
-              message: "Please input the phone number!",
+              message: "Vui lòng nhập SĐT!",
             },
           ]}
         >
@@ -127,7 +127,7 @@ const EditTeacherForm = ({
           rules={[
             {
               required: true,
-              message: "Please select the gender!",
+              message: "Vui lòng chọn giới tính!",
             },
           ]}
         >
@@ -143,11 +143,11 @@ const EditTeacherForm = ({
           rules={[
             {
               required: true,
-              message: "Please input the email!",
+              message: "Vui lòng nhập Email!",
             },
             {
               type: "email",
-              message: "The input is not valid E-mail!",
+              message: "Địa chỉ Email không hợp lệ!",
             },
           ]}
         >
@@ -159,7 +159,7 @@ const EditTeacherForm = ({
           rules={[
             {
               required: true,
-              message: "Please input the teacher's birth date!",
+              message: "Vui lòng nhập ngày sinh!",
             },
           ]}
         >
@@ -171,7 +171,7 @@ const EditTeacherForm = ({
           rules={[
             {
               required: true,
-              message: "Please input the teacher's working date!",
+              message: "Vui lòng nhập ngày vào làm!",
             },
           ]}
         >
@@ -183,18 +183,18 @@ const EditTeacherForm = ({
           rules={[
             {
               required: true,
-              message: "Please select at least one module!",
+              message: "Vui lòng chọn ít nhất một module!",
             },
           ]}
         >
           <Select
             mode="multiple"
-            placeholder="Select modules"
+            placeholder="Chọn module"
             style={{ width: "100%" }}
           >
             {modules.map((module) => (
               <Select.Option key={module.module_id} value={module.module_id}>
-                {module.module_name}
+                {module.code}
               </Select.Option>
             ))}
           </Select>
@@ -205,13 +205,13 @@ const EditTeacherForm = ({
           rules={[
             {
               required: true,
-              message: "Please select at least one shift!",
+              message: "Vui lòng chọn ít nhất một ca làm!",
             },
           ]}
         >
           <Select
             mode="multiple"
-            placeholder="Select shifts"
+            placeholder="Chọn ca làm"
             style={{ width: "100%" }}
           >
             {shifts.map((shift) => (

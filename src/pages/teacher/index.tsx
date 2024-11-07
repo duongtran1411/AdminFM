@@ -67,10 +67,10 @@ const TeacherPage: React.FC = () => {
       key: "email",
     },
     {
-      title: "Module Name",
+      title: "Module",
       key: "module_name",
       render: (record: Teachers) => {
-        return record.modules.map((module) => module.module_name).join(", ");
+        return record.modules.map((module) => module.code).join(", ");
       },
     },
     {

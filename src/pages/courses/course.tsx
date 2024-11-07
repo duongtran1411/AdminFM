@@ -72,7 +72,7 @@ const CoursePage = () => {
       title: "Module Name",
       key: "module_name",
       render: (record: Courses) => {
-        return record.modules.map((module) => module.module_name).join(", ");
+        return record.modules.map((module) => module.code).join(", ");
       },
     },
     {

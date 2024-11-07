@@ -4,7 +4,7 @@ export interface ScheduleData {
   class: { id: number; name: string };
   shift: { id: number; name: string; startTime: string; endTime: string };
   teacher: { id: number; name: string };
-  module: { module_id: number; module_name: string };
+  module: { module_id: number; module_name: string; code: string };
   classroom: { id: number; name: string };
 }
 

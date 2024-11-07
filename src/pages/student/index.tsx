@@ -11,6 +11,7 @@ import useModals from "../../hooks/useModal";
 import { StudentStatus } from "../../models/enum/student.status.enum";
 import { Student } from "../../models/student.model";
 import { studentService } from "../../services/student-service/student.service";
+import { useNavigate } from "react-router-dom";
 
 const StudentPage: React.FC = () => {
   const { isVisible, showModal, hideModal } = useModals();
@@ -31,6 +32,7 @@ const StudentPage: React.FC = () => {
   >(null);
   const [statuses] = useState<string[]>(Object.values(StudentStatus));
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const fetchStudents = async () => {
     setLoading(true);
@@ -163,7 +165,15 @@ const StudentPage: React.FC = () => {
       title: "Mã SV",
       dataIndex: "studentId",
       key: "studentId",
-      render: (studentId: string | null) => <Tag>{studentId || "N/A"}</Tag>,
+      render: (studentId: string | null, record: Student) => (
+        <Tag
+          color="blue"
+          onClick={() => navigate(`/student/${record.id}`)}
+          style={{ cursor: "pointer", textDecoration: "underline" }}
+        >
+          {studentId || "N/A"}
+        </Tag>
+      ),
     },
     {
       title: "Họ và tên",

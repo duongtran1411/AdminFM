@@ -51,6 +51,9 @@ const TeacherPage = lazy(() => import("../pages/teacher"));
 const UserPage = lazy(() => import("../pages/users"));
 const FreshmenPageList = lazy(() => import("../pages/freshmen"));
 const StudentPage = lazy(() => import("../pages/student"));
+const StudentProfile = lazy(
+  () => import("../components/student/StudentProfile"),
+);
 const PromotionPage = lazy(() => import("../pages/promotions"));
 const AdmissionPage = lazy(() => import("../pages/admission"));
 const AddApplicationForm = lazy(
@@ -344,6 +347,16 @@ function MainRoutes() {
             <PageWithTitle title={title}>
               <Suspense fallback={<LoadingSkeleton />}>
                 <AdmissionDetail />
+              </Suspense>
+            </PageWithTitle>
+          ),
+        },
+        {
+          path: "student/:id",
+          element: (
+            <PageWithTitle title={title}>
+              <Suspense fallback={<LoadingSkeleton />}>
+                <StudentProfile />
               </Suspense>
             </PageWithTitle>
           ),
