@@ -2,19 +2,23 @@ import { Button, notification } from "antd";
 import { FormInstance } from "antd/es/form";
 import dayjs from "dayjs";
 import { useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { AdmissionProgram } from "../../models/admission.model";
 import { Application } from "../../models/application.model";
 import { ApplicationStatus } from "../../models/enum/application.status.enum";
+import { Parent } from "../../models/parent.model";
+import { StudentProfile } from "../../models/student.profile.model";
 import applicationService from "../../services/application-service/application.service";
 import attachedDocumentService from "../../services/attached-document-service/attached.document.service";
+import parentService from "../../services/parent-service/parent.service";
+import studentProfileService from "../../services/student-profile-service/student.profile.service";
 import Loading from "../common/loading";
 import NavigateBack from "../shared/NavigateBack";
 import AddAttachedDocumentForm from "./AddAttachedDocumentForm";
-import AddInformationApplication from "./AddInformationApplication";
 import AddInformationParent from "./AddInfomationParent";
-import { Parent } from "../../models/parent.model";
-import parentService from "../../services/parent-service/parent.service";
+import AddInformationApplication from "./AddInformationApplication";
+import AddStudentProfileForm from "./AddStudentProfileForm";
+import ApplicationTabsMenu from "./TabsMenu";
 
 const initialFormData: Application = {
   name: "",
@@ -31,13 +35,15 @@ const AddApplicationForm = () => {
   const { admissionId } = useParams();
   const formRef = useRef<FormInstance>(null);
   const [formData, setFormData] = useState<Application>(initialFormData);
-  const [parentData, setParentData] = useState<Parent>();
+  const [parentData, setParentData] = useState<Parent[]>([]);
+  const [studentProfileData, setStudentProfileData] =
+    useState<StudentProfile>();
   const [attachedDocuments, setAttachedDocuments] = useState<{
     [key: string]: File;
   }>({});
   const [resetUploadKey, setResetUploadKey] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
-  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("1");
 
   const resetAttachedDocuments = () => {
     setAttachedDocuments({});
@@ -60,12 +66,19 @@ const AddApplicationForm = () => {
     try {
       if (formRef.current) {
         setLoading(true);
-
         await formRef.current.validateFields();
-        const newParentData = {
-          ...parentData,
+
+        const newStudentProfileData = {
+          ...studentProfileData,
         };
-        await parentService.add(newParentData);
+        await studentProfileService.add(newStudentProfileData);
+
+        for (const parent of parentData) {
+          const newParentData = {
+            ...parent,
+          };
+          await parentService.add(newParentData);
+        }
 
         const newFormData = {
           ...formData,
@@ -97,12 +110,7 @@ const AddApplicationForm = () => {
         <Loading />
       ) : (
         <>
-          <div
-            onClick={() => navigate(`/admission/${admissionId}`)}
-            className="cursor-pointer mb-4"
-          >
-            <NavigateBack />
-          </div>
+          <NavigateBack />
 
           <AddAttachedDocumentForm
             setAttachedDocument={setAttachedDocuments}
@@ -112,7 +120,19 @@ const AddApplicationForm = () => {
             setFormData={setFormData}
             formRef={formRef}
           />
-          <AddInformationParent setFormData={setParentData} formRef={formRef} />
+          <ApplicationTabsMenu onTabChange={setActiveTab} />
+          {activeTab === "1" && (
+            <AddInformationParent
+              setFormData={(data) => setParentData(data)}
+              formRef={formRef}
+            />
+          )}
+          {activeTab === "2" && (
+            <AddStudentProfileForm
+              setFormData={(data) => setStudentProfileData(data)}
+              formRef={formRef}
+            />
+          )}
           <div className="flex justify-end mt-4">
             <Button
               onClick={handleSave}
