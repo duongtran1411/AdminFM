@@ -45,7 +45,7 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
   const handleFinish = (values: any) => {
     const classData: Response<ClassResponse> = {
       ...values,
-      coursesFamilyId: values.course_family_name,
+      courses_family_id: values.course_family_name,
       tick: values.isActive || false,
       studentCount: values.studentCount || 20,
       admissionDate: moment(values.admissionDate).format("YYYY-MM-DD"),

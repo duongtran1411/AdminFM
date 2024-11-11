@@ -14,7 +14,6 @@ import EditClassForm from "./EditClassForm";
 interface ClassItemProps {
   name: string;
   totalStudent: number;
-  coursesFamilyId: number;
   classId: number;
   onSucess: () => void;
 }
@@ -42,9 +41,11 @@ const ClassItem = ({
       const data = classEdit.data;
       setEditingClass({
         name: data.name,
+        courses_family_id: data.coursesFamily.course_family_id,
         course_family_name: data.coursesFamily.course_family_name,
         term_number: data.term_number,
         status: data.status,
+        admissionDate: data.admissionDate,
       });
       showModal("editClassModal");
     }

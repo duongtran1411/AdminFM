@@ -140,7 +140,7 @@ const CreateStudentForm = ({
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              name="coursesFamilyId"
+              name="courses_family_id"
               label="Courses Family"
               rules={[
                 { required: true, message: "Vui lòng chọn courses family!" },

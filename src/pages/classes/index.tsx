@@ -60,7 +60,7 @@ const ClassPage = () => {
     return allClasses.filter((classItem) => {
       const matchesCourseFamily =
         !filters.course_family_id ||
-        filters.course_family_id == classItem.coursesFamilyId;
+        filters.course_family_id == classItem.coursesFamily.course_family_id;
 
       const matchesStatus =
         !filters.status || classItem.status === filters.status;

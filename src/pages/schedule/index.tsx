@@ -13,10 +13,10 @@ import Timetable from "../../components/schedule/TimeTable";
 import UpdateScheduleForm from "../../components/schedule/UpdateScheduleForm";
 import NavigateBack from "../../components/shared/NavigateBack";
 import useModals from "../../hooks/useModal";
+import { CreateScheduleData, ScheduleData } from "../../models/schedules.model";
 import classService from "../../services/class-service/class.service";
 import { scheduleService } from "../../services/schedule-service/schedule.service";
 import StudentInClassPage from "../student/StudentInClass";
-import { CreateScheduleData, ScheduleData } from "../../models/schedules.model";
 
 dayjs.extend(weekday);
 dayjs.extend(isoWeek);
@@ -143,12 +143,6 @@ const ScheduleList: React.FC = () => {
     }
   };
 
-  const handleAddSchedule = () => {
-    showModal(
-      scheduleInClass.length === 0 ? "createScheduleAuto" : "createSchedule",
-    );
-  };
-
   const handleDateChange = (dates: (Dayjs | null)[] | null) => {
     if (dates && dates[0]) {
       const startOfWeek = dates[0].startOf("isoWeek");
@@ -184,12 +178,22 @@ const ScheduleList: React.FC = () => {
               marginBottom: "10px",
             }}
           >
-            <NavigateBack />
-            <ActionButtons
-              onNewClick={handleAddSchedule}
-              isEmpty={scheduleInClass.length === 0}
-            />
+            <div>
+              <NavigateBack />
+            </div>
+
+            <div style={{ display: "flex", gap: "8px" }}>
+              <ActionButtons
+                onNewClick={() => showModal("createSchedule")}
+                label="Tạo lịch"
+              />
+              <ActionButtons
+                onNewClick={() => showModal("createScheduleAuto")}
+                label="Tạo lịch nhanh"
+              />
+            </div>
           </div>
+
           {scheduleInClass.length === 0 ? (
             <></>
           ) : (

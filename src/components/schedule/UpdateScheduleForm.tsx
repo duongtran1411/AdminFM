@@ -1,11 +1,9 @@
 import { Button, Form, Input, Select, Modal } from "antd";
 import React, { useEffect, useState } from "react";
-import {
-  CreateScheduleData,
-  ScheduleData,
-  scheduleService,
-} from "../../services/schedule-service/schedule.service";
+import { scheduleService } from "../../services/schedule-service/schedule.service";
 import { useParams } from "react-router-dom";
+import { CreateScheduleData } from "../../models/schedules.model";
+import { ScheduleData } from "../../models/schedules.model";
 
 const UpdateScheduleForm: React.FC<{
   initialValues: ScheduleData | undefined;

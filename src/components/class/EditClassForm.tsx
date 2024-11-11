@@ -40,9 +40,10 @@ const EditClassForm: React.FC<EditClassFormProps> = ({
   const handleFinish = (values: any) => {
     onEdit({
       name: values.name,
-      course_family_id: values.course_family_id,
+      courses_family_id: values.course_family_id,
       term_number: values.term_number,
       status: values.status,
+      admissionDate: values.admissionDate,
     });
     form.resetFields();
   };
@@ -62,17 +63,11 @@ const EditClassForm: React.FC<EditClassFormProps> = ({
         >
           <Input placeholder="Nhập tên lớp" />
         </Form.Item>
-        <Form.Item
-          name="course_family_name"
-          label="Courses Family"
-          rules={[
-            {
-              required: true,
-              message: "Please select the Courses Family!",
-            },
-          ]}
-        >
-          <Select placeholder="Chọn Courses Family">
+        <Form.Item name="course_family_id" label="Courses Family">
+          <Select
+            placeholder="Chọn Courses Family"
+            defaultValue={initialValues.course_family_name}
+          >
             {coursesfamily.map((c) => (
               <Select.Option
                 key={c.course_family_id}
@@ -88,7 +83,7 @@ const EditClassForm: React.FC<EditClassFormProps> = ({
           label="Term"
           rules={[{ required: true, message: "Vui lòng nhập Term!" }]}
         >
-          <InputNumber placeholder="Nhập Term Number" />
+          <InputNumber min={0} placeholder="Nhập Term Number" />
         </Form.Item>
         <Form.Item name="status" label="Trạng thái">
           <Select placeholder="Chọn trạng thái">

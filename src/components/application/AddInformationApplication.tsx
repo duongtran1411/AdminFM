@@ -25,7 +25,7 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
       email: "",
       phone: "",
       admissionProgramId: null,
-      coursesFamilyId: null,
+      courses_family_id: null,
       permanentResidence: "",
     });
   }, [form]);
