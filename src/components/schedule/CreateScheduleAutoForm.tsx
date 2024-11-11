@@ -56,7 +56,6 @@ const CreateScheduleAutoForm: React.FC<{
   const fetchAvailableData = async (record: TableDataItem) => {
     if (record.startDate && record.classDays.length > 0) {
       try {
-        // Chỉ lấy các classDay có đủ thông tin
         const validClassDays = record.classDays.filter(
           (day) => day.selectedDays && day.shiftIds.length > 0,
         );
@@ -126,7 +125,6 @@ const CreateScheduleAutoForm: React.FC<{
           };
           const updatedItem = { ...item, classDays: newClassDays };
 
-          // Thêm debounce để tránh gọi API quá nhiều
           const debouncedFetch = debounce(() => {
             fetchAvailableData(updatedItem);
           }, 500);
@@ -154,7 +152,6 @@ const CreateScheduleAutoForm: React.FC<{
     );
   };
 
-  // Add function to remove class day
   const removeClassDay = (recordKey: string, index: number) => {
     setTableData((prevData) =>
       prevData.map((item) => {

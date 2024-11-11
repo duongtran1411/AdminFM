@@ -4,6 +4,7 @@ export interface Module {
   code: string;
   exam_type: string;
   number_of_classes: number;
+  term_number?: number;
 }
 
 export interface Courses {

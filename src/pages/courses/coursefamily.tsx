@@ -73,7 +73,7 @@ const CoursePage = () => {
       title: "Courses",
       key: "courses",
       render: (_, record: CoursesFamily) => {
-        return record.courses.map((course) => course.course_name).join(",  ");
+        return record.courses.map((course) => course.course_code).join(",  ");
       },
     },
     {

@@ -63,7 +63,7 @@ class ClassService {
 
   async updateClass(classId: number, classData: any): Promise<void> {
     try {
-      await axiosInstance.put(`/classes/${classId}`, classData);
+      await axiosInstance.patch(`/classes/${classId}`, classData);
     } catch (error) {
       console.error("Error updating class:", error);
       throw error;

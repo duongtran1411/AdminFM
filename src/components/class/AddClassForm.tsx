@@ -49,6 +49,7 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
       tick: values.isActive || false,
       studentCount: values.studentCount || 20,
       admissionDate: moment(values.admissionDate).format("YYYY-MM-DD"),
+      term_number: values.term_number,
     };
     onAdd(classData);
     form.resetFields();
@@ -99,15 +100,13 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
           </Select>
         </Form.Item>
         <Form.Item
-          name="status"
-          label="Trạng thái"
-          rules={[
-            {
-              required: true,
-              message: "Please select the status!",
-            },
-          ]}
+          name="term_number"
+          label="Term"
+          rules={[{ required: true, message: "Vui lòng nhập Term!" }]}
         >
+          <InputNumber placeholder="Nhập Term Number" />
+        </Form.Item>
+        <Form.Item name="status" label="Trạng thái">
           <Select placeholder="Chọn trạng thái">
             {Object.values(ClassStatus).map((status) => (
               <Select.Option key={status} value={status}>
@@ -116,6 +115,7 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
             ))}
           </Select>
         </Form.Item>
+
         <Form.Item
           name="admissionDate"
           label="Ngày nhập học"

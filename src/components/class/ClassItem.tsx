@@ -14,6 +14,7 @@ import EditClassForm from "./EditClassForm";
 interface ClassItemProps {
   name: string;
   totalStudent: number;
+  coursesFamilyId: number;
   classId: number;
   onSucess: () => void;
 }
@@ -38,7 +39,13 @@ const ClassItem = ({
   const handleEdit = async () => {
     const classEdit = await classService.getClassById(classId);
     if (classEdit) {
-      setEditingClass(classEdit.data);
+      const data = classEdit.data;
+      setEditingClass({
+        name: data.name,
+        course_family_name: data.coursesFamily.course_family_name,
+        term_number: data.term_number,
+        status: data.status,
+      });
       showModal("editClassModal");
     }
   };
@@ -70,7 +77,7 @@ const ClassItem = ({
     },
   ];
 
-  const handleSaveEdit = async (updatedClass: ClassItemProps) => {
+  const handleSaveEdit = async (updatedClass: any) => {
     try {
       await ClassService.updateClass(classId, updatedClass);
       message.success("Class updated successfully");

@@ -1,12 +1,15 @@
 // components/class/EditClassForm.tsx
-import React, { useEffect } from "react";
-import { Button, Form, Input, Modal } from "antd";
+import { Button, Form, Input, InputNumber, Modal, Select } from "antd";
+import React, { useEffect, useState } from "react";
+import { CoursesFamily } from "../../models/courses.model";
+import { ClassStatus } from "../../models/enum/class.status.enum";
+import courseFamilyService from "../../services/course-family-service/course.family.service";
 
 interface EditClassFormProps {
   visible: boolean;
   onEdit: (values: any) => void;
   onCancel: () => void;
-  initialValues: any; // Giá trị ban đầu từ lớp học cần chỉnh sửa
+  initialValues: any;
 }
 
 const EditClassForm: React.FC<EditClassFormProps> = ({
@@ -16,6 +19,17 @@ const EditClassForm: React.FC<EditClassFormProps> = ({
   initialValues,
 }) => {
   const [form] = Form.useForm();
+  const [coursesfamily, setCoursesFamily] = useState<CoursesFamily[]>([]);
+
+  useEffect(() => {
+    const fetchCourse = async () => {
+      const cfm = await courseFamilyService.getAll();
+      setCoursesFamily(cfm);
+    };
+    if (visible) {
+      fetchCourse();
+    }
+  }, [visible]);
 
   useEffect(() => {
     if (initialValues) {
@@ -24,7 +38,12 @@ const EditClassForm: React.FC<EditClassFormProps> = ({
   }, [initialValues, form]);
 
   const handleFinish = (values: any) => {
-    onEdit(values);
+    onEdit({
+      name: values.name,
+      course_family_id: values.course_family_id,
+      term_number: values.term_number,
+      status: values.status,
+    });
     form.resetFields();
   };
 
@@ -42,6 +61,43 @@ const EditClassForm: React.FC<EditClassFormProps> = ({
           rules={[{ required: true, message: "Vui lòng nhập tên lớp" }]}
         >
           <Input placeholder="Nhập tên lớp" />
+        </Form.Item>
+        <Form.Item
+          name="course_family_name"
+          label="Courses Family"
+          rules={[
+            {
+              required: true,
+              message: "Please select the Courses Family!",
+            },
+          ]}
+        >
+          <Select placeholder="Chọn Courses Family">
+            {coursesfamily.map((c) => (
+              <Select.Option
+                key={c.course_family_id}
+                value={c.course_family_id}
+              >
+                {c.course_family_name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+        <Form.Item
+          name="term_number"
+          label="Term"
+          rules={[{ required: true, message: "Vui lòng nhập Term!" }]}
+        >
+          <InputNumber placeholder="Nhập Term Number" />
+        </Form.Item>
+        <Form.Item name="status" label="Trạng thái">
+          <Select placeholder="Chọn trạng thái">
+            {Object.values(ClassStatus).map((status) => (
+              <Select.Option key={status} value={status}>
+                {status}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">

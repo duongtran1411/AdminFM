@@ -121,7 +121,7 @@ const EditCourseForm = ({
             {modules.map((module) => {
               return (
                 <Checkbox key={module.module_id} value={module.module_id}>
-                  {module.module_name}
+                  {module.code}
                 </Checkbox>
               );
             })}

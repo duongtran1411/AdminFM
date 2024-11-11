@@ -79,6 +79,11 @@ const ModulePage = () => {
       key: "number_of_classes",
     },
     {
+      title: "Term NO.",
+      dataIndex: "term_number",
+      key: "term_number",
+    },
+    {
       title: "",
       key: "actions",
       render: (_, record: Module) => (
@@ -91,8 +96,6 @@ const ModulePage = () => {
         </Dropdown>
       ),
     },
-
-    // Thêm các column nếu cần
   ];
 
   const handleDelete = async (mid: number) => {
@@ -153,7 +156,6 @@ const ModulePage = () => {
               marginBottom: "16px",
             }}
           >
-            {/* Button Add Module */}
             <AddModuleBotton
               onModuleCreated={() => showModal("createModule")}
             />
@@ -165,17 +167,14 @@ const ModulePage = () => {
             style={{ width: 400, marginBottom: 16 }}
           />
 
-          {/* Create Module modal */}
           <AddModuleForm
             isModalVisible={isVisible("createModule")}
             hideModal={() => hideModal("createModule")}
             onModuleCreated={onCreateSuccess}
           />
 
-          {/* Module Data Table */}
           <ModuleTable columns={columns} data={module} />
 
-          {/* Edit Module modal */}
           <EditModuleForm
             isModalVisible={isVisible("editModule")}
             hideModal={() => hideModal("editModule")}

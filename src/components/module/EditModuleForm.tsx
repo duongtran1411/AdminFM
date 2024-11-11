@@ -17,7 +17,6 @@ const EditModuleForm = ({
   onUpdate,
 }: EditModuleFormProps) => {
   const [form] = Form.useForm();
-
   useEffect(() => {
     if (module) {
       form.setFieldsValue({
@@ -26,6 +25,7 @@ const EditModuleForm = ({
         code: module.code,
         exam_type: module.exam_type,
         number_of_classes: module.number_of_classes,
+        term_number: module.term_number,
       });
     }
   }, [module, form]);
@@ -115,6 +115,13 @@ const EditModuleForm = ({
           ]}
         >
           <InputNumber placeholder="Enter the Number of Classes" />
+        </Form.Item>
+        <Form.Item
+          name="term_number"
+          label="Term"
+          rules={[{ required: true, message: "Vui lòng nhập Term!" }]}
+        >
+          <InputNumber placeholder="Nhập Term Number" />
         </Form.Item>
       </Form>
     </Modal>

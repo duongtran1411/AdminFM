@@ -79,6 +79,13 @@ const AddModuleForm = ({
             style={{ width: "50%" }}
           />
         </Form.Item>
+        <Form.Item
+          name="term_number"
+          label="Term"
+          rules={[{ required: true, message: "Vui lòng nhập Term!" }]}
+        >
+          <InputNumber placeholder="Nhập Term Number" />
+        </Form.Item>
       </Form>
     </Modal>
   );
