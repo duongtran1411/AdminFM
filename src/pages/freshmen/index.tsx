@@ -1,16 +1,14 @@
 import { Checkbox, Layout, Modal, notification, Tag, Typography } from "antd";
 import { useEffect, useState } from "react";
 import Loading from "../../components/common/loading";
-import ActionButtons from "../../components/student-in-class/ActionButtons";
 import TabsMenu from "../../components/student-in-class/TabsMenu";
-import CreateFreshmentForm from "../../components/student/CreateFreshmentForm";
 import EditStudentForm from "../../components/student/EditStudentForm";
+import FreshmenFilter from "../../components/student/FreshmenFilter";
 import StudentTable from "../../components/student/StudentTable";
 import useModals from "../../hooks/useModal";
+import { StudentStatus } from "../../models/enum/student.status.enum";
 import { Student } from "../../models/student.model";
 import { studentService } from "../../services/student-service/student.service";
-import FreshmenFilter from "../../components/student/FreshmenFilter";
-import { StudentStatus } from "../../models/enum/student.status.enum";
 
 const FreshmenPageList = () => {
   const { isVisible, showModal, hideModal } = useModals();
@@ -236,10 +234,10 @@ const FreshmenPageList = () => {
 
         <div className="flex justify-between flex-wrap mb-2">
           <TabsMenu tabItems={[]} />
-          <ActionButtons
+          {/* <ActionButtons
             onNewClick={() => showModal("createStudent")}
             onImportClick={() => showModal("importStudent")}
-          />
+          /> */}
         </div>
 
         <FreshmenFilter
@@ -260,11 +258,11 @@ const FreshmenPageList = () => {
           onEdit={handleEdit}
         />
 
-        <CreateFreshmentForm
+        {/* <CreateFreshmentForm
           isModalVisible={isVisible("createStudent")}
           hideModal={() => hideModal("createStudent")}
           onCreate={fetchStudents}
-        />
+        /> */}
         {selectedStudent && (
           <EditStudentForm
             isModalVisible={isVisible("editStudent")}

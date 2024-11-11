@@ -28,6 +28,7 @@ const EditApplicationForm = ({
         gender: application.gender,
         birthdate: dayjs(application.birthdate),
         permanentResidence: application.permanentResidence,
+        cardId: application.cardId,
       });
     }
   }, [application]);
@@ -87,6 +88,13 @@ const EditApplicationForm = ({
           <Input placeholder="Nhập họ và tên" />
         </Form.Item>
         <Form.Item
+          name="cardId"
+          label="Card ID"
+          rules={[{ required: true, message: "Vui lòng nhập card ID!" }]}
+        >
+          <Input placeholder="Nhập card ID" />
+        </Form.Item>
+        <Form.Item
           label="Số điện thoại"
           name="phone"
           rules={[{ required: true, message: "Vui lòng nhập số điện thoại!" }]}
@@ -122,17 +130,17 @@ const EditApplicationForm = ({
           <Input placeholder="Nhập Email" />
         </Form.Item>
         <Form.Item
-              name="permanentResidence"
-              label="Hộ khẩu thường trú"
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng nhập hộ không thường trú!",
-                },
-              ]}
-            >
-              <Input placeholder="Nhập hộ không thường trú" />
-            </Form.Item>
+          name="permanentResidence"
+          label="Hộ khẩu thường trú"
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng nhập hộ không thường trú!",
+            },
+          ]}
+        >
+          <Input placeholder="Nhập hộ không thường trú" />
+        </Form.Item>
       </Form>
     </Modal>
   );

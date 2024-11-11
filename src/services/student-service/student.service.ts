@@ -68,6 +68,30 @@ class StudentService {
       throw new Error("Lỗi khi gán sinh viên vào lớp: " + error.message);
     }
   }
+
+  async uploadAvatar(
+    id: number,
+    file: File,
+  ): Promise<Response<{ avatarUrl: string }>> {
+    const formData = new FormData();
+    formData.append("avatar", file);
+
+    const response: AxiosResponse<Response<{ avatarUrl: string }>> =
+      await axiosInstance.post(`/students/${id}/avatar`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+    return response.data;
+  }
+
+  async deleteAvatar(id: number): Promise<Response<void>> {
+    const response: AxiosResponse<Response<void>> = await axiosInstance.delete(
+      `/students/${id}/avatar`,
+    );
+    return response.data;
+  }
 }
 
 export const studentService = new StudentService();

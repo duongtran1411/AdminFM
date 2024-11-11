@@ -11,4 +11,5 @@ export interface Application {
   status: ApplicationStatus;
   permanentResidence: string;
   admissionProgram: AdmissionProgram;
+  cardId: string;
 }

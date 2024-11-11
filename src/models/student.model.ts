@@ -36,5 +36,7 @@ export interface Student {
   cohort?: Cohort;
   application?: Application;
   permanentResidence?: string;
-  parent?: Parent;
+  parent?: Parent[];
+  cardId?: string;
+  avatar?: string;
 }

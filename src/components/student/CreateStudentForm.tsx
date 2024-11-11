@@ -105,6 +105,17 @@ const CreateStudentForm = ({
           </Col>
           <Col span={12}>
             <Form.Item
+              name="cardId"
+              label="Card ID"
+              rules={[{ required: true, message: "Vui lòng nhập card ID!" }]}
+            >
+              <Input placeholder="Nhập card ID" />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item
               name="birthdate"
               label="Ngày sinh"
               rules={[{ required: true, message: "Vui lòng nhập ngày sinh!" }]}
@@ -112,8 +123,6 @@ const CreateStudentForm = ({
               <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
             </Form.Item>
           </Col>
-        </Row>
-        <Row gutter={16}>
           <Col span={12}>
             <Form.Item
               name="gender"
@@ -127,23 +136,11 @@ const CreateStudentForm = ({
               </Select>
             </Form.Item>
           </Col>
-          <Col span={12}>
-            <Form.Item
-              name="email"
-              label="Email"
-              rules={[
-                { required: true, message: "Vui lòng nhập email!" },
-                { type: "email", message: "Email không hợp lệ!" },
-              ]}
-            >
-              <Input placeholder="Nhập Email" />
-            </Form.Item>
-          </Col>
         </Row>
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              name="coursesFamilyName"
+              name="coursesFamilyId"
               label="Courses Family"
               rules={[
                 { required: true, message: "Vui lòng chọn courses family!" },
@@ -165,7 +162,7 @@ const CreateStudentForm = ({
             <Form.Item name="cohort" label="Niên khóa">
               <Select placeholder="Chọn Niên khóa">
                 {cohorts.map((cohort) => (
-                  <Select.Option key={cohort.id} value={cohort.name}>
+                  <Select.Option key={cohort.id} value={cohort.id}>
                     {cohort.name}
                   </Select.Option>
                 ))}
@@ -174,11 +171,23 @@ const CreateStudentForm = ({
           </Col>
         </Row>
         <Row gutter={16}>
-          <Col span={24}>
+          <Col span={12}>
+            <Form.Item
+              name="email"
+              label="Email"
+              rules={[
+                { required: true, message: "Vui lòng nhập email!" },
+                { type: "email", message: "Email không hợp lệ!" },
+              ]}
+            >
+              <Input placeholder="Nhập Email" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
             <Form.Item name="status" label="Trạng thái">
               <Select placeholder="Chọn trạng thái">
                 {Object.entries(StudentStatus).map(([key, value]) => (
-                  <Select.Option key={key} value={key}>
+                  <Select.Option key={key} value={value}>
                     {value}
                   </Select.Option>
                 ))}

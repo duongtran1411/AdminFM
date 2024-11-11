@@ -115,16 +115,16 @@ const StudentPage: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     Modal.confirm({
-      title: "Are you sure you want to delete this student?",
-      okText: "Delete",
+      title: "Bạn có chắc chắn muốn xoá sinh viên này không?",
+      okText: "Xoá",
       okType: "danger",
       onOk: async () => {
         try {
           await studentService.remove(id);
           setStudents((prev) => prev.filter((student) => student.id !== id));
-          notification.success({ message: "Student deleted successfully" });
+          notification.success({ message: "Xoá sinh viên thành công" });
         } catch {
-          notification.error({ message: "Error deleting student" });
+          notification.error({ message: "Lỗi xoá sinh viên" });
         }
       },
     });

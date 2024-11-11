@@ -71,11 +71,11 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              name="birthdate"
-              label="Ngày sinh"
-              rules={[{ required: true, message: "Vui lòng nhập ngày sinh!" }]}
+              name="cardId"
+              label="Card ID"
+              rules={[{ required: true, message: "Vui lòng nhập card ID!" }]}
             >
-              <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+              <Input placeholder="Nhập card ID" />
             </Form.Item>
           </Col>
           <Col span={12}>
@@ -95,14 +95,11 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              name="email"
-              label="Email"
-              rules={[
-                { required: true, message: "Vui lòng nhập email!" },
-                { type: "email", message: "Email không hợp lệ!" },
-              ]}
+              name="birthdate"
+              label="Ngày sinh"
+              rules={[{ required: true, message: "Vui lòng nhập ngày sinh!" }]}
             >
-              <Input placeholder="Nhập Email" />
+              <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
             </Form.Item>
           </Col>
           <Col span={12}>
@@ -144,7 +141,18 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
               <Input placeholder="Nhập hộ không thường trú" />
             </Form.Item>
           </Col>
-          <Col span={12}></Col>
+          <Col span={12}>
+            <Form.Item
+              name="email"
+              label="Email"
+              rules={[
+                { required: true, message: "Vui lòng nhập email!" },
+                { type: "email", message: "Email không hợp lệ!" },
+              ]}
+            >
+              <Input placeholder="Nhập Email" />
+            </Form.Item>
+          </Col>
         </Row>
       </Form>
     </div>
