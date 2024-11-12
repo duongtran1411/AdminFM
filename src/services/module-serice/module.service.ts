@@ -28,7 +28,7 @@ class ModuleService {
       throw error;
     }
   }
-  async update(id: string, module: any): Promise<void> {
+  async update(id: number, module: any): Promise<void> {
     try {
       await axiosInstance.patch(`/module/${id}`, module);
     } catch (error) {

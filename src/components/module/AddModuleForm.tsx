@@ -1,5 +1,8 @@
-import { Form, Input, InputNumber, Modal, notification } from "antd";
+import { Checkbox, Form, Input, InputNumber, Modal, notification } from "antd";
+import { useEffect, useState } from "react";
 import { Module } from "../../models/courses.model";
+import { GradeCategory } from "../../models/gradecategory.model";
+import gradeCategoryService from "../../services/grade-service/grade.category.service";
 import { moduleService } from "../../services/module-serice/module.service";
 
 interface Props {
@@ -14,11 +17,30 @@ const AddModuleForm = ({
   onModuleCreated,
 }: Props) => {
   const [form] = Form.useForm();
+  const [gradeCategory, setGradeCategory] = useState<GradeCategory[]>([]);
+  const [selectedGradeCategory, setSelectedGradeCategory] = useState<number[]>(
+    [],
+  );
+  useEffect(() => {
+    const fetchGradeCategory = async () => {
+      const response = await gradeCategoryService.getAll();
+      setGradeCategory(response.data);
+    };
+
+    if (isModalVisible) {
+      fetchGradeCategory();
+    }
+  }, [isModalVisible]);
+
+  const handleChange = (checkedValues: number[]) => {
+    setSelectedGradeCategory(checkedValues);
+  };
 
   const handleOk = async () => {
     const values = await form.validateFields();
     const newModule: Module = {
       ...values,
+      gradeCategories: selectedGradeCategory,
     };
     await moduleService.add(newModule);
     onModuleCreated();
@@ -85,6 +107,29 @@ const AddModuleForm = ({
           rules={[{ required: true, message: "Vui lòng nhập Term!" }]}
         >
           <InputNumber placeholder="Nhập Term Number" />
+        </Form.Item>
+        <Form.Item
+          name="gradeCategories"
+          label="Chọn các đầu điểm"
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng chọn ít nhất một đầu điểm!",
+            },
+          ]}
+          valuePropName="checked"
+        >
+          <Checkbox.Group
+            onChange={handleChange}
+            style={{ width: "100%" }}
+            value={selectedGradeCategory}
+          >
+            {gradeCategory.map((gradeCategory) => (
+              <Checkbox key={gradeCategory.id} value={gradeCategory.id}>
+                {gradeCategory.name}
+              </Checkbox>
+            ))}
+          </Checkbox.Group>
         </Form.Item>
       </Form>
     </Modal>

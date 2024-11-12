@@ -1,3 +1,5 @@
+import { GradeCategory } from "./gradecategory.model";
+
 export interface Module {
   module_id: number;
   module_name: string;
@@ -5,6 +7,7 @@ export interface Module {
   exam_type: string;
   number_of_classes: number;
   term_number?: number;
+  gradeCategories?: GradeCategory[];
 }
 
 export interface Courses {

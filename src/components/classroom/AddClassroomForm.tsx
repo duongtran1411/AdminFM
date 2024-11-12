@@ -49,25 +49,6 @@ const AddClassroomForm = ({
         >
           <Input placeholder="Nhập tên phòng học" />
         </Form.Item>
-        {/* <Form.Item
-          name="building"
-          label="Select Modules"
-          rules={[
-            { required: true, message: "Please select at least one module!" },
-          ]}
-          valuePropName="checked"
-        >
-          <Checkbox.Group
-            onChange={handleModuleChange}
-            style={{ width: "100%" }}
-          >
-            {modules.map((module) => (
-              <Checkbox key={module.module_id} value={module.module_id}>
-                {module.module_name}
-              </Checkbox>
-            ))}
-          </Checkbox.Group>
-        </Form.Item> */}
       </Form>
     </Modal>
   );

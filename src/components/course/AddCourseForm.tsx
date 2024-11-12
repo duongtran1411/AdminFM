@@ -91,7 +91,7 @@ const AddCourseForm = ({
           >
             {modules.map((module) => (
               <Checkbox key={module.module_id} value={module.module_id}>
-                {module.module_name}
+                {module.code}
               </Checkbox>
             ))}
           </Checkbox.Group>

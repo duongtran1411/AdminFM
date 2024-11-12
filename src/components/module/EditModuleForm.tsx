@@ -1,7 +1,9 @@
-import { Form, Input, InputNumber, Modal, notification } from "antd";
-import { useEffect } from "react";
+import { Checkbox, Form, Input, InputNumber, Modal, notification } from "antd";
+import { useEffect, useState } from "react";
 import { Module } from "../../models/courses.model";
 import { moduleService } from "../../services/module-serice/module.service";
+import { GradeCategory } from "../../models/gradecategory.model";
+import gradeCategoryService from "../../services/grade-service/grade.category.service";
 
 interface EditModuleFormProps {
   isModalVisible: boolean;
@@ -17,7 +19,16 @@ const EditModuleForm = ({
   onUpdate,
 }: EditModuleFormProps) => {
   const [form] = Form.useForm();
+  const [gradeCategory, setGradeCategory] = useState<GradeCategory[]>([]);
+
   useEffect(() => {
+    const fetchGradeCategories = async () => {
+      const response = await gradeCategoryService.getAll();
+      setGradeCategory(response.data);
+    };
+
+    fetchGradeCategories();
+
     if (module) {
       form.setFieldsValue({
         module_id: module.module_id,
@@ -26,6 +37,7 @@ const EditModuleForm = ({
         exam_type: module.exam_type,
         number_of_classes: module.number_of_classes,
         term_number: module.term_number,
+        gradeCategories: module.gradeCategories?.map((category) => category.id),
       });
     }
   }, [module, form]);
@@ -122,6 +134,24 @@ const EditModuleForm = ({
           rules={[{ required: true, message: "Vui lòng nhập Term!" }]}
         >
           <InputNumber placeholder="Nhập Term Number" />
+        </Form.Item>
+        <Form.Item
+          name="gradeCategories"
+          label="Chọn các đầu điểm"
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng chọn ít nhất một đầu điểm!",
+            },
+          ]}
+        >
+          <Checkbox.Group style={{ width: "100%" }}>
+            {gradeCategory.map((gradeCategory) => (
+              <Checkbox key={gradeCategory.id} value={gradeCategory.id}>
+                {gradeCategory.name}
+              </Checkbox>
+            ))}
+          </Checkbox.Group>
         </Form.Item>
       </Form>
     </Modal>

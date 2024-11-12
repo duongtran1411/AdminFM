@@ -1,7 +1,6 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Input, Menu, Modal, notification } from "antd";
+import { Button, Input, Modal, notification, Tooltip } from "antd";
 import { useEffect, useState } from "react";
-import { AiOutlineMore } from "react-icons/ai";
 import Loading from "../../components/common/loading";
 import AddModuleBotton from "../../components/module/AddModuleButton";
 import AddModuleForm from "../../components/module/AddModuleForm";
@@ -32,26 +31,6 @@ const ModulePage = () => {
     fetchModule();
   }, []);
 
-  const menu = (module: Module) => (
-    <Menu>
-      <Menu.Item
-        key="edit"
-        icon={<EditOutlined />}
-        onClick={() => handleEdit(module.module_id)}
-      >
-        Edit
-      </Menu.Item>
-      <Menu.Item
-        style={{ color: "red" }}
-        key="delete"
-        icon={<DeleteOutlined style={{ color: "red" }} />}
-        onClick={() => handleDelete(module.module_id)}
-      >
-        Delete
-      </Menu.Item>
-    </Menu>
-  );
-
   const columns = [
     {
       title: "ID",
@@ -59,14 +38,14 @@ const ModulePage = () => {
       key: "module_id",
     },
     {
-      title: "Tên môn học",
-      dataIndex: "module_name",
-      key: "module_name",
-    },
-    {
       title: "Code",
       dataIndex: "code",
       key: "code",
+    },
+    {
+      title: "Tên môn học",
+      dataIndex: "module_name",
+      key: "module_name",
     },
     {
       title: "Loại thi",
@@ -79,21 +58,38 @@ const ModulePage = () => {
       key: "number_of_classes",
     },
     {
+      title: "Danh sách đầu điểm",
+      key: "gradeCategories",
+      render: (record: Module) => {
+        return record.gradeCategories && record.gradeCategories.length > 0
+          ? record.gradeCategories.map((category) => category.name).join(", ")
+          : "N/A";
+      },
+    },
+    {
       title: "Term NO.",
       dataIndex: "term_number",
       key: "term_number",
     },
     {
-      title: "",
+      title: "Actions",
       key: "actions",
       render: (_, record: Module) => (
-        <Dropdown overlay={() => menu(record)} trigger={["click"]}>
-          <Button
-            type="text"
-            icon={<AiOutlineMore style={{ fontSize: "20px" }} />}
-            style={{ float: "right" }}
-          />
-        </Dropdown>
+        <div style={{ display: "flex", gap: "5px" }}>
+          <Tooltip title="Edit">
+            <Button
+              icon={<EditOutlined />}
+              onClick={() => handleEdit(record.module_id)}
+            />
+          </Tooltip>
+          <Tooltip title="Delete">
+            <Button
+              type="text"
+              icon={<DeleteOutlined style={{ color: "red" }} />}
+              onClick={() => handleDelete(record.module_id)}
+            />
+          </Tooltip>
+        </div>
       ),
     },
   ];
