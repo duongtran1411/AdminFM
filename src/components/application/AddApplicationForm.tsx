@@ -26,6 +26,7 @@ const initialFormData: Application = {
   gender: "",
   birthdate: "",
   phone: "",
+  cardId: "",
   status: ApplicationStatus.WAITING,
   permanentResidence: "",
   admissionProgram: {} as AdmissionProgram,
