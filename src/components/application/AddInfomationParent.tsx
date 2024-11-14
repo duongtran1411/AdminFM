@@ -1,5 +1,5 @@
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Col, Form, Input, Row, Select, Divider } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
+import { Button, Form, Input, Select, Table } from "antd";
 import { useEffect, useState } from "react";
 
 const AddInformationParent = ({ setFormData, formRef }) => {
@@ -34,6 +34,7 @@ const AddInformationParent = ({ setFormData, formRef }) => {
   };
 
   const removeParentForm = (keyToRemove: number) => {
+    if (forms.length === 1) return;
     const newForms = forms.filter((form) => form.key !== keyToRemove);
     setForms(newForms);
 
@@ -47,45 +48,51 @@ const AddInformationParent = ({ setFormData, formRef }) => {
   };
 
   return (
-    <div className="p-6 bg-white rounded-xl">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-bold">Thông tin cha/mẹ</h1>
-      </div>
-      <Form
-        ref={formRef}
-        form={parentForms}
-        layout="vertical"
-        onValuesChange={handleFormChange}
-      >
-        {forms.map((form, index) => (
-          <div key={form.key}>
-            {index > 0 && <Divider className="my-8" />}
-            <div className="relative">
-              {index > 0 && (
-                <Button
-                  type="text"
-                  danger
-                  className="absolute -top-4 right-0"
-                  onClick={() => removeParentForm(form.key)}
-                >
-                  <DeleteOutlined />
-                </Button>
-              )}
-              <Row gutter={16}>
-                <Col span={12}>
+    <div className="bg-white rounded-lg shadow-sm mb-6">
+      <div className="p-6">
+        <Form
+          ref={formRef}
+          form={parentForms}
+          layout="vertical"
+          onValuesChange={handleFormChange}
+          className="space-y-6"
+        >
+          <Table
+            pagination={false}
+            showHeader={true}
+            dataSource={forms}
+            columns={[
+              {
+                title: (
+                  <span>
+                    Họ và tên <span className="text-red-500">*</span>
+                  </span>
+                ),
+                key: "name",
+                render: (_, __, index) => (
                   <Form.Item
                     name={["parents", index, "name"]}
-                    label="Họ và tên cha/mẹ"
                     rules={[
                       { required: true, message: "Vui lòng nhập họ và tên!" },
                     ]}
+                    noStyle
                   >
-                    <Input placeholder="Nhập họ và tên" />
+                    <Input
+                      placeholder="Nhập họ và tên"
+                      className="rounded-md"
+                    />
                   </Form.Item>
-                </Col>
-                <Col span={12}>
+                ),
+              },
+              {
+                title: (
+                  <span>
+                    Số điện thoại <span className="text-red-500">*</span>
+                  </span>
+                ),
+                key: "phone",
+                render: (_, __, index) => (
                   <Form.Item
-                    label="Số điện thoại"
                     name={["parents", index, "phone"]}
                     rules={[
                       {
@@ -93,65 +100,87 @@ const AddInformationParent = ({ setFormData, formRef }) => {
                         message: "Vui lòng nhập số điện thoại!",
                       },
                     ]}
+                    noStyle
                   >
-                    <Input placeholder="Nhập số điện thoại của bạn" />
+                    <Input
+                      placeholder="Nhập số điện thoại"
+                      className="rounded-md"
+                    />
                   </Form.Item>
-                </Col>
-              </Row>
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item
-                    name={["parents", index, "job"]}
-                    label="Nghề nghiệp"
-                    rules={[
-                      {
-                        message: "Vui lòng nhập nghề nghiệp!",
-                      },
-                    ]}
-                  >
-                    <Input placeholder="Nhập nghề nghiệp" />
+                ),
+              },
+              {
+                title: "Nghề nghiệp",
+                key: "job",
+                render: (_, __, index) => (
+                  <Form.Item name={["parents", index, "job"]} noStyle>
+                    <Input
+                      placeholder="Nhập nghề nghiệp"
+                      className="rounded-md"
+                    />
                   </Form.Item>
-                </Col>
-                <Col span={12}>
+                ),
+              },
+              {
+                title: (
+                  <span>
+                    Giới tính <span className="text-red-500">*</span>
+                  </span>
+                ),
+                key: "gender",
+                render: (_, __, index) => (
                   <Form.Item
                     name={["parents", index, "gender"]}
-                    label="Giới tính"
                     rules={[
                       { required: true, message: "Vui lòng chọn giới tính!" },
                     ]}
+                    noStyle
                   >
-                    <Select placeholder="Chọn giới tính">
+                    <Select placeholder="Chọn giới tính" className="rounded-md">
                       <Select.Option value="Nam">Nam</Select.Option>
                       <Select.Option value="Nữ">Nữ</Select.Option>
                       <Select.Option value="Khác">Khác</Select.Option>
                     </Select>
                   </Form.Item>
-                </Col>
-              </Row>
-              <Row gutter={16}>
-                <Col span={12}>
+                ),
+              },
+              {
+                title: "Email",
+                key: "email",
+                render: (_, __, index) => (
                   <Form.Item
                     name={["parents", index, "email"]}
-                    label="Email"
                     rules={[{ type: "email", message: "Email không hợp lệ!" }]}
+                    noStyle
                   >
-                    <Input placeholder="Nhập Email" />
+                    <Input placeholder="Nhập Email" className="rounded-md" />
                   </Form.Item>
-                </Col>
-              </Row>
-            </div>
-          </div>
-        ))}
-      </Form>
-      <Button
-        onClick={addParentForm}
-        type="dashed"
-        className="hover:bg-gray-50 flex justify-center items-center gap-2"
-        block
-      >
-        <PlusOutlined />
-        Thêm phụ huynh
-      </Button>
+                ),
+              },
+              {
+                key: "action",
+                render: (_, record) =>
+                  forms.length > 1 && (
+                    <Button
+                      type="text"
+                      danger
+                      onClick={() => removeParentForm(record.key)}
+                      icon={<DeleteOutlined />}
+                    />
+                  ),
+              },
+            ]}
+          />
+        </Form>
+
+        <Button
+          onClick={addParentForm}
+          type="link"
+          className="text-blue-500 pl-0 mt-4"
+        >
+          + Thêm người giám hộ
+        </Button>
+      </div>
     </div>
   );
 };

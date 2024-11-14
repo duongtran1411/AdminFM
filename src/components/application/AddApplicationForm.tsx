@@ -70,19 +70,16 @@ const AddApplicationForm = () => {
       if (formRef.current) {
         setLoading(true);
         await formRef.current.validateFields();
-
         const newStudentProfileData = {
           ...studentProfileData,
         };
         await studentProfileService.add(newStudentProfileData);
-
         for (const parent of parentData) {
           const newParentData = {
             ...parent,
           };
           await parentService.add(newParentData);
         }
-
         const newFormData = {
           ...formData,
           admissionProgramId: admissionId ? Number(admissionId) : 0,
@@ -91,26 +88,21 @@ const AddApplicationForm = () => {
           intensiveCareList: formData.intensiveCareList
             ? formData.intensiveCareList.map((item) => ({
                 ...item,
-                description: item.description || "Chưa có mô tả",
+                description: item.description,
               }))
             : [],
         };
-
-        console.log("Updated form data before saving:", newFormData);
-
         const newApplication = await applicationService.add(newFormData);
         await saveDocuments(newApplication.data.id!);
-
         notification.success({
           message: "Thêm mới hồ sơ tuyển sinh thành công",
         });
-
         resetForm();
       } else {
-        console.error("Form reference is not set.");
+        console.error("Bạn chưa nhập đủ thông tin.");
       }
     } catch (error) {
-      console.error("Validation failed:", error);
+      console.error("Xác thực không thành công:", error);
     } finally {
       setLoading(false);
     }

@@ -205,9 +205,21 @@ const AddAttachedDocumentForm = ({ setAttachedDocument, resetUploadKey }) => {
   }
 
   return (
-    <div className="p-6 bg-white rounded-lg">
-      <h1 className="text-xl font-bold mb-4">Thông tin đính kèm</h1>
-      <Table dataSource={data} columns={columns} pagination={false} />
+    <div className="bg-white rounded-lg shadow-sm mb-6">
+      <div className="p-4 border-b border-gray-200">
+        <h2 className="text-xl font-semibold text-gray-800">
+          <i>Thông tin đính kèm</i>
+        </h2>
+      </div>
+
+      <div className="p-6">
+        <Table
+          dataSource={data}
+          columns={columns}
+          pagination={false}
+          className="rounded-lg border border-gray-200"
+        />
+      </div>
     </div>
   );
 };
