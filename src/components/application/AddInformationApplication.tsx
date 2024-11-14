@@ -1,20 +1,47 @@
-import { Col, DatePicker, Form, Input, Row, Select } from "antd";
+import {
+  Col,
+  DatePicker,
+  Form,
+  Input,
+  Row,
+  Select,
+  Checkbox,
+  Table,
+  Button,
+} from "antd";
 import { useEffect, useState } from "react";
-import { Application } from "../../models/application.model";
 import { CoursesFamily } from "../../models/courses.model";
 import courseFamilyService from "../../services/course-family-service/course.family.service";
+import priorityService from "../../services/priority-service/priority.service";
+import { Priority } from "../../models/priority.model";
+
+interface PriorityData {
+  id: number;
+  priorityId: number | null;
+  description: string;
+}
 
 const AddInformationApplication = ({ setFormData, formRef }) => {
   const [form] = Form.useForm();
   const [coursesfamily, setCoursesFamily] = useState<CoursesFamily[]>([]);
+  const [isSpecialCare, setIsSpecialCare] = useState(false);
+  const [priorityOptions, setPriorityOptions] = useState<Priority[]>([]);
+  const [priorityData, setPriorityData] = useState<PriorityData[]>([]);
 
   useEffect(() => {
     const fetchCourseFamily = async () => {
       const cfm = await courseFamilyService.getAll();
       setCoursesFamily(cfm);
     };
-
     fetchCourseFamily();
+  }, []);
+
+  useEffect(() => {
+    const fetchPriorityOptions = async () => {
+      const priorities = await priorityService.getAll();
+      setPriorityOptions(priorities.data);
+    };
+    fetchPriorityOptions();
   }, []);
 
   useEffect(() => {
@@ -27,14 +54,39 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
       admissionProgramId: null,
       courses_family_id: null,
       permanentResidence: "",
+      cardId: "",
     });
   }, [form]);
 
-  const handleFormChange = (changedFields: Partial<Application>) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      ...changedFields,
-    }));
+  const handleFormChange = () => {
+    const formData = {
+      ...form.getFieldsValue(),
+      tick: isSpecialCare,
+      intensiveCareList: priorityData.map((priority) => ({
+        priorityId: priority.priorityId,
+        description: priority.description,
+      })),
+    };
+    setFormData(formData);
+  };
+
+  const handleAddPriority = () => {
+    setPriorityData([
+      ...priorityData,
+      { id: Date.now(), priorityId: null, description: "" },
+    ]);
+  };
+
+  const handleRemovePriority = (id: number) => {
+    setPriorityData(priorityData.filter((priority) => priority.id !== id));
+  };
+
+  const handlePriorityChange = (id: number, field: string, value: any) => {
+    setPriorityData(
+      priorityData.map((priority) =>
+        priority.id === id ? { ...priority, [field]: value } : priority,
+      ),
+    );
   };
 
   return (
@@ -104,12 +156,12 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
           </Col>
           <Col span={12}>
             <Form.Item
-              name="coursesFamilyName"
+              name="courses_family_id"
               label="Courses Family"
               rules={[
                 {
                   required: true,
-                  message: "Vui lòng nhập courses family!",
+                  message: "Vui lòng chọn courses family!",
                 },
               ]}
             >
@@ -138,7 +190,7 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
                 },
               ]}
             >
-              <Input placeholder="Nhập hộ không thường trú" />
+              <Input placeholder="Nhập hộ khẩu thường trú" />
             </Form.Item>
           </Col>
           <Col span={12}>
@@ -154,6 +206,77 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
             </Form.Item>
           </Col>
         </Row>
+        <Checkbox
+          checked={isSpecialCare}
+          onChange={(e) => {
+            const checked = e.target.checked;
+            setIsSpecialCare(checked);
+            const formData = {
+              ...form.getFieldsValue(),
+              tick: checked,
+              intensiveCareList: priorityData.map((priority) => ({
+                priorityId: priority.priorityId,
+                description: priority.description,
+              })),
+            };
+
+            setFormData(formData);
+          }}
+        >
+          Chăm sóc đặc biệt
+        </Checkbox>
+
+        {isSpecialCare && (
+          <>
+            <Table dataSource={priorityData} pagination={false} rowKey="id">
+              <Table.Column
+                title="Tên diện ưu tiên"
+                dataIndex="priorityId"
+                render={(value, record: PriorityData) => (
+                  <Select
+                    value={value}
+                    onChange={(val) =>
+                      handlePriorityChange(record.id, "priorityId", val)
+                    }
+                    style={{ width: "100%" }}
+                  >
+                    {priorityOptions.map((option) => (
+                      <Select.Option key={option.id} value={option.id}>
+                        {option.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                )}
+              />
+              <Table.Column
+                title="Mô tả"
+                dataIndex="description"
+                width={400}
+                render={(text, record: PriorityData) => (
+                  <Input
+                    value={text}
+                    onChange={(e) =>
+                      handlePriorityChange(
+                        record.id,
+                        "description",
+                        e.target.value,
+                      )
+                    }
+                  />
+                )}
+              />
+              <Table.Column
+                title="Action"
+                render={(_, record: PriorityData) => (
+                  <Button onClick={() => handleRemovePriority(record.id)}>
+                    Xoá
+                  </Button>
+                )}
+              />
+            </Table>
+            <Button onClick={handleAddPriority}>Thêm diện ưu tiên</Button>
+          </>
+        )}
       </Form>
     </div>
   );

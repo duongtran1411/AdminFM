@@ -30,6 +30,8 @@ const initialFormData: Application = {
   status: ApplicationStatus.WAITING,
   permanentResidence: "",
   admissionProgram: {} as AdmissionProgram,
+  tick: true,
+  intensiveCareList: [],
 };
 
 const AddApplicationForm = () => {
@@ -85,7 +87,16 @@ const AddApplicationForm = () => {
           ...formData,
           admissionProgramId: admissionId ? Number(admissionId) : 0,
           birthdate: dayjs(formData.birthdate).format("YYYY-MM-DD"),
+          tick: formData.tick,
+          intensiveCareList: formData.intensiveCareList
+            ? formData.intensiveCareList.map((item) => ({
+                ...item,
+                description: item.description || "Chưa có mô tả",
+              }))
+            : [],
         };
+
+        console.log("Updated form data before saving:", newFormData);
 
         const newApplication = await applicationService.add(newFormData);
         await saveDocuments(newApplication.data.id!);
