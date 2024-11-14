@@ -1,148 +1,160 @@
-import { DatePicker, Form, Input, Modal, notification, Select } from "antd";
-import { useEffect } from "react";
-import { Application } from "../../models/application.model";
-import applicationService from "../../services/application-service/application.service";
+import { Button, notification } from "antd";
+import { FormInstance } from "antd/es/form";
 import dayjs from "dayjs";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Application } from "../../models/application.model";
+import { Parent } from "../../models/parent.model";
+import { StudentProfile } from "../../models/student.profile.model";
+import applicationService from "../../services/application-service/application.service";
+import attachedDocumentService from "../../services/attached-document-service/attached.document.service";
+import Loading from "../common/loading";
+import NavigateBack from "../shared/NavigateBack";
+import AddAttachedDocumentForm from "./AddAttachedDocumentForm";
+import ApplicationTabsMenu from "./TabsMenu";
+import EditInfomationParent from "./edit/EditInfomationParent";
+import EditInformationApplication from "./edit/EditInformationApplication";
+import EditStudentProfileForm from "./edit/EditStudentProfileForm";
 
-interface EditApplicationPropsForm {
-  isModalVisible: boolean;
-  hideModal: () => void;
-  application: Application | null;
-  onUpdate: () => void;
-}
-
-const EditApplicationForm = ({
-  isModalVisible,
-  hideModal,
-  application,
-  onUpdate,
-}: EditApplicationPropsForm) => {
-  const [form] = Form.useForm();
+const EditApplicationForm = () => {
+  const navigate = useNavigate();
+  const { applicationId } = useParams();
+  const formRef = useRef<FormInstance>(null);
+  const [formData, setFormData] = useState<Application | null>(null);
+  const [parentData, setParentData] = useState<Parent[]>([]);
+  const [studentProfileData, setStudentProfileData] =
+    useState<StudentProfile>();
+  const [attachedDocuments, setAttachedDocuments] = useState<{
+    [key: string]: File;
+  }>({});
+  const [resetUploadKey, setResetUploadKey] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState("1");
 
   useEffect(() => {
-    if (application) {
-      form.setFieldsValue({
-        name: application.name,
-        phone: application.phone,
-        email: application.email,
-        gender: application.gender,
-        birthdate: dayjs(application.birthdate),
-        permanentResidence: application.permanentResidence,
-        cardId: application.cardId,
-      });
-    }
-  }, [application]);
-
-  const handleOk = async () => {
-    Modal.confirm({
-      title: "Bạn có chắc chắn muốn cập nhật thành phần hồ sơ này?",
-      okText: "Cập nhật",
-      okType: "danger",
-      onOk: async () => {
+    const fetchApplicationData = async () => {
+      if (applicationId) {
+        setLoading(true);
         try {
-          const values = await form.validateFields();
-          const birthdate = dayjs(values.birthdate).format("YYYY-MM-DD");
-
-          const updatedApplication = {
-            ...application,
-            ...values,
-            birthdate: birthdate,
-          };
-          await applicationService.update(
-            updatedApplication.id,
-            updatedApplication,
+          const response = await applicationService.getById(
+            Number(applicationId),
           );
-          form.resetFields();
-          hideModal();
-          onUpdate();
-          notification.success({
-            message: "Thành phần hồ sơ cập nhật thành công",
-          });
+          setFormData(response.data);
+          console.log(response.data);
+          if (response.data.parents) {
+            setParentData(response.data.parents);
+          }
+          if (response.data.studentProfile) {
+            setStudentProfileData(response.data.studentProfile);
+          }
         } catch (error) {
           notification.error({
-            message: "Lỗi cập nhật thành phần hồ sơ",
+            message: "Lỗi khi tải thông tin hồ sơ",
           });
+        } finally {
+          setLoading(false);
         }
-      },
-    });
+      }
+    };
+    fetchApplicationData();
+  }, [applicationId]);
+
+  const saveDocuments = async (applicationId: number) => {
+    for (const [documentType, file] of Object.entries(attachedDocuments)) {
+      await attachedDocumentService.add(documentType, applicationId, file);
+    }
+  };
+
+  const handleUpdate = async () => {
+    try {
+      if (formRef.current && formData) {
+        setLoading(true);
+        await formRef.current.validateFields();
+
+        // if (studentProfileData) {
+        //   await studentProfileService.update(
+        //     studentProfileData.id!,
+        //     studentProfileData
+        //   );
+        // }
+
+        // Update parents
+        // for (const parent of parentData) {
+        //   if (parent.id) {
+        //     await parentService.update(parent.id, parent);
+        //   } else {
+        //     await parentService.add(parent);
+        //   }
+        // }
+
+        const updatedFormData = {
+          ...formData,
+          birthdate: dayjs(formData.birthdate).format("YYYY-MM-DD"),
+          intensiveCareList: formData.intensiveCareList?.map((item) => ({
+            ...item,
+            description: item.description,
+          })),
+        };
+
+        await applicationService.update(Number(applicationId), updatedFormData);
+        await saveDocuments(Number(applicationId));
+
+        notification.success({
+          message: "Cập nhật hồ sơ tuyển sinh thành công",
+        });
+
+        navigate(-1);
+      }
+    } catch (error) {
+      notification.error({
+        message: "Lỗi cập nhật hồ sơ tuyển sinh",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <Modal
-      title="Chỉnh sửa hồ sơ"
-      open={isModalVisible}
-      onOk={handleOk}
-      onCancel={() => {
-        hideModal();
-      }}
-      okText="Cập nhật"
-      cancelText="Hủy"
-      centered
-    >
-      <Form form={form} layout="vertical">
-        <Form.Item
-          name="name"
-          label="Họ và tên"
-          rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]}
-        >
-          <Input placeholder="Nhập họ và tên" />
-        </Form.Item>
-        <Form.Item
-          name="cardId"
-          label="Card ID"
-          rules={[{ required: true, message: "Vui lòng nhập card ID!" }]}
-        >
-          <Input placeholder="Nhập card ID" />
-        </Form.Item>
-        <Form.Item
-          label="Số điện thoại"
-          name="phone"
-          rules={[{ required: true, message: "Vui lòng nhập số điện thoại!" }]}
-        >
-          <Input placeholder="Nhập số điện thoại của bạn" />
-        </Form.Item>
-        <Form.Item
-          name="birthdate"
-          label="Ngày sinh"
-          rules={[{ required: true, message: "Vui lòng nhập ngày sinh!" }]}
-        >
-          <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
-        </Form.Item>
-        <Form.Item
-          name="gender"
-          label="Giới tính"
-          rules={[{ required: true, message: "Vui lòng chọn giới tính!" }]}
-        >
-          <Select placeholder="Chọn giới tính">
-            <Select.Option value="Nam">Nam</Select.Option>
-            <Select.Option value="Nữ">Nữ</Select.Option>
-            <Select.Option value="Khác">Khác</Select.Option>
-          </Select>
-        </Form.Item>
-        <Form.Item
-          name="email"
-          label="Email"
-          rules={[
-            { required: true, message: "Vui lòng nhập email!" },
-            { type: "email", message: "Email không hợp lệ!" },
-          ]}
-        >
-          <Input placeholder="Nhập Email" />
-        </Form.Item>
-        <Form.Item
-          name="permanentResidence"
-          label="Hộ khẩu thường trú"
-          rules={[
-            {
-              required: true,
-              message: "Vui lòng nhập hộ không thường trú!",
-            },
-          ]}
-        >
-          <Input placeholder="Nhập hộ không thường trú" />
-        </Form.Item>
-      </Form>
-    </Modal>
+    <div className="p-6 bg-white shadow-md rounded-lg">
+      {loading ? (
+        <Loading />
+      ) : (
+        <>
+          <NavigateBack />
+
+          <AddAttachedDocumentForm
+            setAttachedDocument={setAttachedDocuments}
+            resetUploadKey={resetUploadKey}
+          />
+          <EditInformationApplication
+            setFormData={setFormData}
+            formRef={formRef}
+          />
+          <ApplicationTabsMenu onTabChange={setActiveTab} />
+          {activeTab === "1" && (
+            <EditInfomationParent
+              setFormData={(data) => setParentData(data)}
+              formRef={formRef}
+            />
+          )}
+          {activeTab === "2" && (
+            <EditStudentProfileForm
+              setFormData={(data) => setStudentProfileData(data)}
+              formRef={formRef}
+            />
+          )}
+          <div className="flex justify-end gap-2 mt-4">
+            <Button onClick={() => navigate(-1)}>Hủy</Button>
+            <Button
+              onClick={handleUpdate}
+              className="bg-blue-500 text-white hover:bg-blue-600"
+            >
+              Cập nhật
+            </Button>
+          </div>
+        </>
+      )}
+    </div>
   );
 };
 

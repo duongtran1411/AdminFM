@@ -6,16 +6,20 @@ import {
   DatePicker,
   Form,
   Input,
+  Modal,
   Row,
   Select,
   Table,
-  Modal,
 } from "antd";
 import { useEffect, useState } from "react";
-import { CoursesFamily } from "../../models/courses.model";
-import { Priority } from "../../models/priority.model";
-import courseFamilyService from "../../services/course-family-service/course.family.service";
-import priorityService from "../../services/priority-service/priority.service";
+import { CoursesFamily } from "../../../models/courses.model";
+import { Priority } from "../../../models/priority.model";
+import courseFamilyService from "../../../services/course-family-service/course.family.service";
+import priorityService from "../../../services/priority-service/priority.service";
+
+import dayjs from "dayjs";
+import { useParams } from "react-router-dom";
+import applicationService from "../../../services/application-service/application.service";
 
 interface PriorityData {
   id: number;
@@ -26,8 +30,9 @@ interface PriorityData {
   isCustom?: boolean;
 }
 
-const AddInformationApplication = ({ setFormData, formRef }) => {
+const EditInformationApplication = ({ setFormData, formRef }) => {
   const [form] = Form.useForm();
+  const { applicationId } = useParams();
   const [coursesfamily, setCoursesFamily] = useState<CoursesFamily[]>([]);
   const [isSpecialCare, setIsSpecialCare] = useState(false);
   const [priorityOptions, setPriorityOptions] = useState<Priority[]>([]);
@@ -41,6 +46,37 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
   const [editingPriorityName, setEditingPriorityName] = useState<string>("");
 
   useEffect(() => {
+    const fetchApplication = async () => {
+      const response = await applicationService.getById(Number(applicationId));
+
+      form.setFieldsValue({
+        name: response.data.name,
+        email: response.data.email,
+        gender: response.data.gender,
+        birthdate: dayjs(response.data.birthdate),
+        phone: response.data.phone,
+        cardId: response.data.cardId,
+        permanentResidence: response.data.permanentResidence,
+        courses_family_id: response.data.coursesFamily?.course_family_id,
+      });
+      console.log(response.data.intensiveCare);
+      if (
+        response.data.intensiveCare &&
+        response.data.intensiveCare.length > 0
+      ) {
+        setIsSpecialCare(true);
+        const intensiveCareData: PriorityData[] =
+          response.data.intensiveCare.map((item) => ({
+            id: Date.now() + Math.random(),
+            priorityId: item.id || null,
+            description: item.description || "",
+            isSelected: true,
+          }));
+        setPriorityData(intensiveCareData);
+        console.log(intensiveCareData);
+      }
+    };
+
     const fetchInitialData = async () => {
       const [coursesResponse, prioritiesResponse] = await Promise.all([
         courseFamilyService.getAll(),
@@ -49,10 +85,11 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
       setCoursesFamily(coursesResponse);
       setPriorityOptions(prioritiesResponse.data);
     };
-    fetchInitialData();
-  }, []);
 
-  // Form handlers
+    fetchApplication();
+    fetchInitialData();
+  }, [applicationId]);
+
   const handleFormChange = () => {
     const formValues = form.getFieldsValue();
     setFormData({
@@ -430,68 +467,47 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
                       title="Mô tả"
                       width="40%"
                       render={(_, record: any) => {
-                        if (!record.isCustom) {
-                          const selectedPriority = priorityData.find(
-                            (p) => p.priorityId === record.id,
-                          );
-                          if (selectedPriority) {
-                            return (
-                              <Input
-                                value={selectedPriority.description}
-                                onChange={(e) =>
-                                  handlePriorityChange(
-                                    selectedPriority.id,
-                                    "description",
-                                    e.target.value,
-                                  )
-                                }
-                                placeholder="Nhập mô tả"
-                                className="rounded-md"
-                              />
-                            );
-                          }
-                          return null;
-                        }
-                        return (
-                          <Input
-                            value={record.description}
-                            onChange={(e) =>
-                              handlePriorityChange(
-                                record.id,
-                                "description",
-                                e.target.value,
-                              )
-                            }
-                            placeholder="Nhập mô tả"
-                            className="rounded-md"
-                          />
+                        const selectedPriority = priorityData.find(
+                          (p) => p.priorityId === record.id,
                         );
+
+                        if (selectedPriority) {
+                          return (
+                            <Input
+                              value={selectedPriority.description}
+                              onChange={(e) =>
+                                handlePriorityChange(
+                                  selectedPriority.id,
+                                  "description",
+                                  e.target.value,
+                                )
+                              }
+                              placeholder="Nhập mô tả"
+                              className="rounded-md"
+                            />
+                          );
+                        }
+                        return null;
                       }}
                     />
                     <Table.Column
                       title="Bắt buộc"
                       width="10%"
                       align="center"
-                      render={(_, record: any) => (
-                        <Checkbox
-                          checked={priorityData.some((p) =>
-                            !record.isCustom
-                              ? p.priorityId === record.id
-                              : p.id === record.id,
-                          )}
-                          onChange={(e) => {
-                            if (!record.isCustom) {
+                      render={(_, record: any) => {
+                        const isSelected = priorityData.some(
+                          (p) => p.priorityId === record.id,
+                        );
+
+                        return (
+                          <Checkbox
+                            checked={isSelected}
+                            onChange={(e) => {
                               handlePrioritySelect(record.id, e.target.checked);
-                            } else {
-                              if (!e.target.checked) {
-                                setPriorityData((prev) =>
-                                  prev.filter((p) => p.id !== record.id),
-                                );
-                              }
-                            }
-                          }}
-                        />
-                      )}
+                            }}
+                          />
+                        );
+                      }}
                     />
                     <Table.Column
                       width="20%"
@@ -550,4 +566,4 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
   );
 };
 
-export default AddInformationApplication;
+export default EditInformationApplication;

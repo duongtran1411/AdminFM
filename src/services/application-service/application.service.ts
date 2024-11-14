@@ -16,6 +16,18 @@ class ApplicationService {
     }
   }
 
+  async getById(applicationId: number): Promise<Response<Application>> {
+    try {
+      const response = await axiosInstance.get<Response<Application>>(
+        `/applications/${applicationId}`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching application by ID:", error);
+      throw error;
+    }
+  }
+
   async getByAdmissionId(
     admissionId: number,
   ): Promise<Response<Application[]>> {

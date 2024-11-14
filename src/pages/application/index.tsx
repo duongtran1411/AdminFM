@@ -5,14 +5,13 @@ import AddApplicationButton from "../../components/application/AddApplicationBut
 import ApplicationTable from "../../components/application/ApplicationTable";
 import ButtonChangeStatus from "../../components/application/ButtonChangeStatus";
 import ChangeStatusForm from "../../components/application/ChangeStatusForm";
-import EditApplicationForm from "../../components/application/EditApplicationForm";
 import Loading from "../../components/common/loading";
+import TabsMenu from "../../components/student-in-class/TabsMenu";
 import useModals from "../../hooks/useModal";
 import { Application } from "../../models/application.model";
 import { Response } from "../../models/response.model";
 import applicationService from "../../services/application-service/application.service";
 import attachedDocumentService from "../../services/attached-document-service/attached.document.service";
-import TabsMenu from "../../components/student-in-class/TabsMenu";
 
 const ApplicationPage = () => {
   const navigate = useNavigate();
@@ -129,7 +128,7 @@ const ApplicationPage = () => {
     const application = applicationResponse?.data.find((s) => s.id === id);
     if (application) {
       setSelectedApplication(application);
-      showModal("editApplication");
+      navigate(`/admission/${admissionId}/application/${id}`);
     }
   };
 
@@ -200,12 +199,6 @@ const ApplicationPage = () => {
         hideModal={() => hideModal("changeStatusApplication")}
         onStatusChanged={onUpdateSuccess}
         selectedIds={selectedApplicationIds}
-      />
-      <EditApplicationForm
-        isModalVisible={isVisible("editApplication")}
-        hideModal={() => hideModal("editApplication")}
-        application={selectedApplication}
-        onUpdate={onUpdateSuccess}
       />
       {/* <ViewDocumentModal
         applicationId={selectedApplication?.id}

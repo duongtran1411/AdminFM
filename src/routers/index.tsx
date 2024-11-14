@@ -59,6 +59,9 @@ const AdmissionPage = lazy(() => import("../pages/admission"));
 const AddApplicationForm = lazy(
   () => import("../components/application/AddApplicationForm"),
 );
+const EditApplicationForm = lazy(
+  () => import("../components/application/EditApplicationForm"),
+);
 const ApplicationDocumentPage = lazy(
   () => import("../pages/applicationdocument"),
 );
@@ -377,6 +380,16 @@ function MainRoutes() {
             <PageWithTitle title={title}>
               <Suspense fallback={<LoadingSkeleton />}>
                 <AddApplicationForm />
+              </Suspense>
+            </PageWithTitle>
+          ),
+        },
+        {
+          path: "/admission/:admissionId/application/:applicationId",
+          element: (
+            <PageWithTitle title={title}>
+              <Suspense fallback={<LoadingSkeleton />}>
+                <EditApplicationForm />
               </Suspense>
             </PageWithTitle>
           ),
