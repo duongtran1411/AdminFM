@@ -3,18 +3,15 @@ import { FormInstance } from "antd/es/form";
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Application } from "../../models/application.model";
-import { Parent } from "../../models/parent.model";
-import { StudentProfile } from "../../models/student.profile.model";
-import applicationService from "../../services/application-service/application.service";
-import attachedDocumentService from "../../services/attached-document-service/attached.document.service";
-import Loading from "../common/loading";
-import NavigateBack from "../shared/NavigateBack";
-import AddAttachedDocumentForm from "./AddAttachedDocumentForm";
-import ApplicationTabsMenu from "./TabsMenu";
-import EditInfomationParent from "./edit/EditInfomationParent";
-import EditInformationApplication from "./edit/EditInformationApplication";
-import EditStudentProfileForm from "./edit/EditStudentProfileForm";
+import { Application } from "../../../models/application.model";
+import { Parent } from "../../../models/parent.model";
+import applicationService from "../../../services/application-service/application.service";
+import Loading from "../../common/loading";
+import NavigateBack from "../../shared/NavigateBack";
+import ApplicationTabsMenu from "../TabsMenu";
+import EditInfomationParent from "./EditInfomationParent";
+import EditInformationApplication from "./EditInformationApplication";
+import { Priority } from "../../../models/priority.model";
 
 const EditApplicationForm = () => {
   const navigate = useNavigate();
@@ -22,14 +19,12 @@ const EditApplicationForm = () => {
   const formRef = useRef<FormInstance>(null);
   const [formData, setFormData] = useState<Application | null>(null);
   const [parentData, setParentData] = useState<Parent[]>([]);
-  const [studentProfileData, setStudentProfileData] =
-    useState<StudentProfile>();
-  const [attachedDocuments, setAttachedDocuments] = useState<{
-    [key: string]: File;
-  }>({});
-  const [resetUploadKey, setResetUploadKey] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState("1");
+  const [applicationData, setApplicationData] = useState<Application | null>(
+    null,
+  );
+  const [priorityData, setPriorityData] = useState<Priority[]>([]);
 
   useEffect(() => {
     const fetchApplicationData = async () => {
@@ -40,13 +35,10 @@ const EditApplicationForm = () => {
             Number(applicationId),
           );
           setFormData(response.data);
-          console.log(response.data);
-          if (response.data.parents) {
-            setParentData(response.data.parents);
+          if (response.data.parent) {
+            setParentData(response.data.parent);
           }
-          if (response.data.studentProfile) {
-            setStudentProfileData(response.data.studentProfile);
-          }
+          setApplicationData(response.data);
         } catch (error) {
           notification.error({
             message: "Lỗi khi tải thông tin hồ sơ",
@@ -59,45 +51,41 @@ const EditApplicationForm = () => {
     fetchApplicationData();
   }, [applicationId]);
 
-  const saveDocuments = async (applicationId: number) => {
-    for (const [documentType, file] of Object.entries(attachedDocuments)) {
-      await attachedDocumentService.add(documentType, applicationId, file);
-    }
-  };
-
   const handleUpdate = async () => {
     try {
       if (formRef.current && formData) {
         setLoading(true);
         await formRef.current.validateFields();
 
-        // if (studentProfileData) {
-        //   await studentProfileService.update(
-        //     studentProfileData.id!,
-        //     studentProfileData
-        //   );
-        // }
-
-        // Update parents
-        // for (const parent of parentData) {
-        //   if (parent.id) {
-        //     await parentService.update(parent.id, parent);
-        //   } else {
-        //     await parentService.add(parent);
-        //   }
-        // }
-
         const updatedFormData = {
-          ...formData,
+          name: formData.name,
+          email: formData.email,
+          gender: formData.gender,
           birthdate: dayjs(formData.birthdate).format("YYYY-MM-DD"),
-          intensiveCareList: formData.intensiveCareList?.map((item) => ({
-            ...item,
+          phone: formData.phone,
+          cardId: formData.cardId,
+          permanentResidence: formData.permanentResidence,
+          course_family_id: formData.course_family_id || undefined,
+          parent: parentData.map((parent) => ({
+            name: parent.name || "",
+            gender: parent.gender || "",
+            phone: parent.phone || "",
+            email: parent.email || "",
+            job: parent.job || "",
+          })),
+          intensiveCare: priorityData?.map((item) => ({
             description: item.description,
+            priority: {
+              id: item.id,
+              priorityId: item.priorityId,
+              description: item.description,
+              name: item.name,
+              isSelected: item.isSelected,
+            },
           })),
         };
-
+        console.log(updatedFormData);
         await applicationService.update(Number(applicationId), updatedFormData);
-        await saveDocuments(Number(applicationId));
 
         notification.success({
           message: "Cập nhật hồ sơ tuyển sinh thành công",
@@ -121,26 +109,19 @@ const EditApplicationForm = () => {
       ) : (
         <>
           <NavigateBack />
-
-          <AddAttachedDocumentForm
-            setAttachedDocument={setAttachedDocuments}
-            resetUploadKey={resetUploadKey}
-          />
           <EditInformationApplication
             setFormData={setFormData}
             formRef={formRef}
+            applicationData={applicationData}
+            priorityData={priorityData}
+            setPriorityData={setPriorityData}
           />
           <ApplicationTabsMenu onTabChange={setActiveTab} />
           {activeTab === "1" && (
             <EditInfomationParent
               setFormData={(data) => setParentData(data)}
               formRef={formRef}
-            />
-          )}
-          {activeTab === "2" && (
-            <EditStudentProfileForm
-              setFormData={(data) => setStudentProfileData(data)}
-              formRef={formRef}
+              parentData={applicationData?.parent || []}
             />
           )}
           <div className="flex justify-end gap-2 mt-4">

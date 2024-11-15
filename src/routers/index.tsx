@@ -60,7 +60,7 @@ const AddApplicationForm = lazy(
   () => import("../components/application/AddApplicationForm"),
 );
 const EditApplicationForm = lazy(
-  () => import("../components/application/EditApplicationForm"),
+  () => import("../components/application/edit/EditApplicationForm"),
 );
 const ApplicationDocumentPage = lazy(
   () => import("../pages/applicationdocument"),

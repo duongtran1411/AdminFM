@@ -1,5 +1,7 @@
+import { Priority } from "./priority.model";
+
 export interface IntensiveCare {
   id?: number;
-  name?: string;
   description?: string;
+  priority?: Priority;
 }

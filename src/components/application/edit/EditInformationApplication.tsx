@@ -1,4 +1,3 @@
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import {
   Button,
   Checkbox,
@@ -11,122 +10,89 @@ import {
   Select,
   Table,
 } from "antd";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { CoursesFamily } from "../../../models/courses.model";
 import { Priority } from "../../../models/priority.model";
 import courseFamilyService from "../../../services/course-family-service/course.family.service";
 import priorityService from "../../../services/priority-service/priority.service";
 
-import dayjs from "dayjs";
-import { useParams } from "react-router-dom";
-import applicationService from "../../../services/application-service/application.service";
-
-interface PriorityData {
-  id: number;
-  priorityId: number | null;
-  name?: string;
-  description: string;
-  isSelected?: boolean;
-  isCustom?: boolean;
+interface EditInformationApplicationProps {
+  setFormData: (data: any) => void;
+  formRef: any;
+  applicationData?: any;
+  priorityData: Priority[];
+  setPriorityData: React.Dispatch<React.SetStateAction<Priority[]>>;
 }
 
-const EditInformationApplication = ({ setFormData, formRef }) => {
+const EditInformationApplication = ({
+  setFormData,
+  formRef,
+  applicationData,
+  priorityData,
+  setPriorityData,
+}: EditInformationApplicationProps) => {
   const [form] = Form.useForm();
-  const { applicationId } = useParams();
   const [coursesfamily, setCoursesFamily] = useState<CoursesFamily[]>([]);
-  const [isSpecialCare, setIsSpecialCare] = useState(false);
-  const [priorityOptions, setPriorityOptions] = useState<Priority[]>([]);
-  const [priorityData, setPriorityData] = useState<PriorityData[]>([]);
-  const [newPriorityName, setNewPriorityName] = useState<string>("");
-  const [isAddingPriority, setIsAddingPriority] = useState(false);
   const [priorityToDelete, setPriorityToDelete] = useState<number | null>(null);
-  const [editingPriorityId, setEditingPriorityId] = useState<number | null>(
-    null,
-  );
-  const [editingPriorityName, setEditingPriorityName] = useState<string>("");
+  const [isSpecialCare, setIsSpecialCare] = useState(false);
+  const [allPriorities, setAllPriorities] = useState<Priority[]>([]);
 
   useEffect(() => {
-    const fetchApplication = async () => {
-      const response = await applicationService.getById(Number(applicationId));
-
+    if (applicationData) {
       form.setFieldsValue({
-        name: response.data.name,
-        email: response.data.email,
-        gender: response.data.gender,
-        birthdate: dayjs(response.data.birthdate),
-        phone: response.data.phone,
-        cardId: response.data.cardId,
-        permanentResidence: response.data.permanentResidence,
-        courses_family_id: response.data.coursesFamily?.course_family_id,
+        name: applicationData.name,
+        email: applicationData.email,
+        gender: applicationData.gender,
+        birthdate: dayjs(applicationData.birthdate),
+        phone: applicationData.phone,
+        cardId: applicationData.cardId,
+        permanentResidence: applicationData.permanentResidence,
+        course_family_id: applicationData.coursesFamily?.course_family_id,
       });
-      console.log(response.data.intensiveCare);
+
       if (
-        response.data.intensiveCare &&
-        response.data.intensiveCare.length > 0
+        applicationData.intensiveCare &&
+        applicationData.intensiveCare.length > 0
       ) {
         setIsSpecialCare(true);
-        const intensiveCareData: PriorityData[] =
-          response.data.intensiveCare.map((item) => ({
-            id: Date.now() + Math.random(),
-            priorityId: item.id || null,
-            description: item.description || "",
-            isSelected: true,
-          }));
-        setPriorityData(intensiveCareData);
-        console.log(intensiveCareData);
+        const priorityData = applicationData.intensiveCare.map((care) => ({
+          id: care.priority?.id,
+          priorityId: care.priority?.id,
+          description: care.description,
+          name: care.priority?.name,
+          isSelected: true,
+        }));
+        setPriorityData(priorityData);
       }
-    };
+    }
 
     const fetchInitialData = async () => {
-      const [coursesResponse, prioritiesResponse] = await Promise.all([
-        courseFamilyService.getAll(),
-        priorityService.getAll(),
-      ]);
+      const coursesResponse = await courseFamilyService.getAll();
       setCoursesFamily(coursesResponse);
-      setPriorityOptions(prioritiesResponse.data);
     };
 
-    fetchApplication();
     fetchInitialData();
-  }, [applicationId]);
+  }, [applicationData, form]);
 
-  const handleFormChange = () => {
-    const formValues = form.getFieldsValue();
-    setFormData({
-      ...formValues,
-      tick: isSpecialCare,
-      intensiveCareList: isSpecialCare
-        ? priorityData
-            .filter((p) => p.priorityId && p.description)
-            .map((priority) => ({
-              priorityId: priority.priorityId,
-              description: priority.description,
-            }))
-        : [],
-    });
-  };
-
-  const handlePrioritySelect = (priorityId: number, checked: boolean) => {
-    if (checked) {
-      const priority = priorityOptions.find((p) => p.id === priorityId);
-      if (priority) {
-        setPriorityData((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            priorityId: priority.id,
-            name: priority.name,
-            description: "",
-            isSelected: true,
-          },
-        ]);
+  useEffect(() => {
+    const fetchPriorities = async () => {
+      try {
+        const response = await priorityService.getAll();
+        setAllPriorities(response.data);
+      } catch (error) {
+        console.error("Error fetching priorities:", error);
       }
-    } else {
-      setPriorityData((prev) =>
-        prev.filter((p) => p.priorityId !== priorityId),
-      );
-    }
-    handleFormChange();
+    };
+
+    fetchPriorities();
+  }, []);
+
+  const handleFormChange = (changedValues: any, _: any) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      ...changedValues,
+    }));
   };
 
   const handlePriorityChange = (id: number, field: string, value: any) => {
@@ -135,66 +101,23 @@ const EditInformationApplication = ({ setFormData, formRef }) => {
         priority.id === id ? { ...priority, [field]: value } : priority,
       ),
     );
-    handleFormChange();
+
+    setFormData((prevData) => ({
+      ...prevData,
+      intensiveCare: priorityData
+        .filter((item) => item.isSelected)
+        .map((item) => ({
+          description: item.description,
+          priority: {
+            id: item.id,
+            priorityId: item.priorityId,
+            name: item.name,
+            description: item.description,
+          },
+        })),
+    }));
   };
 
-  const handleAddCustomPriority = () => setIsAddingPriority(true);
-
-  const handleConfirmPriority = async () => {
-    if (!newPriorityName.trim()) return;
-
-    try {
-      const response = await priorityService.add({ name: newPriorityName });
-      setPriorityOptions((prev) => [...prev, response.data]);
-      setNewPriorityName("");
-      setIsAddingPriority(false);
-    } catch (error) {
-      console.error("Error adding priority:", error);
-    }
-  };
-
-  const handleDeletePriority = (id: number | string) => {
-    if (id === "new") {
-      setIsAddingPriority(false);
-      setNewPriorityName("");
-    } else {
-      setPriorityToDelete(id as number);
-    }
-  };
-
-  const handleConfirmDelete = async () => {
-    if (priorityToDelete === null) return;
-
-    try {
-      await priorityService.delete(priorityToDelete);
-      setPriorityOptions((prev) =>
-        prev.filter((p) => p.id !== priorityToDelete),
-      );
-      setPriorityData((prev) =>
-        prev.filter((p) => p.priorityId !== priorityToDelete),
-      );
-      setPriorityToDelete(null);
-    } catch (error) {
-      console.error("Error deleting priority:", error);
-    }
-  };
-
-  const handleUpdatePriority = async (id: number) => {
-    if (!editingPriorityName.trim()) return;
-
-    try {
-      const response = await priorityService.update(id, {
-        name: editingPriorityName,
-      });
-      setPriorityOptions((prev) =>
-        prev.map((p) => (p.id === id ? response.data : p)),
-      );
-      setEditingPriorityId(null);
-      setEditingPriorityName("");
-    } catch (error) {
-      console.error("Error updating priority:", error);
-    }
-  };
   return (
     <div className="bg-white rounded-lg shadow-sm">
       <div className="p-4 border-b border-gray-200">
@@ -288,7 +211,6 @@ const EditInformationApplication = ({ setFormData, formRef }) => {
             </Row>
           </div>
 
-          {/* Contact Information Section */}
           <div className="p-2 bg-gray-50 rounded-lg">
             <h2 className="text-md font-medium text-gray-700 mb-4">
               Thông tin liên hệ
@@ -333,7 +255,7 @@ const EditInformationApplication = ({ setFormData, formRef }) => {
             <Row gutter={24}>
               <Col span={24}>
                 <Form.Item
-                  name="courses_family_id"
+                  name="course_family_id"
                   label="Chương trình học"
                   rules={[
                     {
@@ -365,19 +287,10 @@ const EditInformationApplication = ({ setFormData, formRef }) => {
               <Checkbox
                 checked={isSpecialCare}
                 onChange={(e) => {
-                  const checked = e.target.checked;
-                  setIsSpecialCare(checked);
-                  const formData = {
-                    ...form.getFieldsValue(),
-                    tick: checked,
-                    intensiveCareList: priorityData
-                      .filter((p) => p.priorityId && p.description)
-                      .map((priority) => ({
-                        priorityId: priority.priorityId,
-                        description: priority.description,
-                      })),
-                  };
-                  setFormData(formData);
+                  setIsSpecialCare(e.target.checked);
+                  if (!e.target.checked) {
+                    setPriorityData([]);
+                  }
                 }}
                 className="mr-2"
               />
@@ -386,167 +299,84 @@ const EditInformationApplication = ({ setFormData, formRef }) => {
               </span>
             </div>
 
-            {isSpecialCare && (
-              <div className="mt-4">
-                <div className="mb-4">
-                  <h3 className="text-lg font-medium text-gray-700 mb-2">
-                    Danh sách diện ưu tiên
-                  </h3>
-                  <Table
-                    dataSource={[
-                      ...priorityOptions,
-                      ...(isAddingPriority
-                        ? [{ id: "new", name: "", isNew: true }]
-                        : []),
-                      ...priorityData.filter((p) => !p.priorityId),
-                    ]}
-                    pagination={false}
-                    rowKey={(record) => record.id?.toString()}
-                    className="rounded-lg border border-gray-200 mb-4"
-                  >
-                    <Table.Column
-                      title="Tên diện ưu tiên"
-                      width="30%"
-                      render={(_, record: any) => {
-                        if (record.isNew) {
-                          return (
-                            <div className="flex gap-2">
-                              <Input
-                                value={newPriorityName}
-                                onChange={(e) =>
-                                  setNewPriorityName(e.target.value)
-                                }
-                                placeholder="Nhập tên diện ưu tiên"
-                                className="rounded-md"
-                              />
-                              <Button
-                                type="primary"
-                                onClick={handleConfirmPriority}
-                                disabled={!newPriorityName.trim()}
-                              >
-                                Xác nhận
-                              </Button>
-                            </div>
-                          );
-                        }
-
-                        if (editingPriorityId === record.id) {
-                          return (
-                            <div className="flex gap-2">
-                              <Input
-                                value={editingPriorityName}
-                                onChange={(e) =>
-                                  setEditingPriorityName(e.target.value)
-                                }
-                                placeholder="Nhập tên diện ưu tiên"
-                                className="rounded-md"
-                              />
-                              <Button
-                                type="primary"
-                                onClick={() => handleUpdatePriority(record.id)}
-                                disabled={!editingPriorityName.trim()}
-                              >
-                                Xác nhận
-                              </Button>
-                              <Button
-                                onClick={() => {
-                                  setEditingPriorityId(null);
-                                  setEditingPriorityName("");
-                                }}
-                              >
-                                Hủy
-                              </Button>
-                            </div>
-                          );
-                        }
-
-                        return <span>{record.name}</span>;
-                      }}
-                    />
-                    <Table.Column
-                      title="Mô tả"
-                      width="40%"
-                      render={(_, record: any) => {
-                        const selectedPriority = priorityData.find(
-                          (p) => p.priorityId === record.id,
-                        );
-
-                        if (selectedPriority) {
-                          return (
-                            <Input
-                              value={selectedPriority.description}
-                              onChange={(e) =>
-                                handlePriorityChange(
-                                  selectedPriority.id,
-                                  "description",
-                                  e.target.value,
-                                )
-                              }
-                              placeholder="Nhập mô tả"
-                              className="rounded-md"
-                            />
-                          );
-                        }
-                        return null;
-                      }}
-                    />
-                    <Table.Column
-                      title="Bắt buộc"
-                      width="10%"
-                      align="center"
-                      render={(_, record: any) => {
-                        const isSelected = priorityData.some(
-                          (p) => p.priorityId === record.id,
-                        );
-
-                        return (
-                          <Checkbox
-                            checked={isSelected}
-                            onChange={(e) => {
-                              handlePrioritySelect(record.id, e.target.checked);
-                            }}
-                          />
-                        );
-                      }}
-                    />
-                    <Table.Column
-                      width="20%"
-                      align="center"
-                      render={(_, record: any) => (
-                        <div className="flex justify-center gap-2">
-                          {!record.isNew && editingPriorityId !== record.id && (
-                            <Button
-                              type="link"
-                              onClick={() => {
-                                setEditingPriorityId(record.id);
-                                setEditingPriorityName(record.name);
-                              }}
-                              icon={<EditOutlined />}
-                            ></Button>
-                          )}
-                          {record.isNew && (
-                            <Button
-                              type="text"
-                              danger
-                              onClick={() => handleDeletePriority("new")}
-                              icon={<DeleteOutlined />}
-                            />
-                          )}
-                        </div>
-                      )}
-                    />
-                  </Table>
-                </div>
-
-                <Button
-                  onClick={handleAddCustomPriority}
-                  type="link"
-                  className="text-blue-500 pl-0"
+            <div className="mt-4">
+              <div className="mb-4">
+                <h3 className="text-lg font-medium text-gray-700 mb-2">
+                  Danh sách diện ưu tiên
+                </h3>
+                <Table
+                  dataSource={allPriorities}
+                  pagination={false}
+                  rowKey={(record) => record.id?.toString()}
+                  className="rounded-lg border border-gray-200 mb-4"
                 >
-                  + Thêm diện ưu tiên khác
-                </Button>
+                  <Table.Column
+                    title="Tên diện ưu tiên"
+                    dataIndex="name"
+                    key="name"
+                    width="30%"
+                  />
+                  <Table.Column
+                    title="Mô tả"
+                    key="description"
+                    width="40%"
+                    render={(_, record: Priority) => {
+                      const selectedPriority = priorityData.find(
+                        (p) => p.id === record.id,
+                      );
+                      return (
+                        <Input
+                          value={selectedPriority?.description || ""}
+                          onChange={(e) =>
+                            handlePriorityChange(
+                              record.id,
+                              "description",
+                              e.target.value,
+                            )
+                          }
+                          placeholder="Nhập mô tả"
+                          className="rounded-md"
+                          disabled={!selectedPriority}
+                        />
+                      );
+                    }}
+                  />
+                  <Table.Column
+                    title="Chọn"
+                    key="isSelected"
+                    width="10%"
+                    align="center"
+                    render={(_, record: Priority) => (
+                      <Checkbox
+                        checked={priorityData.some((p) => p.id === record.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setPriorityData((prev) => [
+                              ...prev,
+                              {
+                                id: record.id,
+                                priorityId: record.id,
+                                name: record.name,
+                                description: "",
+                                isSelected: true,
+                              },
+                            ]);
+                          } else {
+                            setPriorityData((prev) =>
+                              prev.filter((p) => p.id !== record.id),
+                            );
+                          }
+                        }}
+                      />
+                    )}
+                  />
+                </Table>
               </div>
-            )}
+
+              <Button type="link" className="text-blue-500 pl-0">
+                + Thêm diện ưu tiên khác
+              </Button>
+            </div>
           </div>
         </Form>
       </div>
@@ -554,7 +384,6 @@ const EditInformationApplication = ({ setFormData, formRef }) => {
       <Modal
         title="Xác nhận xóa"
         open={priorityToDelete !== null}
-        onOk={handleConfirmDelete}
         onCancel={() => setPriorityToDelete(null)}
         okText="Xóa"
         cancelText="Hủy"

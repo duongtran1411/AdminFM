@@ -77,7 +77,7 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
           ...prev,
           {
             id: Date.now(),
-            priorityId: priority.id,
+            priorityId: priority.id || null,
             name: priority.name,
             description: "",
             isSelected: true,
@@ -364,7 +364,7 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
                       ...priorityData.filter((p) => !p.priorityId),
                     ]}
                     pagination={false}
-                    rowKey={(record) => record.id?.toString()}
+                    rowKey={(record) => record.id?.toString() || ""}
                     className="rounded-lg border border-gray-200 mb-4"
                   >
                     <Table.Column

@@ -1,26 +1,37 @@
 import { DeleteOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Select, Table } from "antd";
 import { useEffect, useState } from "react";
+import { Parent } from "../../../models/parent.model";
 
-const EditInfomationParent = ({ setFormData, formRef }) => {
+interface EditInfomationParentProps {
+  setFormData: (data: any) => void;
+  formRef: any;
+  parentData: Parent[];
+}
+
+const EditInfomationParent = ({
+  setFormData,
+  formRef,
+  parentData,
+}: EditInfomationParentProps) => {
   const [forms, setForms] = useState([{ key: 0 }]);
   const [parentForms] = Form.useForm();
 
   useEffect(() => {
-    if (!parentForms.getFieldValue("parents")) {
+    if (parentData && parentData.length > 0) {
+      setForms(parentData.map((_, index) => ({ key: index })));
+
       parentForms.setFieldsValue({
-        parents: [
-          {
-            name: "",
-            gender: null,
-            email: "",
-            phone: "",
-            job: "",
-          },
-        ],
+        parents: parentData.map((parent) => ({
+          name: parent.name,
+          gender: parent.gender,
+          email: parent.email,
+          phone: parent.phone,
+          job: parent.job,
+        })),
       });
     }
-  }, [parentForms]);
+  }, [parentData, parentForms]);
 
   const handleFormChange = (_: any, allFields: any) => {
     const parentValues = forms.map((_, index) => ({

@@ -1,6 +1,5 @@
 import { AdmissionProgram } from "./admission.model";
 import { AttachedDocument } from "./attached.document.model";
-import { CoursesFamily } from "./courses.model";
 import { ApplicationStatus } from "./enum/application.status.enum";
 import { IntensiveCare } from "./intensive.care.model";
 import { Parent } from "./parent.model";
@@ -20,9 +19,9 @@ export interface Application {
   priorityId?: number;
   tick?: boolean;
   intensiveCareList?: IntensiveCare[];
-  parents?: Parent[];
+  parent?: Parent[];
   studentProfile?: StudentProfile;
-  coursesFamily?: CoursesFamily;
+  course_family_id?: number;
   attachedDocuments?: AttachedDocument[];
   intensiveCare?: IntensiveCare[];
 }

@@ -1,6 +1,9 @@
 export interface Priority {
   id: number;
-  name?: string;
+  priorityId: number;
+  description: string;
+  name: string;
+  isSelected: boolean;
 }
 
 export interface CreatePriorityDto {
