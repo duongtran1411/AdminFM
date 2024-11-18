@@ -4,6 +4,5 @@ export interface GradeComponent {
   id?: number;
   name?: string;
   weight?: number;
-  comment?: string;
   gradeCategory?: GradeCategory;
 }

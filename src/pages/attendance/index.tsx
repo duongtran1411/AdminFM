@@ -100,9 +100,7 @@ const AttendancePage = () => {
           setLoading(false);
         }
       },
-      onCancel() {
-        console.log("Đã hủy lưu điểm danh.");
-      },
+      onCancel() {},
     });
   };
 

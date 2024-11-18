@@ -144,6 +144,13 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
                             >
                               <Input placeholder="Tên thành phần" />
                             </Form.Item>
+                            <Form.Item
+                              {...componentField}
+                              name={[componentField.name, "weight"]}
+                              style={{ flex: 1, marginRight: 8 }}
+                            >
+                              <Input type="number" placeholder="Trọng số" />
+                            </Form.Item>
                             <Button
                               type="text"
                               icon={<MinusCircleOutlined />}

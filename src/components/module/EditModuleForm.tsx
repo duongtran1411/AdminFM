@@ -55,6 +55,7 @@ const EditModuleForm = ({
             category.gradeComponents?.map((comp) => ({
               id: comp.id,
               name: comp.name,
+              weight: comp.weight,
             })) || [],
         })) || [];
 
@@ -83,6 +84,7 @@ const EditModuleForm = ({
             category.gradeComponents?.map((component: any) => ({
               id: component.id || undefined,
               name: component.name,
+              weight: component.weight,
             })) || [],
         }),
       );
@@ -162,11 +164,12 @@ const EditModuleForm = ({
           <InputNumber placeholder="Nhập Term" />
         </Form.Item>
 
-        <div style={{ marginBottom: 16, fontWeight: "500" }}>Danh mục điểm</div>
-
         <Form.List name="gradeCategories">
           {(fields, { add: addCategory, remove: removeCategory }) => (
             <>
+              <div style={{ marginBottom: 16, fontWeight: "500" }}>
+                Danh mục điểm
+              </div>
               {fields.map((field) => (
                 <div
                   key={field.key}
@@ -177,8 +180,14 @@ const EditModuleForm = ({
                   }}
                 >
                   <div style={{ flex: 1, marginRight: 8 }}>
-                    <Form.Item {...field} name={[field.name, "name"]}>
-                      <Input placeholder="Nhập Tên danh mục điểm" />
+                    <Form.Item
+                      {...field}
+                      name={[field.name, "name"]}
+                      rules={[
+                        { required: true, message: "Thiếu tên danh mục điểm" },
+                      ]}
+                    >
+                      <Input placeholder="Tên danh mục điểm" />
                     </Form.Item>
                   </div>
 
@@ -198,7 +207,18 @@ const EditModuleForm = ({
                               name={[componentField.name, "name"]}
                               style={{ flex: 1, marginRight: 8 }}
                             >
-                              <Input placeholder="Nhập Tên thành phần điểm" />
+                              <Input placeholder="Tên thành phần" />
+                            </Form.Item>
+                            <Form.Item
+                              {...componentField}
+                              name={[componentField.name, "weight"]}
+                              style={{ flex: 1, marginRight: 8 }}
+                            >
+                              <Input
+                                type="number"
+                                placeholder="Trọng số"
+                                suffix="%"
+                              />
                             </Form.Item>
                             <Button
                               type="text"
@@ -215,7 +235,7 @@ const EditModuleForm = ({
                           icon={<PlusOutlined />}
                           style={{ width: "60%" }}
                         >
-                          Thêm thành phần điểm
+                          Thêm thành phần
                         </Button>
                       </div>
                     )}
@@ -229,7 +249,6 @@ const EditModuleForm = ({
                   />
                 </div>
               ))}
-
               <Form.Item>
                 <Button
                   type="dashed"
