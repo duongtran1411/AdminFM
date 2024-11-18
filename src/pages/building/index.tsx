@@ -50,7 +50,12 @@ const BuildingPage = () => {
       dataIndex: "name",
       key: "name",
       render: (text: string, record: Building) => (
-        <Link to={`/classroom/building/${record.id}/classrooms`}>{text}</Link>
+        <Link
+          className="text-blue-500"
+          to={`/classroom/building/${record.id}/classrooms`}
+        >
+          {text}
+        </Link>
       ),
     },
     {
@@ -60,7 +65,7 @@ const BuildingPage = () => {
         <Dropdown overlay={menu(record)} trigger={["click"]}>
           <Button
             type="text"
-            icon={<AiOutlineMore style={{ fontSize: "20px" }} />} // Thay đổi kích thước icon ở đây
+            icon={<AiOutlineMore style={{ fontSize: "20px" }} />}
             style={{ float: "right" }}
           />
         </Dropdown>
@@ -70,14 +75,14 @@ const BuildingPage = () => {
 
   const handleDelete = async (bid: number) => {
     Modal.confirm({
-      title: "Are you sure you want to delete this building?",
-      okText: "Delete",
+      title: "Bạn có chắc chắn muốn xóa tòa nhà này không?",
+      okText: "Xóa",
       okType: "danger",
       onOk: async () => {
         try {
           await buildingService.deleteBuilding(bid);
           setBuildings(buildings.filter((build) => build.id !== bid));
-          notification.success({ message: "Building deleted successfully" });
+          notification.success({ message: "Xóa tòa nhà thành công" });
         } catch (error) {
           notification.error({ message: "Error deleting building" });
         }

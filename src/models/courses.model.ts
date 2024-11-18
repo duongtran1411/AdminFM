@@ -4,9 +4,19 @@ export interface Module {
   module_id: number;
   module_name: string;
   code: string;
-  exam_type: string;
+  exam_type: ExamType[];
   number_of_classes: number;
-  term_number?: number;
+  term_number: number;
+  gradeCategories?: GradeCategory[];
+}
+
+export interface CreateModule {
+  module_id: number;
+  module_name: string;
+  code: string;
+  exam_type: number[];
+  number_of_classes: number;
+  term_number: number;
   gradeCategories?: GradeCategory[];
 }
 
@@ -23,4 +33,9 @@ export interface CoursesFamily {
   course_family_name: string;
   year: string;
   courses: Courses[];
+}
+
+export interface ExamType {
+  id: number;
+  name: string;
 }

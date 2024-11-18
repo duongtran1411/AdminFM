@@ -40,7 +40,7 @@ const EditTeacherForm = ({
   useEffect(() => {
     const fetchModules = async () => {
       const moduleList = await moduleService.getAllModules();
-      setModules(moduleList);
+      setModules(moduleList.data);
     };
 
     const fetchShifts = async () => {

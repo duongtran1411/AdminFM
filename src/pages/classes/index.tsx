@@ -5,8 +5,8 @@ import FloatButtonGroup from "../../components/class/FloatButtonGroup";
 import Loading from "../../components/common/loading";
 import { ClassStatus } from "../../models/enum/class.status.enum";
 import { Class } from "../../models/classes.model";
-import ClassService from "../../services/class-service/class.service";
 import courseFamilyService from "../../services/course-family-service/course.family.service";
+import classService from "../../services/class-service/class.service";
 import { CoursesFamily } from "../../models/courses.model";
 
 const { Option } = Select;
@@ -17,14 +17,14 @@ const ClassPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<{
-    course_family_id?: number;
+    courses_family_id?: number;
     status?: ClassStatus;
   }>({});
 
   const fetchClasses = async () => {
     setLoading(true);
     try {
-      const data = await ClassService.getClasses();
+      const data = await classService.getClasses();
       setAllClasses(data.data);
     } catch (error) {
       setError("Error loading classes");
@@ -51,7 +51,7 @@ const ClassPage = () => {
 
   const handleFilterChange = (_: any, allValues: any) => {
     setFilters({
-      course_family_id: allValues.course_family_id,
+      courses_family_id: allValues.courses_family_id,
       status: allValues.status,
     });
   };
@@ -59,8 +59,8 @@ const ClassPage = () => {
   const filteredClasses = useMemo(() => {
     return allClasses.filter((classItem) => {
       const matchesCourseFamily =
-        !filters.course_family_id ||
-        filters.course_family_id == classItem.coursesFamily.course_family_id;
+        !filters.courses_family_id ||
+        filters.courses_family_id == classItem.coursesFamily.course_family_id;
 
       const matchesStatus =
         !filters.status || classItem.status === filters.status;

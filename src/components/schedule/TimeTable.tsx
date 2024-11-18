@@ -37,7 +37,6 @@ const Timetable: React.FC<TimetableProps> = ({
         initialTable[slot][dayIndex] = data;
       }
     });
-
     setTableData(initialTable);
   }, [scheduleData]);
 
@@ -56,7 +55,7 @@ const Timetable: React.FC<TimetableProps> = ({
   ];
 
   const columns = [
-    { title: "Slot", dataIndex: "slot", key: "slot" },
+    { title: "Slot", dataIndex: "slot", key: "slot", width: "10%" },
     ...daysOfWeek.map((day, dayIndex) => {
       const currentDay = startOfWeek.add(dayIndex, "day");
       return {
@@ -70,6 +69,7 @@ const Timetable: React.FC<TimetableProps> = ({
         ),
         dataIndex: `day${dayIndex}`,
         key: `day${dayIndex}`,
+        width: "20%",
         render: (data: ScheduleData | null, record: any) =>
           data ? (
             <div

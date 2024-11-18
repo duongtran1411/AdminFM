@@ -21,17 +21,22 @@ const UpdateScheduleForm: React.FC<{
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [shiftsData, classroomsData, teacherData, subjectsData] =
+        const [shiftsData, classroomsData, teacherData, modulesData] =
           await Promise.all([
             scheduleService.getShifts(),
             scheduleService.getClassrooms(),
             scheduleService.getTeachers(),
             scheduleService.getModule(),
           ]);
+
+        const moduleArray = Array.isArray(modulesData)
+          ? modulesData
+          : Object.values(modulesData);
+
         setShifts(shiftsData);
         setClassrooms(classroomsData);
         setTeachers(teacherData);
-        setModules(subjectsData);
+        setModules(moduleArray);
       } catch (error) {
         console.error("Error fetching data for UpdateScheduleForm:", error);
       }
@@ -123,11 +128,12 @@ const UpdateScheduleForm: React.FC<{
           rules={[{ required: true, message: "Vui lòng chọn môn học!" }]}
         >
           <Select>
-            {modules.map((module) => (
-              <Select.Option key={module.module_id} value={module.module_id}>
-                {module.module_name}
-              </Select.Option>
-            ))}
+            {Array.isArray(modules) &&
+              modules.map((module) => (
+                <Select.Option key={module.module_id} value={module.module_id}>
+                  {module.module_name}
+                </Select.Option>
+              ))}
           </Select>
         </Form.Item>
 

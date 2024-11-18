@@ -112,11 +112,12 @@ const CreateScheduleForm: React.FC<{
           rules={[{ required: true, message: "Vui lòng chọn môn học!" }]}
         >
           <Select>
-            {modules.map((module) => (
-              <Select.Option key={module.module_id} value={module.module_id}>
-                {module.code}
-              </Select.Option>
-            ))}
+            {Array.isArray(modules) &&
+              modules.map((module) => (
+                <Select.Option key={module.module_id} value={module.module_id}>
+                  {module.module_name}
+                </Select.Option>
+              ))}
           </Select>
         </Form.Item>
 

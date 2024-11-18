@@ -2,7 +2,7 @@ import { DeleteOutlined, EyeOutlined } from "@ant-design/icons";
 import { Button, Modal, notification, Tooltip } from "antd";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AddAdmissionProgramButton from "../../components/admission/AddAdmissionProgramButton";
 import AddAdmissionProgramForm from "../../components/admission/AddAdmissionProgramForm";
 import AdmissionProgramTable from "../../components/admission/AdmissionProgramTable";
@@ -85,6 +85,18 @@ const AdmissionPage = () => {
       title: "Khuyến mãi",
       key: "promotions",
       render: (record: AdmissionProgram) => {
+        if (record.promotions.length === 0) {
+          return (
+            <span>
+              <Link
+                to="/promotions"
+                style={{ color: "#1E90FF", cursor: "pointer" }}
+              >
+                N/A
+              </Link>
+            </span>
+          );
+        }
         return record.promotions.map((promo, index) => (
           <span
             key={promo.id}

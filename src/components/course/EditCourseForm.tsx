@@ -34,7 +34,7 @@ const EditCourseForm = ({
   useEffect(() => {
     const fetchModules = async () => {
       const moduleList = await moduleService.getAllModules();
-      setModules(moduleList);
+      setModules(moduleList.data);
     };
 
     if (isModalVisible) {

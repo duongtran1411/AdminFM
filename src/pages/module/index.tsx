@@ -20,7 +20,7 @@ const ModulePage = () => {
   const fetchModule = async () => {
     try {
       const data = await moduleService.getAllModules();
-      setModule(data);
+      setModule(data.data);
     } catch (error) {
       setError("Error loading Modules");
     } finally {
@@ -51,6 +51,11 @@ const ModulePage = () => {
       title: "Loại thi",
       dataIndex: "exam_type",
       key: "exam_type",
+      render: (examTypes: any[]) => {
+        return examTypes && examTypes.length > 0
+          ? examTypes.map((examType) => examType.name).join(", ")
+          : "N/A";
+      },
     },
     {
       title: "Số buổi",
@@ -111,11 +116,13 @@ const ModulePage = () => {
     });
   };
 
-  const handleEdit = (id: number) => {
-    const moduleEdit = module.find((c) => c.module_id === id);
-    if (moduleEdit) {
-      setSelectedModule(moduleEdit);
+  const handleEdit = async (id: number) => {
+    try {
+      const response = await moduleService.getModuleById(id);
+      setSelectedModule(response.data);
       showModal("editModule");
+    } catch (error) {
+      notification.error({ message: "Lỗi khi lấy thông tin module" });
     }
   };
 

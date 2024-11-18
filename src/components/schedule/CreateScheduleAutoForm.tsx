@@ -263,7 +263,7 @@ const CreateScheduleAutoForm: React.FC<{
               </Select>
               <Select
                 mode="multiple"
-                style={{ width: "200px" }}
+                style={{ width: "230px" }}
                 value={classDay.shiftIds}
                 placeholder="Chọn ca học"
                 onChange={(value) =>
@@ -272,7 +272,7 @@ const CreateScheduleAutoForm: React.FC<{
               >
                 {shifts.map((shift) => (
                   <Select.Option key={shift.id} value={shift.id}>
-                    {shift.name}
+                    {shift.name} ({shift.startTime} - {shift.endTime})
                   </Select.Option>
                 ))}
               </Select>

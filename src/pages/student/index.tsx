@@ -56,7 +56,7 @@ const StudentPage: React.FC = () => {
       ];
 
       setAdmissionPrograms(programs.filter(Boolean) as string[]);
-      setCoursesFamilies(families);
+      setCoursesFamilies(families as string[]);
     } catch {
       setError("Error loading students");
     } finally {

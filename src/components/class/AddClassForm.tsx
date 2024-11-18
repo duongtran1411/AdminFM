@@ -4,18 +4,17 @@ import {
   Checkbox,
   Form,
   Input,
+  InputNumber,
   Modal,
   Select,
-  InputNumber,
-  DatePicker,
 } from "antd";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { CoursesFamily } from "../../models/courses.model";
+import { ClassStatus } from "../../models/enum/class.status.enum";
 import { Response } from "../../models/response.model";
 import { ClassResponse } from "../../services/class-service/class.service";
 import courseFamilyService from "../../services/course-family-service/course.family.service";
-import { ClassStatus } from "../../models/enum/class.status.enum";
-import moment from "moment";
 
 interface AddClassFormProps {
   visible: boolean;
@@ -59,9 +58,9 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
     setAutoAddStudents(e.target.checked);
   };
 
-  const disabledDate = (current: any) => {
-    return current && current < moment().startOf("day");
-  };
+  // const disabledDate = (current: any) => {
+  //   return current && current < moment().startOf("day");
+  // };
 
   return (
     <Modal
@@ -104,7 +103,7 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
           label="Term"
           rules={[{ required: true, message: "Vui lòng nhập Term!" }]}
         >
-          <InputNumber placeholder="Nhập Term Number" />
+          <InputNumber placeholder="Nhập kỳ học" style={{ width: "100%" }} />
         </Form.Item>
         <Form.Item name="status" label="Trạng thái">
           <Select placeholder="Chọn trạng thái">
@@ -116,13 +115,13 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
           </Select>
         </Form.Item>
 
-        <Form.Item
+        {/* <Form.Item
           name="admissionDate"
           label="Ngày nhập học"
           rules={[{ required: true }]}
         >
           <DatePicker disabledDate={disabledDate} />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item name="isActive" valuePropName="checked">
           <Checkbox onChange={handleAutoAddChange}>
             Tự động thêm sinh viên
