@@ -67,6 +67,8 @@ const ApplicationDocumentPage = lazy(
 );
 const AdmissionDetail = lazy(() => import("../pages/admission/detail"));
 const CohortPage = lazy(() => import("../pages/cohort"));
+const GradesPage = lazy(() => import("../pages/grades"));
+
 const getTitleFromLocation = (pathname: string) => {
   if (
     matchPath({ path: "/student-list/class/:classId", end: false }, pathname)
@@ -390,6 +392,16 @@ function MainRoutes() {
             <PageWithTitle title={title}>
               <Suspense fallback={<LoadingSkeleton />}>
                 <EditApplicationForm />
+              </Suspense>
+            </PageWithTitle>
+          ),
+        },
+        {
+          path: "markreport",
+          element: (
+            <PageWithTitle title={title}>
+              <Suspense fallback={<LoadingSkeleton />}>
+                <GradesPage />
               </Suspense>
             </PageWithTitle>
           ),

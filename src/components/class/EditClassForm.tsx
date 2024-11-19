@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { CoursesFamily } from "../../models/courses.model";
 import { ClassStatus } from "../../models/enum/class.status.enum";
 import courseFamilyService from "../../services/course-family-service/course.family.service";
+import { Cohort } from "../../models/cohort.model";
+import cohortService from "../../services/cohort-service/cohort.service";
 
 interface EditClassFormProps {
   visible: boolean;
@@ -20,14 +22,20 @@ const EditClassForm: React.FC<EditClassFormProps> = ({
 }) => {
   const [form] = Form.useForm();
   const [coursesfamily, setCoursesFamily] = useState<CoursesFamily[]>([]);
+  const [cohorts, setCohorts] = useState<Cohort[]>([]);
 
   useEffect(() => {
     const fetchCourse = async () => {
       const cfm = await courseFamilyService.getAll();
       setCoursesFamily(cfm);
     };
+    const fetchCohort = async () => {
+      const cohorts = await cohortService.getAllCohort();
+      setCohorts(cohorts.data);
+    };
     if (visible) {
       fetchCourse();
+      fetchCohort();
     }
   }, [visible]);
 
@@ -44,6 +52,7 @@ const EditClassForm: React.FC<EditClassFormProps> = ({
       term_number: values.term_number,
       status: values.status,
       admissionDate: values.admissionDate,
+      cohort_id: values.cohort_id,
     });
     form.resetFields();
   };
@@ -84,6 +93,15 @@ const EditClassForm: React.FC<EditClassFormProps> = ({
           rules={[{ required: true, message: "Vui lòng nhập Term!" }]}
         >
           <InputNumber min={0} placeholder="Nhập Term Number" />
+        </Form.Item>
+        <Form.Item name="cohort_id" label="Cohort">
+          <Select placeholder="Chọn Cohort">
+            {cohorts.map((c) => (
+              <Select.Option key={c.id} value={c.id}>
+                {c.name}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
         <Form.Item name="status" label="Trạng thái">
           <Select placeholder="Chọn trạng thái">

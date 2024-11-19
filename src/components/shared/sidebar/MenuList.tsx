@@ -14,6 +14,7 @@ import { SiGoogleclassroom } from "react-icons/si";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "../../../contexts/ThemeContext";
 import { PiStudent } from "react-icons/pi";
+import { MdGrade } from "react-icons/md";
 
 const DashBoardMenuList = () => {
   const { theme, colorBgContainer } = useTheme();
@@ -93,6 +94,7 @@ const DashBoardMenuList = () => {
         // Thêm menulist vào sau nếu cần
       ],
     },
+    { key: "markreport", icon: <MdGrade />, label: "Báo cáo điểm" },
   ];
 
   return (

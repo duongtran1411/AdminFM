@@ -1,3 +1,4 @@
+import { Cohort } from "./cohort.model";
 import { CoursesFamily } from "./courses.model";
 import { ClassStatus } from "./enum/class.status.enum";
 
@@ -11,6 +12,7 @@ export interface Class {
   status: ClassStatus;
   admissionDate: string;
   term_number?: number;
+  cohort: Cohort;
 }
 
 export interface Classroom {

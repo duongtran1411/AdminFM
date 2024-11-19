@@ -23,7 +23,7 @@ const StudentInClassPage = () => {
   const fetchStudents = async () => {
     setLoading(true);
     try {
-      const data = await studentService.findByClassId(classId);
+      const data = await studentService.findByClassId(+classId!);
       setStudents(data.data);
     } catch (error) {
       setError("Error loading students");

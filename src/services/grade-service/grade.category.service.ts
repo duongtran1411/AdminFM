@@ -1,4 +1,4 @@
-import { GradeCategory } from "../../models/gradecategory.model";
+import { GradeCategory, GradeData } from "../../models/gradecategory.model";
 import { Response } from "../../models/response.model";
 import axiosInstance from "../../utils/axiosInstance";
 
@@ -14,6 +14,16 @@ class GradecategoryService {
       throw error;
     }
   }
+
+  async getGradeByModuleAndStudent(
+    studentId: number,
+    moduleId: number,
+  ): Promise<Response<GradeData[]>> {
+    const response = await axiosInstance.get(
+      `/gradecategory/student/${studentId}/module/${moduleId}`,
+    );
+    return response.data;
+  }
 }
 
-export default new GradecategoryService();
+export const gradeCategoryService = new GradecategoryService();

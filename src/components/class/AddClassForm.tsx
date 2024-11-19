@@ -15,6 +15,8 @@ import { ClassStatus } from "../../models/enum/class.status.enum";
 import { Response } from "../../models/response.model";
 import { ClassResponse } from "../../services/class-service/class.service";
 import courseFamilyService from "../../services/course-family-service/course.family.service";
+import cohortService from "../../services/cohort-service/cohort.service";
+import { Cohort } from "../../models/cohort.model";
 
 interface AddClassFormProps {
   visible: boolean;
@@ -28,14 +30,19 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
 }) => {
   const [coursesfamily, setCoursesFamily] = useState<CoursesFamily[]>([]);
   const [autoAddStudents, setAutoAddStudents] = useState<boolean>(false);
-
+  const [cohorts, setCohorts] = useState<Cohort[]>([]);
   useEffect(() => {
     const fetchCourse = async () => {
       const cfm = await courseFamilyService.getAll();
       setCoursesFamily(cfm);
     };
+    const fetchCohort = async () => {
+      const cohorts = await cohortService.getAllCohort();
+      setCohorts(cohorts.data);
+    };
     if (visible) {
       fetchCourse();
+      fetchCohort();
     }
   }, [visible]);
 
@@ -49,6 +56,7 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
       studentCount: values.studentCount || 20,
       admissionDate: moment(values.admissionDate).format("YYYY-MM-DD"),
       term_number: values.term_number,
+      cohort_id: values.cohort_id,
     };
     onAdd(classData);
     form.resetFields();
@@ -105,6 +113,23 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
         >
           <InputNumber placeholder="Nhập kỳ học" style={{ width: "100%" }} />
         </Form.Item>
+
+        {/* <Form.Item
+          name="admissionDate"
+          label="Ngày nhập học"
+          rules={[{ required: true }]}
+        >
+          <DatePicker disabledDate={disabledDate} />
+        </Form.Item> */}
+        <Form.Item name="cohort_id" label="Cohort">
+          <Select placeholder="Chọn Cohort">
+            {cohorts.map((c) => (
+              <Select.Option key={c.id} value={c.id}>
+                {c.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
         <Form.Item name="status" label="Trạng thái">
           <Select placeholder="Chọn trạng thái">
             {Object.values(ClassStatus).map((status) => (
@@ -114,14 +139,6 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
             ))}
           </Select>
         </Form.Item>
-
-        {/* <Form.Item
-          name="admissionDate"
-          label="Ngày nhập học"
-          rules={[{ required: true }]}
-        >
-          <DatePicker disabledDate={disabledDate} />
-        </Form.Item> */}
         <Form.Item name="isActive" valuePropName="checked">
           <Checkbox onChange={handleAutoAddChange}>
             Tự động thêm sinh viên

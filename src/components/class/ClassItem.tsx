@@ -46,6 +46,7 @@ const ClassItem = ({
         term_number: data.term_number,
         status: data.status,
         admissionDate: data.admissionDate,
+        cohort_id: data.cohort.id,
       });
       showModal("editClassModal");
     }

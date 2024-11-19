@@ -25,7 +25,7 @@ class StudentService {
     return response.data;
   }
 
-  async findByClassId(classId?: string): Promise<Response<Student[]>> {
+  async findByClassId(classId?: number): Promise<Response<Student[]>> {
     const response: AxiosResponse<Response<Student[]>> =
       await axiosInstance.get(`/students/class/${classId}`);
     return response.data;

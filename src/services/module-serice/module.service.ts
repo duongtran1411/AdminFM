@@ -74,5 +74,20 @@ class ModuleService {
       throw error;
     }
   }
+
+  async getModulesByClassAndTerm(
+    classId: number,
+    termNumber: number,
+  ): Promise<Response<Module[]>> {
+    try {
+      const response = await axiosInstance.get<Response<Module[]>>(
+        `/module/class/${classId}/term/${termNumber}`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching modules by class and term:", error);
+      throw error;
+    }
+  }
 }
 export const moduleService = new ModuleService();
