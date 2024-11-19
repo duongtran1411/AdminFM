@@ -1,4 +1,8 @@
-import { GradeCategory, GradeData } from "../../models/gradecategory.model";
+import {
+  GradeCategory,
+  GradeData,
+  GradeInput,
+} from "../../models/gradecategory.model";
 import { Response } from "../../models/response.model";
 import axiosInstance from "../../utils/axiosInstance";
 
@@ -23,6 +27,19 @@ class GradecategoryService {
       `/gradecategory/student/${studentId}/module/${moduleId}`,
     );
     return response.data;
+  }
+
+  async assignGradesForStudents(grades: GradeInput[]): Promise<Response<any>> {
+    try {
+      const response = await axiosInstance.post(
+        "/gradecategory/assign-grades",
+        grades,
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error assigning grades:", error);
+      throw error;
+    }
   }
 }
 

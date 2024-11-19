@@ -1,8 +1,18 @@
-import { Card, Col, InputNumber, notification, Row, Select, Table } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  InputNumber,
+  notification,
+  Row,
+  Select,
+  Table,
+} from "antd";
 import { ColumnType } from "antd/es/table";
 import React, { useEffect, useState } from "react";
 import { Class } from "../../models/classes.model";
 import { Module } from "../../models/courses.model";
+import { GradeInput } from "../../models/gradecategory.model";
 import { Student } from "../../models/student.model";
 import classService from "../../services/class-service/class.service";
 import { gradeCategoryService } from "../../services/grade-service/grade.category.service";
@@ -108,21 +118,56 @@ const GradesPage: React.FC = () => {
     fetchGrades();
   }, [selectedModule, students]);
 
-  const handleScoreChange = (gradeId: number, newScore: string) => {
+  const handleScoreChange = (
+    studentId: number,
+    gradeComponentId: number,
+    newScore: number | null,
+  ) => {
     setGradeData((prevData) =>
-      prevData.map((grade) =>
-        grade.grades.some((g: any) => g.id === gradeId)
+      prevData.map((studentData) =>
+        studentData.student.id === studentId
           ? {
-              ...grade,
-              grades: grade.grades.map((g: any) =>
-                g.id === gradeId
-                  ? { ...g, score: parseFloat(newScore) || 0 }
+              ...studentData,
+              grades: studentData.grades.map((g: any) =>
+                g.gradeComponent.id === gradeComponentId
+                  ? { ...g, score: newScore }
                   : g,
               ),
             }
-          : grade,
+          : studentData,
       ),
     );
+  };
+
+  const handleSubmitGrades = async () => {
+    if (!selectedModule) return;
+
+    try {
+      const gradesToSubmit: GradeInput[] = [];
+
+      gradeData.forEach((studentData) => {
+        studentData.grades.forEach((grade) => {
+          if (grade.score !== null) {
+            gradesToSubmit.push({
+              studentId: studentData.student.id,
+              moduleId: selectedModule,
+              gradeComponentId: grade.gradeComponent.id,
+              score: grade.score,
+            });
+          }
+        });
+      });
+
+      if (gradesToSubmit.length === 0) {
+        notification.warning({ message: "Không có điểm nào để lưu" });
+        return;
+      }
+
+      await gradeCategoryService.assignGradesForStudents(gradesToSubmit);
+      notification.success({ message: "Lưu điểm thành công" });
+    } catch (error) {
+      notification.error({ message: "Lỗi khi lưu điểm" });
+    }
   };
 
   const getGradeColumns = () => {
@@ -162,7 +207,11 @@ const GradesPage: React.FC = () => {
               <InputNumber
                 value={gradeItem?.score || null}
                 onChange={(value) =>
-                  handleScoreChange(gradeItem?.id, value?.toString() || "")
+                  handleScoreChange(
+                    record.student.id,
+                    grade.gradeComponent.id,
+                    value,
+                  )
                 }
                 style={{ width: "100%" }}
                 min={0}
@@ -224,33 +273,61 @@ const GradesPage: React.FC = () => {
           </Col>
         </Row>
 
+        {selectedModule && (
+          <div style={{ marginBottom: 16, textAlign: "right" }}>
+            <Button type="primary" onClick={handleSubmitGrades}>
+              Lưu điểm
+            </Button>
+          </div>
+        )}
+
         <Card
           className="table-card"
-          bodyStyle={{ padding: 0 }}
           style={{
             boxShadow: "0 1px 2px rgba(0, 0, 0, 0.03)",
             marginTop: 16,
             borderRadius: 8,
           }}
         >
-          {!selectedClass || !selectedTerm || !selectedModule ? (
+          {!selectedClass ? (
             <div style={{ textAlign: "center", padding: "20px" }}>
               <h3 className="text-center text-gray-500 text-lg">
                 <i className="fa-solid fa-circle-info mr-2">
-                  Vui lòng chọn lớp học, học kỳ và môn học để xem điểm.
+                  Vui lòng chọn lớp học để xem danh sách sinh viên.
                 </i>
               </h3>
             </div>
           ) : (
-            <Table
-              dataSource={gradeData}
-              columns={getGradeColumns()}
-              scroll={{ x: "max-content" }}
-              pagination={false}
-              bordered
-              rowKey={(record) => record.student?.id || "fallback"}
-              style={{ borderRadius: 8 }}
-            />
+            <>
+              <Table
+                dataSource={gradeData}
+                columns={
+                  !selectedModule
+                    ? [
+                        {
+                          title: "Mã SV",
+                          dataIndex: ["student", "studentId"],
+                          key: "studentId",
+                          fixed: "left",
+                          width: 100,
+                        },
+                        {
+                          title: "Họ tên",
+                          dataIndex: ["student", "name"],
+                          key: "name",
+                          fixed: "left",
+                          width: 200,
+                        },
+                      ]
+                    : getGradeColumns()
+                }
+                scroll={{ x: "max-content" }}
+                pagination={false}
+                bordered
+                rowKey={(record) => record.student?.id || "fallback"}
+                style={{ borderRadius: 8 }}
+              />
+            </>
           )}
         </Card>
       </Card>

@@ -25,3 +25,10 @@ export interface GradeData {
     };
   }[];
 }
+
+export interface GradeInput {
+  studentId: number;
+  moduleId: number;
+  gradeComponentId: number;
+  score: number;
+}
