@@ -214,10 +214,16 @@ const EditModuleForm = ({
                               name={[componentField.name, "weight"]}
                               style={{ flex: 1, marginRight: 8 }}
                             >
-                              <Input
-                                type="number"
+                              <InputNumber
                                 placeholder="Trọng số"
                                 suffix="%"
+                                min={0}
+                                max={100}
+                                formatter={(value: any) =>
+                                  value !== undefined && value !== null
+                                    ? parseFloat(value).toString()
+                                    : ""
+                                }
                               />
                             </Form.Item>
                             <Button

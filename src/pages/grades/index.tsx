@@ -28,7 +28,7 @@ const GradesPage: React.FC = () => {
   const [selectedClass, setSelectedClass] = useState<number | null>(null);
   const [selectedTerm, setSelectedTerm] = useState<number | null>(null);
   const [selectedModule, setSelectedModule] = useState<number | null>(null);
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     const fetchClasses = async () => {
       try {
@@ -141,8 +141,8 @@ const GradesPage: React.FC = () => {
 
   const handleSubmitGrades = async () => {
     if (!selectedModule) return;
-
     try {
+      setLoading(true);
       const gradesToSubmit: GradeInput[] = [];
 
       gradeData.forEach((studentData) => {
@@ -167,6 +167,8 @@ const GradesPage: React.FC = () => {
       notification.success({ message: "Lưu điểm thành công" });
     } catch (error) {
       notification.error({ message: "Lỗi khi lưu điểm" });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -231,105 +233,108 @@ const GradesPage: React.FC = () => {
   return (
     <div style={{ padding: "24px" }}>
       <Card>
-        <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-          <Col xs={24} sm={24} md={8}>
-            <Select
-              style={{ width: "100%" }}
-              placeholder="Chọn lớp học"
-              onChange={(value) => setSelectedClass(value)}
-              options={classes.map((c) => ({ label: c.name, value: c.id }))}
-              size="large"
-              showSearch
-              optionFilterProp="label"
-            />
-          </Col>
-          <Col xs={24} sm={24} md={8}>
-            <Select
-              style={{ width: "100%" }}
-              placeholder="Chọn học kỳ"
-              disabled={!selectedClass}
-              onChange={(value) => setSelectedTerm(value)}
-              options={terms.map((term) => ({
-                label: `Kỳ ${term}`,
-                value: term,
-              }))}
-              size="large"
-            />
-          </Col>
-          <Col xs={24} sm={24} md={8}>
-            <Select
-              style={{ width: "100%" }}
-              placeholder="Chọn môn học"
-              disabled={!selectedTerm}
-              onChange={(value) => setSelectedModule(value)}
-              options={modules.map((m) => ({
-                label: `${m.module_name} (${m.code})`,
-                value: m.module_id,
-              }))}
-              size="large"
-              showSearch
-              optionFilterProp="label"
-            />
-          </Col>
-        </Row>
-
-        {selectedModule && (
-          <div style={{ marginBottom: 16, textAlign: "right" }}>
-            <Button type="primary" onClick={handleSubmitGrades}>
-              Lưu điểm
-            </Button>
-          </div>
-        )}
-
-        <Card
-          className="table-card"
-          style={{
-            boxShadow: "0 1px 2px rgba(0, 0, 0, 0.03)",
-            marginTop: 16,
-            borderRadius: 8,
-          }}
-        >
-          {!selectedClass ? (
-            <div style={{ textAlign: "center", padding: "20px" }}>
-              <h3 className="text-center text-gray-500 text-lg">
-                <i className="fa-solid fa-circle-info mr-2">
-                  Vui lòng chọn lớp học để xem danh sách sinh viên.
-                </i>
-              </h3>
-            </div>
-          ) : (
-            <>
-              <Table
-                dataSource={gradeData}
-                columns={
-                  !selectedModule
-                    ? [
-                        {
-                          title: "Mã SV",
-                          dataIndex: ["student", "studentId"],
-                          key: "studentId",
-                          fixed: "left",
-                          width: 100,
-                        },
-                        {
-                          title: "Họ tên",
-                          dataIndex: ["student", "name"],
-                          key: "name",
-                          fixed: "left",
-                          width: 200,
-                        },
-                      ]
-                    : getGradeColumns()
-                }
-                scroll={{ x: "max-content" }}
-                pagination={false}
-                bordered
-                rowKey={(record) => record.student?.id || "fallback"}
-                style={{ borderRadius: 8 }}
+        <>
+          <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+            <Col xs={24} sm={24} md={8}>
+              <Select
+                style={{ width: "100%" }}
+                placeholder="Chọn lớp học"
+                onChange={(value) => setSelectedClass(value)}
+                options={classes.map((c) => ({ label: c.name, value: c.id }))}
+                size="large"
+                showSearch
+                optionFilterProp="label"
               />
-            </>
+            </Col>
+            <Col xs={24} sm={24} md={8}>
+              <Select
+                style={{ width: "100%" }}
+                placeholder="Chọn học kỳ"
+                disabled={!selectedClass}
+                onChange={(value) => setSelectedTerm(value)}
+                options={terms.map((term) => ({
+                  label: `Kỳ ${term}`,
+                  value: term,
+                }))}
+                size="large"
+              />
+            </Col>
+            <Col xs={24} sm={24} md={8}>
+              <Select
+                style={{ width: "100%" }}
+                placeholder="Chọn môn học"
+                disabled={!selectedTerm}
+                onChange={(value) => setSelectedModule(value)}
+                options={modules.map((m) => ({
+                  label: `${m.module_name} (${m.code})`,
+                  value: m.module_id,
+                }))}
+                size="large"
+                showSearch
+                optionFilterProp="label"
+              />
+            </Col>
+          </Row>
+
+          {selectedModule && (
+            <div style={{ marginBottom: 16, textAlign: "right" }}>
+              <Button type="primary" onClick={handleSubmitGrades}>
+                Lưu điểm
+              </Button>
+            </div>
           )}
-        </Card>
+
+          <Card
+            className="table-card"
+            style={{
+              boxShadow: "0 1px 2px rgba(0, 0, 0, 0.03)",
+              marginTop: 16,
+              borderRadius: 8,
+            }}
+          >
+            {!selectedClass ? (
+              <div style={{ textAlign: "center", padding: "20px" }}>
+                <h3 className="text-center text-gray-500 text-lg">
+                  <i className="fa-solid fa-circle-info mr-2">
+                    Vui lòng chọn lớp học để xem danh sách sinh viên.
+                  </i>
+                </h3>
+              </div>
+            ) : (
+              <>
+                <Table
+                  dataSource={gradeData}
+                  columns={
+                    !selectedModule
+                      ? [
+                          {
+                            title: "Mã SV",
+                            dataIndex: ["student", "studentId"],
+                            key: "studentId",
+                            fixed: "left",
+                            width: 100,
+                          },
+                          {
+                            title: "Họ tên",
+                            dataIndex: ["student", "name"],
+                            key: "name",
+                            fixed: "left",
+                            width: 200,
+                          },
+                        ]
+                      : getGradeColumns()
+                  }
+                  scroll={{ x: "max-content" }}
+                  pagination={false}
+                  bordered
+                  rowKey={(record) => record.student?.id || "fallback"}
+                  style={{ borderRadius: 8 }}
+                  loading={loading}
+                />
+              </>
+            )}
+          </Card>
+        </>
       </Card>
     </div>
   );
