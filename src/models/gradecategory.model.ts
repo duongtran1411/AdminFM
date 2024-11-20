@@ -7,6 +7,7 @@ export interface GradeCategory {
   name?: string;
   module?: Module;
   gradeComponents?: GradeComponent[];
+  weight?: number;
 }
 
 export interface GradeData {
@@ -21,14 +22,23 @@ export interface GradeData {
       gradeCategory: {
         id: number;
         name: string;
+        weight: string;
       };
     };
   }[];
+  finalGrade: {
+    id: number;
+    average_grade: string;
+    status: string;
+    remarks: string;
+  } | null;
 }
 
 export interface GradeInput {
   studentId: number;
   moduleId: number;
-  gradeComponentId: number;
-  score: number;
+  gradeComponentId?: number;
+  score?: number;
+  average_grade?: number;
+  remarks?: string;
 }

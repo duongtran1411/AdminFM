@@ -35,9 +35,30 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
     fetchExamTypes();
   }, []);
 
+  const calculateCategoryWeight = (components: any[] = []) => {
+    const sum = components.reduce((sum, comp) => {
+      const weight = parseFloat(comp?.weight) || 0;
+      return sum + weight;
+    }, 0);
+    return Math.round(sum);
+  };
+
   const onFinish = async (values: any) => {
     try {
-      await moduleService.add(values);
+      const updatedValues = {
+        ...values,
+        gradeCategories: values.gradeCategories?.map((category: any) => ({
+          ...category,
+          gradeComponents: category.gradeComponents?.map((component: any) => ({
+            ...component,
+            weight: component.weight
+              ? Math.round(parseFloat(component.weight))
+              : null,
+          })),
+        })),
+      };
+
+      await moduleService.add(updatedValues);
       notification.success({ message: "Tạo môn học thành công!" });
       form.resetFields();
       hideModal();
@@ -45,6 +66,17 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
     } catch (error) {
       notification.error({ message: "Lỗi khi tạo môn học" });
     }
+  };
+
+  const handleAddCategory = () => {
+    const currentCategories = form.getFieldValue("gradeCategories") || [];
+    const newCategory = {
+      name: "",
+      gradeComponents: [{ name: "", weight: null }],
+    };
+    form.setFieldsValue({
+      gradeCategories: [...currentCategories, newCategory],
+    });
   };
 
   return (
@@ -100,7 +132,7 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
         </Form.Item>
 
         <Form.List name="gradeCategories">
-          {(fields, { add: addCategory, remove: removeCategory }) => (
+          {(fields, { add: _, remove: removeCategory }) => (
             <>
               <div style={{ marginBottom: 16, fontWeight: "500" }}>
                 Danh mục điểm
@@ -124,9 +156,52 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
                     >
                       <Input placeholder="Tên danh mục điểm" />
                     </Form.Item>
+                    <Form.Item
+                      style={{ marginBottom: 0 }}
+                      shouldUpdate={(prevValues, curValues) => {
+                        const prevComponents =
+                          prevValues?.gradeCategories?.[field.name]
+                            ?.gradeComponents;
+                        const curComponents =
+                          curValues?.gradeCategories?.[field.name]
+                            ?.gradeComponents;
+                        return (
+                          JSON.stringify(prevComponents) !==
+                          JSON.stringify(curComponents)
+                        );
+                      }}
+                    >
+                      {({ getFieldValue }) => {
+                        const components =
+                          getFieldValue([
+                            "gradeCategories",
+                            field.name,
+                            "gradeComponents",
+                          ]) || [];
+                        const totalWeight = calculateCategoryWeight(components);
+                        return (
+                          <div style={{ color: "#666" }}>
+                            Tổng trọng số: {totalWeight}%
+                          </div>
+                        );
+                      }}
+                    </Form.Item>
                   </div>
 
-                  <Form.List name={[field.name, "gradeComponents"]}>
+                  <Form.List
+                    name={[field.name, "gradeComponents"]}
+                    rules={[
+                      {
+                        validator: async (_, components) => {
+                          if (!components || components.length === 0) {
+                            throw new Error(
+                              "Vui lòng thêm ít nhất một thành phần điểm",
+                            );
+                          }
+                        },
+                      },
+                    ]}
+                  >
                     {(
                       componentFields,
                       { add: addComponent, remove: removeComponent },
@@ -140,6 +215,12 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
                             <Form.Item
                               {...componentField}
                               name={[componentField.name, "name"]}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Vui lòng nhập tên thành phần",
+                                },
+                              ]}
                               style={{ flex: 1, marginRight: 8 }}
                             >
                               <Input placeholder="Tên thành phần" />
@@ -147,6 +228,19 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
                             <Form.Item
                               {...componentField}
                               name={[componentField.name, "weight"]}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Vui lòng nhập trọng số",
+                                },
+                                {
+                                  type: "number",
+                                  min: 0,
+                                  max: 100,
+                                  transform: (value) => Number(value),
+                                  message: "Trọng số phải từ 0 đến 100",
+                                },
+                              ]}
                               style={{ flex: 1, marginRight: 8 }}
                             >
                               <Input type="number" placeholder="Trọng số" />
@@ -184,7 +278,7 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
               <Form.Item>
                 <Button
                   type="dashed"
-                  onClick={() => addCategory()}
+                  onClick={handleAddCategory}
                   icon={<PlusOutlined />}
                   style={{ width: "60%" }}
                 >

@@ -31,6 +31,7 @@ const EditModuleForm = ({
 }: EditModuleFormProps) => {
   const [form] = Form.useForm();
   const [examTypes, setExamTypes] = useState<ExamType[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchExamTypes = async () => {
     try {
@@ -73,20 +74,41 @@ const EditModuleForm = ({
     }
   }, [module, form]);
 
+  const calculateCategoryWeight = (components: any[] = []) => {
+    const sum = components.reduce((sum, comp) => {
+      const weight = parseFloat(comp?.weight) || 0;
+      return sum + weight;
+    }, 0);
+    return Math.round(sum);
+  };
+
   const handleOk = async () => {
     try {
+      setLoading(true);
       const values = await form.validateFields();
+
       const updatedGradeCategories = values.gradeCategories.map(
-        (category: any) => ({
-          id: category.id || undefined,
-          name: category.name,
-          gradeComponents:
-            category.gradeComponents?.map((component: any) => ({
+        (category: any) => {
+          const categoryId = category.id || undefined;
+
+          const gradeComponents = (category.gradeComponents || []).map(
+            (component: any) => ({
               id: component.id || undefined,
               name: component.name,
-              weight: component.weight,
-            })) || [],
-        }),
+              weight: component.weight
+                ? Math.round(parseFloat(component.weight) * 10) / 10
+                : null,
+              gradeCategory: categoryId ? { id: categoryId } : undefined,
+            }),
+          );
+
+          return {
+            id: categoryId,
+            name: category.name,
+            gradeComponents: gradeComponents,
+            module: categoryId ? undefined : { module_id: module?.module_id },
+          };
+        },
       );
 
       const updatedModule = {
@@ -95,27 +117,40 @@ const EditModuleForm = ({
         exam_type: values.exam_type || [],
         gradeCategories: updatedGradeCategories,
       };
+
       await moduleService.update(updatedModule.module_id, updatedModule);
 
       form.resetFields();
       hideModal();
       onUpdate();
-      notification.success({ message: "Module updated successfully" });
+      notification.success({ message: "Cập nhật Module thành công!" });
     } catch (error) {
       console.error("Error updating module:", error);
-      notification.error({ message: "Error updating module" });
+      notification.error({ message: "Lỗi cập nhật Module" });
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleAddCategory = () => {
+    const currentCategories = form.getFieldValue("gradeCategories") || [];
+    const newCategory = {
+      name: "",
+      gradeComponents: [{ name: "", weight: null }],
+    };
+    form.setFieldsValue({
+      gradeCategories: [...currentCategories, newCategory],
+    });
   };
 
   return (
     <Modal
       title="Cập nhật Module"
       open={isModalVisible}
-      onCancel={() => {
-        hideModal();
-      }}
+      onCancel={hideModal}
       footer={null}
       width={800}
+      confirmLoading={loading}
     >
       <Form form={form} layout="vertical" onFinish={handleOk}>
         <Form.Item
@@ -165,12 +200,12 @@ const EditModuleForm = ({
         </Form.Item>
 
         <Form.List name="gradeCategories">
-          {(fields, { add: addCategory, remove: removeCategory }) => (
+          {(fields, { add: _, remove: removeCategory }) => (
             <>
               <div style={{ marginBottom: 16, fontWeight: "500" }}>
                 Danh mục điểm
               </div>
-              {fields.map((field) => (
+              {fields.map((field, _) => (
                 <div
                   key={field.key}
                   style={{
@@ -189,6 +224,36 @@ const EditModuleForm = ({
                     >
                       <Input placeholder="Tên danh mục điểm" />
                     </Form.Item>
+                    <Form.Item
+                      style={{ marginBottom: 0 }}
+                      shouldUpdate={(prevValues, curValues) => {
+                        const prevComponents =
+                          prevValues?.gradeCategories?.[field.name]
+                            ?.gradeComponents;
+                        const curComponents =
+                          curValues?.gradeCategories?.[field.name]
+                            ?.gradeComponents;
+                        return (
+                          JSON.stringify(prevComponents) !==
+                          JSON.stringify(curComponents)
+                        );
+                      }}
+                    >
+                      {({ getFieldValue }) => {
+                        const components =
+                          getFieldValue([
+                            "gradeCategories",
+                            field.name,
+                            "gradeComponents",
+                          ]) || [];
+                        const totalWeight = calculateCategoryWeight(components);
+                        return (
+                          <div style={{ color: "#666" }}>
+                            Tổng trọng số: {totalWeight}%
+                          </div>
+                        );
+                      }}
+                    </Form.Item>
                   </div>
 
                   <Form.List name={[field.name, "gradeComponents"]}>
@@ -197,7 +262,7 @@ const EditModuleForm = ({
                       { add: addComponent, remove: removeComponent },
                     ) => (
                       <div style={{ flex: 2, marginRight: 8 }}>
-                        {componentFields.map((componentField) => (
+                        {componentFields.map((componentField, _) => (
                           <div
                             key={componentField.key}
                             style={{ display: "flex", marginBottom: 8 }}
@@ -205,6 +270,12 @@ const EditModuleForm = ({
                             <Form.Item
                               {...componentField}
                               name={[componentField.name, "name"]}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Vui lòng nhập tên thành phần",
+                                },
+                              ]}
                               style={{ flex: 1, marginRight: 8 }}
                             >
                               <Input placeholder="Tên thành phần" />
@@ -212,19 +283,22 @@ const EditModuleForm = ({
                             <Form.Item
                               {...componentField}
                               name={[componentField.name, "weight"]}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Vui lòng nhập trọng số",
+                                },
+                                {
+                                  type: "number",
+                                  min: 0,
+                                  max: 100,
+                                  transform: (value) => Number(value),
+                                  message: "Trọng số phải từ 0 đến 100",
+                                },
+                              ]}
                               style={{ flex: 1, marginRight: 8 }}
                             >
-                              <InputNumber
-                                placeholder="Trọng số"
-                                suffix="%"
-                                min={0}
-                                max={100}
-                                formatter={(value: any) =>
-                                  value !== undefined && value !== null
-                                    ? parseFloat(value).toString()
-                                    : ""
-                                }
-                              />
+                              <Input type="number" placeholder="Trọng số" />
                             </Form.Item>
                             <Button
                               type="text"
@@ -258,7 +332,7 @@ const EditModuleForm = ({
               <Form.Item>
                 <Button
                   type="dashed"
-                  onClick={() => addCategory()}
+                  onClick={handleAddCategory}
                   icon={<PlusOutlined />}
                   style={{ width: "60%" }}
                 >
@@ -270,10 +344,19 @@ const EditModuleForm = ({
         </Form.List>
 
         <Form.Item style={{ marginTop: 24, textAlign: "right" }}>
-          <Button onClick={hideModal} style={{ marginRight: 8 }}>
+          <Button
+            onClick={hideModal}
+            style={{ marginRight: 8 }}
+            disabled={loading}
+          >
             Hủy
           </Button>
-          <Button type="primary" onClick={handleOk}>
+          <Button
+            type="primary"
+            onClick={handleOk}
+            loading={loading}
+            disabled={loading}
+          >
             Cập nhật
           </Button>
         </Form.Item>
