@@ -54,7 +54,7 @@ const GradesPage: React.FC = () => {
       const selectedClassData = classes.find((c) => c.id === selectedClass);
       if (selectedClassData) {
         const termArray = Array.from(
-          { length: Math.min(selectedClassData.term_number || 6, 6) },
+          { length: Math.min(selectedClassData.current_term || 6, 6) },
           (_, i) => i + 1,
         );
         setTerms(termArray);
@@ -126,24 +126,60 @@ const GradesPage: React.FC = () => {
     fetchGrades();
   }, [selectedModule, students]);
 
+  const calculateFinalGrade = (studentData: any): number | null => {
+    if (!isAllComponentGradesEntered(studentData)) {
+      return null;
+    }
+
+    let totalWeightedScore = 0;
+    let totalWeight = 0;
+
+    studentData.grades.forEach((grade: any) => {
+      const weight = parseFloat(grade.gradeComponent.gradeCategory.weight);
+      const score = grade.score;
+
+      if (score !== null && score !== undefined && !isNaN(weight)) {
+        totalWeightedScore += score * weight;
+        totalWeight += weight;
+      }
+    });
+
+    if (totalWeight === 0) return null;
+
+    // Làm tròn đến 1 chữ số thập phân
+    return Math.round((totalWeightedScore / totalWeight) * 10) / 10;
+  };
+
   const handleScoreChange = (
     studentId: number,
     gradeComponentId: number,
     newScore: number | null,
   ) => {
     setGradeData((prevData) =>
-      prevData.map((studentData) =>
-        studentData.student.id === studentId
-          ? {
-              ...studentData,
-              grades: studentData.grades.map((g: any) =>
-                g.gradeComponent.id === gradeComponentId
-                  ? { ...g, score: newScore }
-                  : g,
-              ),
-            }
-          : studentData,
-      ),
+      prevData.map((studentData) => {
+        if (studentData.student.id === studentId) {
+          const updatedStudentData = {
+            ...studentData,
+            grades: studentData.grades.map((g: any) =>
+              g.gradeComponent.id === gradeComponentId
+                ? { ...g, score: newScore }
+                : g,
+            ),
+          };
+
+          // Tự động cập nhật điểm tổng kết
+          const calculatedFinalGrade = calculateFinalGrade(updatedStudentData);
+          if (calculatedFinalGrade !== null) {
+            setManualFinalGrades((prev) => ({
+              ...prev,
+              [studentId]: calculatedFinalGrade,
+            }));
+          }
+
+          return updatedStudentData;
+        }
+        return studentData;
+      }),
     );
   };
 
@@ -284,22 +320,25 @@ const GradesPage: React.FC = () => {
           width: 120,
           fixed: "right",
           align: "center",
-          render: (_, record) => (
-            <InputNumber
-              value={manualFinalGrades[record.student.id] ?? null}
-              onChange={(value) =>
-                handleFinalGradeChange(record.student.id, value)
-              }
-              style={{ width: "90%" }}
-              min={0}
-              max={10}
-              step={0.1}
-              placeholder="Điểm TK"
-              size="middle"
-              className="final-grade-input"
-              disabled={!isAllComponentGradesEntered(record)}
-            />
-          ),
+          render: (_, record) => {
+            const calculatedGrade = calculateFinalGrade(record);
+            return (
+              <InputNumber
+                value={manualFinalGrades[record.student.id] ?? calculatedGrade}
+                onChange={(value) =>
+                  handleFinalGradeChange(record.student.id, value)
+                }
+                style={{ width: "90%" }}
+                min={0}
+                max={10}
+                step={0.1}
+                placeholder="Điểm TK"
+                size="middle"
+                className="final-grade-input"
+                disabled={!isAllComponentGradesEntered(record)}
+              />
+            );
+          },
         },
         {
           title: "Ghi chú",
