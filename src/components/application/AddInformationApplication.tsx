@@ -469,7 +469,7 @@ const AddInformationApplication = ({ setFormData, formRef }) => {
                       }}
                     />
                     <Table.Column
-                      title="Bắt buộc"
+                      title="Chọn"
                       width="10%"
                       align="center"
                       render={(_, record: any) => (

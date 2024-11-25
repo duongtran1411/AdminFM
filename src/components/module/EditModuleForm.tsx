@@ -1,20 +1,22 @@
-import { useEffect, useState } from "react";
 import {
+  DeleteOutlined,
+  MinusCircleOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
+import {
+  Button,
   Form,
   Input,
   InputNumber,
   Modal,
-  Button,
   notification,
   Select,
 } from "antd";
+import { useEffect, useState } from "react";
 import { ExamType, Module } from "../../models/courses.model";
+import { Semester } from "../../models/semester.model";
 import { moduleService } from "../../services/module-serice/module.service";
-import {
-  MinusCircleOutlined,
-  PlusOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
+import semesterService from "../../services/semester-service/semester.service";
 
 interface EditModuleFormProps {
   isModalVisible: boolean;
@@ -32,6 +34,7 @@ const EditModuleForm = ({
   const [form] = Form.useForm();
   const [examTypes, setExamTypes] = useState<ExamType[]>([]);
   const [loading, setLoading] = useState(false);
+  const [semesters, setSemesters] = useState<Semester[]>([]);
 
   const fetchExamTypes = async () => {
     try {
@@ -42,8 +45,18 @@ const EditModuleForm = ({
     }
   };
 
+  const fetchSemesters = async () => {
+    try {
+      const semesters = await semesterService.findAll();
+      setSemesters(semesters);
+    } catch (error) {
+      console.error("Error fetching semesters:", error);
+    }
+  };
+
   useEffect(() => {
     fetchExamTypes();
+    fetchSemesters();
   }, []);
 
   useEffect(() => {
@@ -68,7 +81,7 @@ const EditModuleForm = ({
           (exam: { id: number; name: string }) => exam.id,
         ),
         number_of_classes: module.number_of_classes,
-        term_number: module.term_number,
+        semester_id: module.semester?.id,
         gradeCategories: gradeCategoriesWithComponents,
       });
     }
@@ -192,11 +205,17 @@ const EditModuleForm = ({
         </Form.Item>
 
         <Form.Item
-          name="term_number"
-          label="Term"
-          rules={[{ required: true, message: "Vui lòng nhập Term!" }]}
+          name="semester_id"
+          label="Kỳ học"
+          rules={[{ required: true, message: "Vui lòng nhập Kỳ học!" }]}
         >
-          <InputNumber placeholder="Nhập Term" />
+          <Select placeholder="Chọn Kỳ học">
+            {semesters.map((semester) => (
+              <Select.Option key={semester.id} value={semester.id}>
+                {semester.name}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
 
         <Form.List name="gradeCategories">

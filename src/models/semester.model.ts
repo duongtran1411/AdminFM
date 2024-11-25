@@ -1,7 +1,5 @@
 export interface Semester {
   id?: number;
-  name: string;
-  code?: string;
-  year?: number;
-  season?: string;
+  name?: string;
+  term_number?: number;
 }

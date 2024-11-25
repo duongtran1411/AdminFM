@@ -1,12 +1,12 @@
 import { GradeCategory } from "./gradecategory.model";
-
+import { Semester } from "./semester.model";
 export interface Module {
   module_id: number;
   module_name: string;
   code: string;
   exam_type: ExamType[];
   number_of_classes: number;
-  term_number: number;
+  semester?: Semester;
   gradeCategories?: GradeCategory[];
 }
 
@@ -16,7 +16,7 @@ export interface CreateModule {
   code: string;
   exam_type: number[];
   number_of_classes: number;
-  term_number: number;
+  semester_id: number;
   gradeCategories?: GradeCategory[];
 }
 

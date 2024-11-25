@@ -17,6 +17,8 @@ import { ClassResponse } from "../../services/class-service/class.service";
 import courseFamilyService from "../../services/course-family-service/course.family.service";
 import cohortService from "../../services/cohort-service/cohort.service";
 import { Cohort } from "../../models/cohort.model";
+import { Semester } from "../../models/semester.model";
+import semesterService from "../../services/semester-service/semester.service";
 
 interface AddClassFormProps {
   visible: boolean;
@@ -31,6 +33,7 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
   const [coursesfamily, setCoursesFamily] = useState<CoursesFamily[]>([]);
   const [autoAddStudents, setAutoAddStudents] = useState<boolean>(false);
   const [cohorts, setCohorts] = useState<Cohort[]>([]);
+  const [semesters, setSemesters] = useState<Semester[]>([]);
   useEffect(() => {
     const fetchCourse = async () => {
       const cfm = await courseFamilyService.getAll();
@@ -40,9 +43,14 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
       const cohorts = await cohortService.getAllCohort();
       setCohorts(cohorts.data);
     };
+    const fetchSemester = async () => {
+      const semesters = await semesterService.findAll();
+      setSemesters(semesters);
+    };
     if (visible) {
       fetchCourse();
       fetchCohort();
+      fetchSemester();
     }
   }, [visible]);
 
@@ -107,11 +115,17 @@ const AddClassForm: React.FC<AddClassFormProps> = ({
           </Select>
         </Form.Item>
         <Form.Item
-          name="term_number"
-          label="Term"
-          rules={[{ required: true, message: "Vui lòng nhập Term!" }]}
+          name="semester_id"
+          label="Kỳ học"
+          rules={[{ required: true, message: "Vui lòng nhập Kỳ học!" }]}
         >
-          <InputNumber placeholder="Nhập kỳ học" style={{ width: "100%" }} />
+          <Select placeholder="Chọn Kỳ học">
+            {semesters.map((semester) => (
+              <Select.Option key={semester.id} value={semester.id}>
+                {semester.name}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
 
         {/* <Form.Item

@@ -7,6 +7,8 @@ import {
 import { moduleService } from "../../services/module-serice/module.service";
 import { ExamType } from "../../models/courses.model";
 import { useState, useEffect } from "react";
+import { Semester } from "../../models/semester.model";
+import semesterService from "../../services/semester-service/semester.service";
 
 interface AddModuleFormProps {
   isModalVisible: boolean;
@@ -21,11 +23,14 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
 }) => {
   const [form] = Form.useForm();
   const [examTypes, setExamTypes] = useState<ExamType[]>([]);
+  const [semesters, setSemesters] = useState<Semester[]>([]);
 
   const fetchExamTypes = async () => {
     try {
       const response = await moduleService.getAllExamTypes();
+      const semesters = await semesterService.findAll();
       setExamTypes(response.data);
+      setSemesters(semesters);
     } catch (error) {
       notification.error({ message: "Lỗi khi tải loại thi" });
     }
@@ -59,6 +64,7 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
       };
 
       await moduleService.add(updatedValues);
+      console.log(updatedValues);
       notification.success({ message: "Tạo môn học thành công!" });
       form.resetFields();
       hideModal();
@@ -124,11 +130,17 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
           <Input type="number" placeholder="Nhập số buổi" />
         </Form.Item>
         <Form.Item
-          name="term_number"
-          label="Term NO."
-          rules={[{ required: true, message: "Vui lòng nhập Term NO." }]}
+          name="semester_id"
+          label="Kỳ học"
+          rules={[{ required: true, message: "Vui lòng nhập kỳ học" }]}
         >
-          <Input type="number" placeholder="Nhập Term NO." />
+          <Select
+            placeholder="Chọn kỳ học"
+            options={semesters.map((semester) => ({
+              label: semester.name,
+              value: semester.id,
+            }))}
+          />
         </Form.Item>
 
         <Form.List name="gradeCategories">

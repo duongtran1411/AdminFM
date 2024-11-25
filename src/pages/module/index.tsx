@@ -72,9 +72,9 @@ const ModulePage = () => {
       },
     },
     {
-      title: "Term NO.",
-      dataIndex: "term_number",
-      key: "term_number",
+      title: "Kỳ học",
+      dataIndex: ["semester", "name"],
+      key: "semester_id",
     },
     {
       title: "Actions",

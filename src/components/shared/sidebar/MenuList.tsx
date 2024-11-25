@@ -38,9 +38,7 @@ const DashBoardMenuList = () => {
     }
   };
 
-  // Determine the selected key based on the current URL
-  const selectedKey = location.pathname.slice(1) || "dashboards"; // Default to "dashboards" if pathname is empty
-
+  const selectedKey = location.pathname.slice(1) || "dashboards";
   const menuItems: ItemType<MenuItemType>[] = [
     { key: "dashboards", icon: <HomeOutlined />, label: "Dashboards" },
     { key: "users", icon: <FaRegUser />, label: "Users" },
@@ -81,6 +79,7 @@ const DashBoardMenuList = () => {
         { key: "teachers", icon: <FaChalkboardTeacher />, label: "Giảng viên" },
         { key: "building", icon: <FaRegBuilding />, label: "Toà nhà" },
         { key: "cohort", icon: <GoPeople />, label: "Niên khóa" },
+        { key: "examschedule", icon: <AiOutlineFolder />, label: "Lịch thi" },
       ],
     },
     {

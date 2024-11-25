@@ -54,7 +54,7 @@ const GradesPage: React.FC = () => {
       const selectedClassData = classes.find((c) => c.id === selectedClass);
       if (selectedClassData) {
         const termArray = Array.from(
-          { length: Math.min(selectedClassData.current_term || 6, 6) },
+          { length: Math.min(selectedClassData.term_number || 6, 6) },
           (_, i) => i + 1,
         );
         setTerms(termArray);

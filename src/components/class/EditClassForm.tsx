@@ -1,11 +1,13 @@
 // components/class/EditClassForm.tsx
-import { Button, Form, Input, InputNumber, Modal, Select } from "antd";
+import { Button, Form, Input, Modal, Select } from "antd";
 import React, { useEffect, useState } from "react";
+import { Cohort } from "../../models/cohort.model";
 import { CoursesFamily } from "../../models/courses.model";
 import { ClassStatus } from "../../models/enum/class.status.enum";
-import courseFamilyService from "../../services/course-family-service/course.family.service";
-import { Cohort } from "../../models/cohort.model";
+import { Semester } from "../../models/semester.model";
 import cohortService from "../../services/cohort-service/cohort.service";
+import courseFamilyService from "../../services/course-family-service/course.family.service";
+import semesterService from "../../services/semester-service/semester.service";
 
 interface EditClassFormProps {
   visible: boolean;
@@ -23,7 +25,7 @@ const EditClassForm: React.FC<EditClassFormProps> = ({
   const [form] = Form.useForm();
   const [coursesfamily, setCoursesFamily] = useState<CoursesFamily[]>([]);
   const [cohorts, setCohorts] = useState<Cohort[]>([]);
-
+  const [semesters, setSemesters] = useState<Semester[]>([]);
   useEffect(() => {
     const fetchCourse = async () => {
       const cfm = await courseFamilyService.getAll();
@@ -33,9 +35,14 @@ const EditClassForm: React.FC<EditClassFormProps> = ({
       const cohorts = await cohortService.getAllCohort();
       setCohorts(cohorts.data);
     };
+    const fetchSemester = async () => {
+      const semesters = await semesterService.findAll();
+      setSemesters(semesters);
+    };
     if (visible) {
       fetchCourse();
       fetchCohort();
+      fetchSemester();
     }
   }, [visible]);
 
@@ -49,7 +56,7 @@ const EditClassForm: React.FC<EditClassFormProps> = ({
     onEdit({
       name: values.name,
       courses_family_id: values.course_family_id,
-      term_number: values.term_number,
+      semester_id: values.semester_id,
       status: values.status,
       admissionDate: values.admissionDate,
       cohort_id: values.cohort_id,
@@ -88,11 +95,20 @@ const EditClassForm: React.FC<EditClassFormProps> = ({
           </Select>
         </Form.Item>
         <Form.Item
-          name="term_number"
-          label="Term"
-          rules={[{ required: true, message: "Vui lòng nhập Term!" }]}
+          name="semester_id"
+          label="Kỳ học"
+          rules={[{ required: true, message: "Vui lòng nhập Kỳ học!" }]}
         >
-          <InputNumber min={0} placeholder="Nhập Term Number" />
+          <Select
+            placeholder="Chọn Kỳ học"
+            defaultValue={initialValues.semester_id}
+          >
+            {semesters.map((s) => (
+              <Select.Option key={s.id} value={s.id}>
+                {s.name}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
         <Form.Item name="cohort_id" label="Cohort">
           <Select placeholder="Chọn Cohort">
