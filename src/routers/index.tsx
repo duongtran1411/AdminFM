@@ -68,6 +68,7 @@ const ApplicationDocumentPage = lazy(
 const AdmissionDetail = lazy(() => import("../pages/admission/detail"));
 const CohortPage = lazy(() => import("../pages/cohort"));
 const GradesPage = lazy(() => import("../pages/grades"));
+const ExamManagement = lazy(() => import("../pages/exam"));
 
 const getTitleFromLocation = (pathname: string) => {
   if (
@@ -402,6 +403,16 @@ function MainRoutes() {
             <PageWithTitle title={title}>
               <Suspense fallback={<LoadingSkeleton />}>
                 <GradesPage />
+              </Suspense>
+            </PageWithTitle>
+          ),
+        },
+        {
+          path: "examschedule",
+          element: (
+            <PageWithTitle title={title}>
+              <Suspense fallback={<LoadingSkeleton />}>
+                <ExamManagement />
               </Suspense>
             </PageWithTitle>
           ),
