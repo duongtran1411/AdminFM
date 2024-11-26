@@ -11,7 +11,7 @@ const ExamManagement: React.FC = () => {
   const [examSchedules, setExamSchedules] = useState<ExamScheduleMaster[]>([]);
   const [examRooms, setExamRooms] = useState<ExamRoom[]>([]);
   const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
-  const [isRoomModalVisible, setIsRoomModalVisible] = useState(false);
+  // const [isRoomModalVisible, setIsRoomModalVisible] = useState(false);
   const [selectedSchedule, setSelectedSchedule] =
     useState<ExamScheduleMaster | null>(null);
 
@@ -152,7 +152,7 @@ const ExamManagement: React.FC = () => {
                         <Button
                           type="primary"
                           icon={<PlusOutlined />}
-                          onClick={() => setIsRoomModalVisible(true)}
+                          // onClick={() => setIsRoomModalVisible(true)}
                         >
                           Thêm phòng thi
                         </Button>
