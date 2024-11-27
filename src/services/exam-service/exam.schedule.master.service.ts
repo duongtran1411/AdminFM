@@ -4,10 +4,17 @@ import axiosInstance from "../../utils/axiosInstance";
 
 class ExamScheduleMasterService {
   async getAll(): Promise<Response<ExamScheduleMaster[]>> {
-    const response = await axiosInstance.get<Response<ExamScheduleMaster[]>>(
+    const { data } = await axiosInstance.get<Response<ExamScheduleMaster[]>>(
       "/exam-schedule-master",
     );
-    return response.data;
+    return data;
+  }
+
+  async getById(id: number | undefined): Promise<Response<ExamScheduleMaster>> {
+    const { data } = await axiosInstance.get<Response<ExamScheduleMaster>>(
+      `/exam-schedule-master/${id}`,
+    );
+    return data;
   }
 
   async create(
@@ -18,6 +25,24 @@ class ExamScheduleMasterService {
       examScheduleMaster,
     );
     return response.data;
+  }
+
+  async remove(id: number | undefined): Promise<Response<void>> {
+    const response = await axiosInstance.delete<Response<void>>(
+      `/exam-schedule-master/${id}`,
+    );
+    return response.data;
+  }
+
+  async update(
+    id: number,
+    examScheduleMaster: ExamScheduleMaster,
+  ): Promise<Response<ExamScheduleMaster>> {
+    const { data } = await axiosInstance.put<Response<ExamScheduleMaster>>(
+      `/exam-schedule-master/${id}`,
+      examScheduleMaster,
+    );
+    return data;
   }
 }
 

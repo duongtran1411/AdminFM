@@ -139,8 +139,8 @@ const AdmissionPage = () => {
 
   const handleDelete = async (id: number) => {
     Modal.confirm({
-      title: "Are you sure you want to delete this Admission Program?",
-      okText: "Delete",
+      title: "Bạn có chắc chắn muốn xóa chương trình tuyển sinh này?",
+      okText: "Xóa",
       okType: "danger",
       onOk: async () => {
         try {
@@ -154,10 +154,12 @@ const AdmissionPage = () => {
             });
           }
           notification.success({
-            message: "Admission Program deleted successfully",
+            message: "Chương trình tuyển sinh đã được xóa thành công",
           });
         } catch (error) {
-          notification.error({ message: "Error deleting Admission Program" });
+          notification.error({
+            message: "Lỗi khi xóa chương trình tuyển sinh",
+          });
         }
       },
     });
