@@ -16,6 +16,7 @@ export interface ExamScheduleMaster {
   retake_start_time?: string;
   retake_end_time?: string;
   note?: string;
+  module?: Module;
 }
 
 export interface UpdateExamScheduleMaster {

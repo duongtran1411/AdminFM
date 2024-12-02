@@ -14,9 +14,13 @@ import ViewStudentsModal from "./ViewStudentModal";
 
 interface ExamRoomListProps {
   examScheduleId: number | null;
+  moduleId?: number;
 }
 
-const ExamRoomList: React.FC<ExamRoomListProps> = ({ examScheduleId }) => {
+const ExamRoomList: React.FC<ExamRoomListProps> = ({
+  examScheduleId,
+  moduleId,
+}) => {
   const [examRooms, setExamRooms] = useState<ExamRoom[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isAddStudentsModalVisible, setIsAddStudentsModalVisible] =
@@ -172,6 +176,7 @@ const ExamRoomList: React.FC<ExamRoomListProps> = ({ examScheduleId }) => {
           examRoomId={selectedRoom.id}
           capacity={selectedRoom.capacity || 0}
           currentStudentCount={selectedRoom.exam_room_students?.length || 0}
+          moduleId={moduleId || 0}
         />
       )}
 

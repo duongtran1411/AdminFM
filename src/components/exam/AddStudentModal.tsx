@@ -11,6 +11,7 @@ interface AddStudentsModalProps {
   examRoomId: number;
   capacity: number;
   currentStudentCount: number;
+  moduleId: number;
 }
 
 const AddStudentsModal: React.FC<AddStudentsModalProps> = ({
@@ -20,6 +21,7 @@ const AddStudentsModal: React.FC<AddStudentsModalProps> = ({
   examRoomId,
   capacity,
   currentStudentCount,
+  moduleId,
 }) => {
   const [form] = Form.useForm();
   const [students, setStudents] = useState<Student[]>([]);
@@ -37,7 +39,7 @@ const AddStudentsModal: React.FC<AddStudentsModalProps> = ({
   const fetchStudents = async () => {
     try {
       setLoading(true);
-      const response = await studentService.findAll();
+      const response = await studentService.findStudentsByModule(moduleId);
       setStudents(response.data);
       setFilteredStudents(response.data);
     } catch (error) {

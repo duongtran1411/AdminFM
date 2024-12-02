@@ -220,12 +220,21 @@ const ExamManagement: React.FC = () => {
     ];
 
     if (selectedExamId !== null) {
+      const currentExam = examSchedules.find(
+        (exam) => exam.id === selectedExamId,
+      );
+
       tabs.push({
         label: (
           <span style={{ fontSize: "16px", padding: "0 8px" }}>Phòng thi</span>
         ),
         key: "rooms",
-        children: <ExamRoomList examScheduleId={selectedExamId} />,
+        children: (
+          <ExamRoomList
+            examScheduleId={selectedExamId}
+            moduleId={currentExam?.module?.module_id}
+          />
+        ),
       });
     }
 

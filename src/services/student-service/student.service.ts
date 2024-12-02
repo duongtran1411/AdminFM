@@ -37,7 +37,6 @@ class StudentService {
     return response.data;
   }
 
-  // Cập nhật một student theo ID
   async update(id: number, studentList: Student): Promise<Student> {
     const response: AxiosResponse<Student> = await axiosInstance.put(
       `/students/${id}`,
@@ -90,6 +89,12 @@ class StudentService {
     const response: AxiosResponse<Response<void>> = await axiosInstance.delete(
       `/students/${id}/avatar`,
     );
+    return response.data;
+  }
+
+  async findStudentsByModule(moduleId: number): Promise<Response<Student[]>> {
+    const response: AxiosResponse<Response<Student[]>> =
+      await axiosInstance.get(`/students/module/${moduleId}`);
     return response.data;
   }
 }
