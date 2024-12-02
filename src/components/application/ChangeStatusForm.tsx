@@ -79,25 +79,8 @@ const ChangeStatusForm = ({
       centered
     >
       <Form form={form} layout="vertical">
-        <Form.Item name="status" label="Trạng thái">
+        <Form.Item name="status">
           <Radio.Group onChange={handleStatusChange}>
-            {[
-              ApplicationStatus.WAITING,
-              ApplicationStatus.PRIORITY,
-              ApplicationStatus.MEETS_CRITERIA,
-              ApplicationStatus.DOES_NOT_MEET_CRITERIA,
-            ].map((status) => (
-              <Radio
-                key={status}
-                value={status}
-                style={{ display: "block", margin: "15px 0" }}
-              >
-                {status}
-              </Radio>
-            ))}
-            <div style={{ fontSize: "13px", fontWeight: "bold" }}>
-              Đã xét tuyển
-            </div>
             {[
               ApplicationStatus.ACCEPTED,
               ApplicationStatus.NOT_ACCEPTED,

@@ -92,13 +92,13 @@ const EditPromotionForm = ({
         <Form.Item name="period" label="Thời gian" rules={[{ required: true }]}>
           <RangePicker />
         </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           name="discount"
           label="Mức ưu đãi"
           rules={[{ required: true }]}
         >
           <InputNumber min={0} max={100} />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item
           name="scholarshipQuantity"
           label="Số lượng học bổng"
@@ -107,13 +107,13 @@ const EditPromotionForm = ({
           <InputNumber min={0} />
         </Form.Item>
 
-        <Form.Item
+        {/* <Form.Item
           name="maxQuantity"
           label="Số lượng tối đa"
           rules={[{ required: true }]}
         >
           <InputNumber min={0} />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item
           name="registrationMethod"
           label="Phương thức đăng ký"

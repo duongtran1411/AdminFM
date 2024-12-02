@@ -1,21 +1,14 @@
-import { DownloadOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Table } from "antd";
+import { EditOutlined } from "@ant-design/icons";
+import { Button, Table } from "antd";
 import { useEffect, useRef, useState } from "react";
-import { CiMenuKebab } from "react-icons/ci";
 
 interface DataApplicationProps {
   data: any[];
   columns: any[];
   onEdit: (id: any) => void;
-  onDownload: (id: any) => void;
 }
 
-const ApplicationTable = ({
-  data,
-  columns,
-  onEdit,
-  onDownload,
-}: DataApplicationProps) => {
+const ApplicationTable = ({ data, columns, onEdit }: DataApplicationProps) => {
   const tableRef = useRef<HTMLDivElement>(null);
   const [canScroll, setCanScroll] = useState(false);
 
@@ -35,32 +28,17 @@ const ApplicationTable = ({
     };
   }, []);
 
-  const actionMenu = (record) => ({
-    items: [
-      {
-        key: "edit",
-        label: <span>Edit</span>,
-        icon: <EditOutlined />,
-        onClick: () => onEdit(record.id),
-      },
-      {
-        key: "download",
-        label: <span>Download</span>,
-        icon: <DownloadOutlined />,
-        onClick: () => onDownload(record.id),
-      },
-    ],
-  });
-
   const extendedColumns = [
     ...columns,
     {
       title: "Action",
       key: "action",
       render: (record) => (
-        <Dropdown menu={actionMenu(record)} trigger={["click"]}>
-          <Button icon={<CiMenuKebab />} type="text" />
-        </Dropdown>
+        <Button
+          icon={<EditOutlined />}
+          type="text"
+          onClick={() => onEdit(record.id)}
+        />
       ),
     },
   ];

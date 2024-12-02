@@ -57,14 +57,14 @@ const PromotionDetail = ({
               </Col>
             </Row>
 
-            <Row>
+            {/* <Row>
               <Col span={8}>
                 <Text strong>Mức giảm giá:</Text>
               </Col>
               <Col span={16}>
                 <Text>{promotion.discount || "Không xác định"}</Text>
               </Col>
-            </Row>
+            </Row> */}
             <Row>
               <Col span={8}>
                 <Text strong>Số lượng học bổng:</Text>
@@ -73,14 +73,14 @@ const PromotionDetail = ({
                 <Text>{promotion.scholarshipQuantity || "Không xác định"}</Text>
               </Col>
             </Row>
-            <Row>
+            {/* <Row>
               <Col span={8}>
                 <Text strong>Số lượng tối đa:</Text>
               </Col>
               <Col span={16}>
                 <Text>{promotion.maxQuantity || "Không xác định"}</Text>
               </Col>
-            </Row>
+            </Row> */}
             <Row>
               <Col span={8}>
                 <Text strong>Phương thức đăng ký:</Text>

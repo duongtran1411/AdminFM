@@ -11,7 +11,6 @@ import useModals from "../../hooks/useModal";
 import { Application } from "../../models/application.model";
 import { Response } from "../../models/response.model";
 import applicationService from "../../services/application-service/application.service";
-import attachedDocumentService from "../../services/attached-document-service/attached.document.service";
 
 const ApplicationPage = () => {
   const navigate = useNavigate();
@@ -22,8 +21,6 @@ const ApplicationPage = () => {
   > | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedApplication, setSelectedApplication] =
-    useState<Application | null>(null);
   const [selectedApplicationIds, setSelectedApplicationIds] = useState<
     number[]
   >([]);
@@ -125,22 +122,9 @@ const ApplicationPage = () => {
   ];
 
   const handleEdit = (id: number) => {
-    const application = applicationResponse?.data.find((s) => s.id === id);
-    if (application) {
-      setSelectedApplication(application);
-      navigate(`/admission/${admissionId}/application/${id}`);
-    }
+    navigate(`/admission/${admissionId}/application/${id}`);
   };
 
-  const handleDownload = async () => {
-    try {
-      await attachedDocumentService.downloadFilesByApplicationId(
-        selectedApplication?.id,
-      );
-    } catch (error) {
-      console.error("Error downloading files:", error);
-    }
-  };
   const onUpdateSuccess = () => {
     fetchApplication();
     setSelectedApplicationIds([]);
@@ -191,7 +175,6 @@ const ApplicationPage = () => {
           data={applicationResponse?.data || []}
           columns={columns}
           onEdit={handleEdit}
-          onDownload={handleDownload}
         />
       </div>
       <ChangeStatusForm

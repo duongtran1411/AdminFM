@@ -99,11 +99,11 @@ const PromotionPage = () => {
         </span>
       ),
     },
-    {
-      title: "Giảm giá",
-      dataIndex: "discount",
-      key: "discount",
-    },
+    // {
+    //   title: "Giảm giá",
+    //   dataIndex: "discount",
+    //   key: "discount",
+    // },
     {
       title: "Số lượng",
       dataIndex: "scholarshipQuantity",
@@ -204,9 +204,9 @@ const PromotionPage = () => {
               <Paragraph>
                 <strong>Mô tả: </strong> {selectedPromotion.description}
               </Paragraph>
-              <Paragraph>
+              {/* <Paragraph>
                 <strong>Giảm giá: </strong> {selectedPromotion.discount}%
-              </Paragraph>
+              </Paragraph> */}
               <Paragraph>
                 <strong>Khoảng thời gian: </strong>
                 {moment(selectedPromotion.startDate).format(

@@ -55,12 +55,18 @@ const Timetable: React.FC<TimetableProps> = ({
   ];
 
   const columns = [
-    { title: "Slot", dataIndex: "slot", key: "slot", width: "10%" },
+    {
+      title: "Slot",
+      dataIndex: "slot",
+      key: "slot",
+      width: 100,
+      fixed: true,
+    },
     ...daysOfWeek.map((day, dayIndex) => {
       const currentDay = startOfWeek.add(dayIndex, "day");
       return {
         title: (
-          <div>
+          <div style={{ textAlign: "center" }}>
             <div>{day}</div>
             <div style={{ fontSize: "0.8em", color: "gray" }}>
               {currentDay.format("DD-MM-YYYY")}
@@ -69,7 +75,7 @@ const Timetable: React.FC<TimetableProps> = ({
         ),
         dataIndex: `day${dayIndex}`,
         key: `day${dayIndex}`,
-        width: "20%",
+        width: "100%",
         render: (data: ScheduleData | null, record: any) =>
           data ? (
             <div
@@ -83,7 +89,8 @@ const Timetable: React.FC<TimetableProps> = ({
                     ? "#e6f7ff"
                     : "transparent",
                 borderRadius: "4px",
-                padding: "5px",
+                padding: "8px",
+                minHeight: "120px",
               }}
               onMouseEnter={() =>
                 setHoveredCell({ slot: record.key, day: dayIndex })
@@ -141,7 +148,7 @@ const Timetable: React.FC<TimetableProps> = ({
               </div>
             </div>
           ) : (
-            "-"
+            <div style={{ minHeight: "120px", textAlign: "center" }}>-</div>
           ),
       };
     }),
@@ -168,6 +175,8 @@ const Timetable: React.FC<TimetableProps> = ({
       pagination={false}
       bordered
       rowKey="key"
+      scroll={{ x: 1500 }}
+      style={{ width: "100%" }}
     />
   );
 };

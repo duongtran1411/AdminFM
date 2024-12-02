@@ -80,8 +80,6 @@ const AppHeader = () => {
     }
   };
 
- 
-
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 0);
