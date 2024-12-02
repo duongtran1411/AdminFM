@@ -1,4 +1,4 @@
-import { FileExcelOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import { PlusCircleOutlined } from "@ant-design/icons";
 import { Button, message, Tooltip } from "antd";
 import { RcFile } from "antd/es/upload";
 import useModals from "../../hooks/useModal";
@@ -39,7 +39,7 @@ const FloatButtonGroup = ({ onSuccess }: { onSuccess: () => void }) => {
   return (
     <>
       <div style={{ position: "fixed", top: 100, right: 24, zIndex: 1000 }}>
-        <Tooltip>
+        {/* <Tooltip>
           <Button
             type="primary"
             icon={<FileExcelOutlined />}
@@ -48,7 +48,7 @@ const FloatButtonGroup = ({ onSuccess }: { onSuccess: () => void }) => {
           >
             Import Excel
           </Button>
-        </Tooltip>
+        </Tooltip> */}
         <Tooltip>
           <Button
             type="primary"

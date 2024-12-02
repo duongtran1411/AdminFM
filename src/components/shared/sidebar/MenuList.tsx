@@ -6,15 +6,15 @@ import {
   AiOutlineFolder,
   AiOutlineNotification,
 } from "react-icons/ai";
-import { FaChalkboardTeacher, FaRegUser, FaRegBuilding } from "react-icons/fa";
+import { FaChalkboardTeacher, FaRegBuilding } from "react-icons/fa";
 import { GoPeople } from "react-icons/go";
 import { HiAcademicCap } from "react-icons/hi2";
 import { LuBookCopy, LuBookMarked } from "react-icons/lu";
+import { MdGrade } from "react-icons/md";
+import { PiStudent } from "react-icons/pi";
 import { SiGoogleclassroom } from "react-icons/si";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "../../../contexts/ThemeContext";
-import { PiStudent } from "react-icons/pi";
-import { MdGrade } from "react-icons/md";
 
 const DashBoardMenuList = () => {
   const { theme, colorBgContainer } = useTheme();
@@ -41,7 +41,7 @@ const DashBoardMenuList = () => {
   const selectedKey = location.pathname.slice(1) || "dashboards";
   const menuItems: ItemType<MenuItemType>[] = [
     { key: "dashboards", icon: <HomeOutlined />, label: "Dashboards" },
-    { key: "users", icon: <FaRegUser />, label: "Users" },
+    // { key: "users", icon: <FaRegUser />, label: "Users" },
     {
       key: "tuyensinh",
       label: "Tuyển Sinh",

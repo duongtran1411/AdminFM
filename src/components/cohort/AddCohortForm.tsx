@@ -1,4 +1,4 @@
-import { DatePicker, Form, Input, Modal, notification } from "antd";
+import { Form, Input, Modal, notification } from "antd";
 import { Cohort } from "../../models/cohort.model";
 import cohortService from "../../services/cohort-service/cohort.service";
 
@@ -48,7 +48,7 @@ const AddCohortForm = ({
         >
           <Input placeholder="Enter cohort's name" />
         </Form.Item>
-        <Form.Item name="startDate" label="Ngày bắt đầu">
+        {/* <Form.Item name="startDate" label="Ngày bắt đầu">
           <DatePicker />
         </Form.Item>
         <Form.Item name="endDate" label="Ngày kết thúc">
@@ -56,7 +56,7 @@ const AddCohortForm = ({
         </Form.Item>
         <Form.Item name="status" label="Trạng thái">
           <Input />
-        </Form.Item>
+        </Form.Item> */}
       </Form>
     </Modal>
   );
