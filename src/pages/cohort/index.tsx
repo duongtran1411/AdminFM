@@ -4,12 +4,12 @@ import { AiOutlineMore } from "react-icons/ai";
 import AddCohortButton from "../../components/cohort/AddCohortButton";
 import AddCohortForm from "../../components/cohort/AddCohortForm";
 import CohortTable from "../../components/cohort/CohortTable";
+import EditCohortForm from "../../components/cohort/EditCohortForm";
 import Loading from "../../components/common/loading";
 import TabsMenu from "../../components/student-in-class/TabsMenu";
 import useModals from "../../hooks/useModal";
 import { Cohort } from "../../models/cohort.model";
 import cohortService from "../../services/cohort-service/cohort.service";
-import EditCohortForm from "../../components/cohort/EditCohortForm";
 
 const CohortPage = () => {
   const { isVisible, showModal, hideModal } = useModals();
@@ -48,23 +48,23 @@ const CohortPage = () => {
       dataIndex: "name",
       key: "name",
     },
-    {
-      title: "Ngày bắt đầu",
-      dataIndex: "startDate",
-      key: "startDate",
-      render: (date: string) => new Date(date).toLocaleDateString(),
-    },
-    {
-      title: "Ngày kết thúc",
-      dataIndex: "endDate",
-      key: "endDate",
-      render: (date: string) => new Date(date).toLocaleDateString(),
-    },
-    {
-      title: "Trạng thái",
-      dataIndex: "status",
-      key: "status",
-    },
+    // {
+    //   title: "Ngày bắt đầu",
+    //   dataIndex: "startDate",
+    //   key: "startDate",
+    //   render: (date: string) => new Date(date).toLocaleDateString(),
+    // },
+    // {
+    //   title: "Ngày kết thúc",
+    //   dataIndex: "endDate",
+    //   key: "endDate",
+    //   render: (date: string) => new Date(date).toLocaleDateString(),
+    // },
+    // {
+    //   title: "Trạng thái",
+    //   dataIndex: "status",
+    //   key: "status",
+    // },
     {
       title: "",
       key: "actions",

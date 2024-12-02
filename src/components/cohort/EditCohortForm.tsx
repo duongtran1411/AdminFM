@@ -1,8 +1,8 @@
-import { DatePicker, Form, Input, Modal, notification } from "antd";
+import { Form, Input, Modal, notification } from "antd";
+import dayjs from "dayjs";
 import { useEffect } from "react";
 import { Cohort } from "../../models/cohort.model";
 import buildingService from "../../services/building-service/building.service";
-import dayjs from "dayjs";
 
 interface EditCohortFormProps {
   isModalVisible: boolean;
@@ -78,7 +78,7 @@ const EditCohortForm = ({
         >
           <Input placeholder="Enter cohort's name" />
         </Form.Item>
-        <Form.Item name="startDate" label="Ngày bắt đầu">
+        {/* <Form.Item name="startDate" label="Ngày bắt đầu">
           <DatePicker />
         </Form.Item>
         <Form.Item name="endDate" label="Ngày kết thúc">
@@ -86,7 +86,7 @@ const EditCohortForm = ({
         </Form.Item>
         <Form.Item name="status" label="Trạng thái">
           <Input />
-        </Form.Item>
+        </Form.Item> */}
       </Form>
     </Modal>
   );
