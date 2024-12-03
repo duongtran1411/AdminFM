@@ -65,7 +65,8 @@ const EditApplicationForm = () => {
           phone: formData.phone,
           cardId: formData.cardId,
           permanentResidence: formData.permanentResidence,
-          course_family_id: formData.course_family_id || undefined,
+          course_family_id:
+            formData.coursesFamily?.course_family_id || undefined,
           parent: parentData.map((parent) => ({
             name: parent.name || "",
             gender: parent.gender || "",
