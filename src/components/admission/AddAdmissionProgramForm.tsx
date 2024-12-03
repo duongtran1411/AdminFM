@@ -6,12 +6,15 @@ import {
   InputNumber,
   Modal,
   notification,
+  Select,
 } from "antd";
 import { useEffect, useState } from "react";
-import { AdmissionProgram } from "../../models/admission.model";
+import { CreateAdmissionProgramRequest } from "../../models/admission.model";
 import { ApplicationDocument } from "../../models/applicationdocument.model";
-import applicationDocumentsService from "../../services/application-documents-service/application.documents.service";
+import { Promotion } from "../../models/promotions.model";
 import admissionService from "../../services/admission-program-service/admission.service";
+import applicationDocumentsService from "../../services/application-documents-service/application.documents.service";
+import promotionsService from "../../services/promotions-service/promotions.service";
 
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
@@ -34,32 +37,43 @@ const AddAdmissionProgramForm: React.FC<AddAdmissionProgramFormProps> = ({
   const [selectedAdmissionProgram, setSelectedAdmissionProgram] = useState<
     number[]
   >([]);
+  const [promotions, setPromotions] = useState<Promotion[] | null>(null);
 
   useEffect(() => {
-    const fetchApplicationDocuments = async () => {
+    const fetchData = async () => {
       const response = await applicationDocumentsService.getAll();
+      const promotionResponse = await promotionsService.getPromotions();
       const documents = response.data;
+      const promotion = promotionResponse.data;
       setApplicationDocuments(documents);
-      setSelectedAdmissionProgram(documents.map((doc) => doc.id)); // Set all IDs as selected by default
+      setPromotions(promotion);
+      setSelectedAdmissionProgram(documents.map((doc) => doc.id));
+
+      form.setFieldsValue({
+        applicationDocuments: documents.map((doc) => doc.id),
+      });
     };
 
     if (open) {
-      fetchApplicationDocuments();
+      fetchData();
     }
-  }, [open]);
+  }, [open, form]);
 
   const onFinish = async () => {
     try {
       const values = await form.validateFields();
-      const newAdmissionProgram: AdmissionProgram = {
-        ...values,
+      const newAdmissionProgram: CreateAdmissionProgramRequest = {
         name: values.name,
         description: values.description,
         startDate: values.period[0].format("YYYY-MM-DD"),
         endDate: values.period[1].format("YYYY-MM-DD"),
-        startRegistration: values.period[0].format("YYYY-MM-DD"),
-        endRegistration: values.period[1].format("YYYY-MM-DD"),
-        applicationDocuments: selectedAdmissionProgram,
+        startRegistration: values.startRegistration.format("YYYY-MM-DD"),
+        endRegistration: values.endRegistration.format("YYYY-MM-DD"),
+        quota: values.quota,
+        applicationDocuments: selectedAdmissionProgram.map((id) => ({ id })),
+        promotions: values.promotion
+          ? values.promotion.map((id) => ({ id }))
+          : [],
       };
 
       await admissionService.add(newAdmissionProgram);
@@ -80,12 +94,19 @@ const AddAdmissionProgramForm: React.FC<AddAdmissionProgramFormProps> = ({
 
   return (
     <Modal
-      title="Tạo mới chương trình tuyển sinh"
+      title="Thêm chương trình tuyển sinh"
       open={open}
       onCancel={hideModal}
       onOk={() => form.submit()}
     >
-      <Form form={form} layout="vertical" onFinish={onFinish}>
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={onFinish}
+        initialValues={{
+          applicationDocuments: selectedAdmissionProgram, // Ensure initial values are set
+        }}
+      >
         <Form.Item name="name" label="Tên" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
@@ -146,6 +167,15 @@ const AddAdmissionProgramForm: React.FC<AddAdmissionProgramFormProps> = ({
         >
           <InputNumber min={0} />
         </Form.Item>
+        <Form.Item name="promotion" label="Khuyến mãi">
+          <Select mode="multiple">
+            {promotions?.map((promotion) => (
+              <Select.Option key={promotion.id} value={promotion.id}>
+                {promotion.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
         <Form.Item
           name="applicationDocuments"
           label="Chọn các tài liệu đăng ký"
@@ -155,7 +185,6 @@ const AddAdmissionProgramForm: React.FC<AddAdmissionProgramFormProps> = ({
               message: "Vui lòng chọn ít nhất một tài liệu đăng ký!",
             },
           ]}
-          valuePropName="checked"
         >
           <Checkbox.Group
             onChange={handleChange}

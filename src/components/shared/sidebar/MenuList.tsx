@@ -1,4 +1,3 @@
-import { HomeOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
 import { ItemType, MenuItemType } from "antd/es/menu/interface";
 import {
@@ -13,8 +12,10 @@ import { LuBookCopy, LuBookMarked } from "react-icons/lu";
 import { MdGrade } from "react-icons/md";
 import { PiStudent } from "react-icons/pi";
 import { SiGoogleclassroom } from "react-icons/si";
+import { VscGitStashApply } from "react-icons/vsc";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "../../../contexts/ThemeContext";
+import { useState } from "react";
 
 const DashBoardMenuList = () => {
   const { theme, colorBgContainer } = useTheme();
@@ -40,7 +41,7 @@ const DashBoardMenuList = () => {
 
   const selectedKey = location.pathname.slice(1) || "dashboards";
   const menuItems: ItemType<MenuItemType>[] = [
-    { key: "dashboards", icon: <HomeOutlined />, label: "Dashboards" },
+    // { key: "dashboards", icon: <HomeOutlined />, label: "Dashboards" },
     // { key: "users", icon: <FaRegUser />, label: "Users" },
     {
       key: "tuyensinh",
@@ -51,6 +52,11 @@ const DashBoardMenuList = () => {
           key: "admission",
           icon: <LuBookCopy />,
           label: "CT Tuyển Sinh",
+        },
+        {
+          key: "application",
+          icon: <VscGitStashApply />,
+          label: "DS Ứng tuyển",
         },
         {
           key: "freshmens",
@@ -65,7 +71,7 @@ const DashBoardMenuList = () => {
         {
           key: "applicationdocument",
           icon: <AiOutlineFolder />,
-          label: "Thành phần hồ sơ",
+          label: "TP hồ sơ",
         },
       ],
     },
@@ -96,12 +102,25 @@ const DashBoardMenuList = () => {
     { key: "markreport", icon: <MdGrade />, label: "Báo cáo điểm" },
   ];
 
+  const getAllParentKeys = () => {
+    return menuItems
+      .filter(
+        (item): item is ItemType<MenuItemType> =>
+          item !== null && "children" in item,
+      )
+      .map((item) => String(item?.key));
+  };
+
+  const [openKeys, setOpenKeys] = useState<string[]>(getAllParentKeys());
+
   return (
     <div>
       <Menu
         items={menuItems}
         selectedKeys={[selectedKey]}
         defaultSelectedKeys={["dashboards"]}
+        openKeys={openKeys}
+        onOpenChange={setOpenKeys}
         theme={theme}
         mode="inline"
         onClick={({ key }) => handleMenuClick(key)}

@@ -6,14 +6,14 @@ import LoginForm from "../components/auth/LoginForm";
 import SignupForm from "../components/auth/SignupForm";
 import PageWithTitle from "../components/shared/PageWithTitle"; // Import component wrapper
 import PrivateRoute from "../components/shared/PrivateRoute";
-import ScheduleList from "../pages/schedule";
 import Settings from "../components/users/Settings";
-import CoursesFamilyPage from "../pages/courses/coursefamily";
 import AttendancePage from "../pages/attendance";
-import ModulePage from "../pages/module";
 import BuildingPage from "../pages/building";
-import CoursePage from "../pages/courses/course";
 import ClassroomPage from "../pages/classroom";
+import CoursePage from "../pages/courses/course";
+import CoursesFamilyPage from "../pages/courses/coursefamily";
+import ModulePage from "../pages/module";
+import ScheduleList from "../pages/schedule";
 
 // Loading Components
 const LoadingIndicator = () => (
@@ -40,7 +40,7 @@ const LoadingSkeleton = () => (
 
 // Lazy load các trang
 const AuthPage = lazy(() => import("../pages/auth"));
-const DashBoardPage = lazy(() => import("../pages/dashboard"));
+// const DashBoardPage = lazy(() => import("../pages/dashboard"));
 const ErrorPage = lazy(() => import("../pages/errors"));
 const ClassPage = lazy(() => import("../pages/classes"));
 const MainPage = lazy(() => import("../pages"));
@@ -69,7 +69,9 @@ const AdmissionDetail = lazy(() => import("../pages/admission/detail"));
 const CohortPage = lazy(() => import("../pages/cohort"));
 const GradesPage = lazy(() => import("../pages/grades"));
 const ExamManagement = lazy(() => import("../pages/exam"));
-
+const ApplicationList = lazy(
+  () => import("../pages/application/ApplicationList"),
+);
 const getTitleFromLocation = (pathname: string) => {
   if (
     matchPath({ path: "/student-list/class/:classId", end: false }, pathname)
@@ -398,6 +400,16 @@ function MainRoutes() {
           ),
         },
         {
+          path: "application",
+          element: (
+            <PageWithTitle title={title}>
+              <Suspense fallback={<LoadingSkeleton />}>
+                <ApplicationList />
+              </Suspense>
+            </PageWithTitle>
+          ),
+        },
+        {
           path: "markreport",
           element: (
             <PageWithTitle title={title}>
@@ -422,7 +434,7 @@ function MainRoutes() {
           element: (
             <PageWithTitle title={title}>
               <Suspense fallback={<LoadingSkeleton />}>
-                <DashBoardPage />
+                <StudentPage />
               </Suspense>
             </PageWithTitle>
           ),

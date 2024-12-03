@@ -21,7 +21,7 @@ const LoginForm = () => {
 
   useEffect(() => {
     if (authState.isAuthenticated) {
-      navigate("/");
+      navigate("/students");
     }
   }, [authState.isAuthenticated]);
 

@@ -1,4 +1,7 @@
-import { AdmissionProgram } from "../../models/admission.model";
+import {
+  AdmissionProgram,
+  CreateAdmissionProgramRequest,
+} from "../../models/admission.model";
 import { Response } from "../../models/response.model";
 import axiosInstance from "../../utils/axiosInstance";
 
@@ -28,7 +31,7 @@ class AdmissionService {
   }
 
   async add(
-    admissionData: AdmissionProgram,
+    admissionData: CreateAdmissionProgramRequest,
   ): Promise<Response<AdmissionProgram>> {
     try {
       const response = await axiosInstance.post<Response<AdmissionProgram>>(
@@ -42,7 +45,10 @@ class AdmissionService {
     }
   }
 
-  async update(admissionId: number, admissionData: any): Promise<void> {
+  async update(
+    admissionId: number,
+    admissionData: AdmissionProgram,
+  ): Promise<void> {
     try {
       await axiosInstance.put(
         `/admission-program/${admissionId}`,

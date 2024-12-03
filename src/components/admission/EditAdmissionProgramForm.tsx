@@ -5,12 +5,15 @@ import {
   InputNumber,
   Modal,
   notification,
+  Select,
 } from "antd";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { AdmissionProgram } from "../../models/admission.model";
+import { Promotion } from "../../models/promotions.model";
 import { Response } from "../../models/response.model";
 import admissionService from "../../services/admission-program-service/admission.service";
+import promotionsService from "../../services/promotions-service/promotions.service";
 
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
@@ -33,8 +36,23 @@ const EditAdmissionProgramForm = ({
   const [selectedAdmissionProgram, setSelectedAdmissionProgram] = useState<
     number[]
   >([]);
+  const [promotions, setPromotions] = useState<Promotion[] | null>(null);
+  const [selectedPromotions, setSelectedPromotions] = useState<number[]>([]);
 
   useEffect(() => {
+    const fetchPromotions = async () => {
+      try {
+        const response = await promotionsService.getPromotions();
+        setPromotions(response.data);
+      } catch (error) {
+        notification.error({ message: "Lỗi khi tải khuyến mãi" });
+      }
+    };
+
+    if (isModalVisible) {
+      fetchPromotions();
+    }
+
     if (admissionProgram) {
       form.setFieldsValue({
         name: admissionProgram.data.name,
@@ -49,6 +67,7 @@ const EditAdmissionProgramForm = ({
         applicationDocuments: admissionProgram.data.applicationDocuments.map(
           (document) => document.id,
         ),
+        promotion: admissionProgram.data.promotions.map((promo) => promo.id),
       });
 
       setSelectedAdmissionProgram(
@@ -56,23 +75,26 @@ const EditAdmissionProgramForm = ({
           (document) => document.id,
         ),
       );
+
+      setSelectedPromotions(
+        admissionProgram.data.promotions.map((promo) => promo.id),
+      );
     }
-  }, [admissionProgram, form]);
+  }, [admissionProgram, form, isModalVisible]);
 
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
       if (admissionProgram) {
-        const { period, ...rest } = values;
-        const updatedAdmissionProgram: Partial<AdmissionProgram> = {
+        const { period, promotion, ...rest } = values;
+        const updatedAdmissionProgram = {
           ...rest,
           startDate: period[0].format("YYYY-MM-DD"),
           endDate: period[1].format("YYYY-MM-DD"),
-          startRegistration: period[0].format("YYYY-MM-DD"),
-          endRegistration: period[1].format("YYYY-MM-DD"),
-          applicationDocuments: selectedAdmissionProgram.map((id) => ({
-            id,
-          })),
+          startRegistration: values.startRegister.format("YYYY-MM-DD"),
+          endRegistration: values.endRegister.format("YYYY-MM-DD"),
+          applicationDocuments: selectedAdmissionProgram.map((id) => ({ id })),
+          promotions: promotion ? promotion.map((id) => ({ id })) : [],
         };
 
         await admissionService.update(
@@ -139,6 +161,19 @@ const EditAdmissionProgramForm = ({
           rules={[{ required: true }]}
         >
           <InputNumber min={0} />
+        </Form.Item>
+        <Form.Item name="promotion" label="Khuyến mãi">
+          <Select
+            mode="multiple"
+            value={selectedPromotions}
+            onChange={setSelectedPromotions}
+          >
+            {promotions?.map((promotion) => (
+              <Select.Option key={promotion.id} value={promotion.id}>
+                {promotion.name}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
       </Form>
     </Modal>

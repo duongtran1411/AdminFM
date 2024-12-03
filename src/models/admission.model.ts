@@ -11,4 +11,20 @@ export interface AdmissionProgram {
   quota: number;
   applicationDocuments: ApplicationDocument[];
   promotions: Promotion[];
+  promotionId?: number;
 }
+
+export interface CreateAdmissionProgramRequest {
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  startRegistration: string;
+  endRegistration: string;
+  quota: number;
+  applicationDocuments: { id: number }[];
+  promotions: { id: number }[];
+}
+
+export interface UpdateAdmissionProgramRequest
+  extends CreateAdmissionProgramRequest {}

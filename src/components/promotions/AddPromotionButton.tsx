@@ -10,8 +10,12 @@ const AddPromotionButton = ({ onPromotionCreated }: Props) => {
     <div
       style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}
     >
-      <Button type="primary" icon={<PlusOutlined />} onClick={onPromotionCreated}>
-        New Promotion
+      <Button
+        type="primary"
+        icon={<PlusOutlined />}
+        onClick={onPromotionCreated}
+      >
+        Thêm khuyến mãi
       </Button>
     </div>
   );

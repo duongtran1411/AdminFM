@@ -4,10 +4,11 @@ import { Response } from "../../models/response.model";
 import axiosInstance from "../../utils/axiosInstance";
 
 class ApplicationService {
-  async getAll(): Promise<Response<Application[]>> {
+  async getAll(filters: any = {}): Promise<Response<Application[]>> {
     try {
       const response = await axiosInstance.get<Response<Application[]>>(
         "/applications",
+        { params: filters },
       );
       return response.data;
     } catch (error) {

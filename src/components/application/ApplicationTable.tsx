@@ -1,14 +1,20 @@
 import { EditOutlined } from "@ant-design/icons";
-import { Button, Table } from "antd";
+import { Button, Table, Spin } from "antd";
 import { useEffect, useRef, useState } from "react";
 
 interface DataApplicationProps {
   data: any[];
   columns: any[];
   onEdit: (id: any) => void;
+  loading: boolean;
 }
 
-const ApplicationTable = ({ data, columns, onEdit }: DataApplicationProps) => {
+const ApplicationTable = ({
+  data,
+  columns,
+  onEdit,
+  loading,
+}: DataApplicationProps) => {
   const tableRef = useRef<HTMLDivElement>(null);
   const [canScroll, setCanScroll] = useState(false);
 
@@ -55,18 +61,19 @@ const ApplicationTable = ({ data, columns, onEdit }: DataApplicationProps) => {
         canScroll ? "scrollbar-thin" : "scrollbar-none"
       } overflow-x-auto`}
     >
-      <Table
-        dataSource={dataSource}
-        pagination={false}
-        columns={extendedColumns.map((col) => ({
-          ...col,
-
-          className: "border border-gray-300",
-        }))}
-        rowClassName={(_, index) =>
-          index % 2 === 0 ? "bg-white" : "bg-gray-100"
-        }
-      />
+      <Spin spinning={loading}>
+        <Table
+          dataSource={dataSource}
+          pagination={{ pageSize: 10 }}
+          columns={extendedColumns.map((col) => ({
+            ...col,
+            className: "border border-gray-300",
+          }))}
+          rowClassName={(_, index) =>
+            index % 2 === 0 ? "bg-white" : "bg-gray-100"
+          }
+        />
+      </Spin>
     </div>
   );
 };
