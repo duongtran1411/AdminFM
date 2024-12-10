@@ -194,7 +194,7 @@ const ApplicationPage = () => {
           data={applicationResponse?.data || []}
           columns={columns}
           onEdit={handleEdit}
-          loading
+          loading={loading}
         />
       </div>
       <ChangeStatusForm
