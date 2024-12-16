@@ -199,6 +199,9 @@ const EditExamScheduleForm: React.FC<Props> = ({
             format="DD/MM/YYYY"
             placeholder={`Chọn ${dateLabel.toLowerCase()} (DD/MM/YYYY)`}
             suffixIcon={<CalendarOutlined />}
+            disabledDate={(current) => {
+              return current && current < moment().startOf("day");
+            }}
           />
         </Form.Item>
       </Col>

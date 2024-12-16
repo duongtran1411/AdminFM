@@ -120,8 +120,23 @@ const GradesPage: React.FC = () => {
           );
           const gradeResponses = await Promise.all(gradePromises);
           setGradeData(gradeResponses.map((response) => response.data));
-        } catch (error) {
-          notification.error({ message: "Error loading grades" });
+
+          // Khởi tạo manualFinalGrades từ dữ liệu DB
+          const initialFinalGrades = {};
+          gradeResponses.forEach((response) => {
+            const studentData = response.data;
+            if (
+              studentData?.student?.id &&
+              studentData?.finalGrade?.average_grade
+            ) {
+              initialFinalGrades[studentData.student.id] = parseFloat(
+                studentData.finalGrade.average_grade,
+              );
+            }
+          });
+          setManualFinalGrades(initialFinalGrades);
+        } catch (error: any) {
+          notification.error({ message: error.response.data.error });
         }
       }
     };
@@ -230,6 +245,31 @@ const GradesPage: React.FC = () => {
 
       await gradeCategoryService.assignGradesForStudents(gradesToSubmit);
       notification.success({ message: "Lưu điểm thành công" });
+
+      // Fetch lại dữ liệu sau khi lưu thành công
+      const gradePromises = students.map((student) =>
+        gradeCategoryService.getGradeByModuleAndStudent(
+          student.id,
+          selectedModule,
+        ),
+      );
+      const gradeResponses = await Promise.all(gradePromises);
+      setGradeData(gradeResponses.map((response) => response.data));
+
+      // Cập nhật lại manualFinalGrades
+      const initialFinalGrades = {};
+      gradeResponses.forEach((response) => {
+        const studentData = response.data;
+        if (
+          studentData?.student?.id &&
+          studentData?.finalGrade?.average_grade
+        ) {
+          initialFinalGrades[studentData.student.id] = parseFloat(
+            studentData.finalGrade.average_grade,
+          );
+        }
+      });
+      setManualFinalGrades(initialFinalGrades);
     } catch (error) {
       notification.error({ message: "Lỗi khi lưu điểm" });
     } finally {
@@ -251,7 +291,7 @@ const GradesPage: React.FC = () => {
         dataIndex: ["student", "studentId"],
         key: "studentId",
         fixed: "left",
-        width: 120,
+        width: 80,
         align: "center",
       },
       {
@@ -259,7 +299,7 @@ const GradesPage: React.FC = () => {
         dataIndex: ["student", "name"],
         key: "name",
         fixed: "left",
-        width: 200,
+        width: 80,
       },
     ];
 
@@ -280,7 +320,7 @@ const GradesPage: React.FC = () => {
             </div>
           ),
           key: `grade-${grade.gradeComponent.id}`,
-          width: 120,
+          width: 70,
           align: "center" as const,
           render: (_, record) => {
             const gradeItem = record.grades.find(
@@ -319,14 +359,16 @@ const GradesPage: React.FC = () => {
             </div>
           ),
           key: "finalGrade",
-          width: 120,
+          width: 70,
           fixed: "right",
           align: "center",
           render: (_, record) => {
-            const calculatedGrade = calculateFinalGrade(record);
+            const finalGrade = manualFinalGrades[record.student.id];
+            const calculatedGrade = finalGrade ?? calculateFinalGrade(record);
+
             return (
               <InputNumber
-                value={manualFinalGrades[record.student.id] ?? calculatedGrade}
+                value={calculatedGrade}
                 onChange={(value) =>
                   handleFinalGradeChange(record.student.id, value)
                 }
@@ -342,10 +384,11 @@ const GradesPage: React.FC = () => {
             );
           },
         },
+
         {
           title: "Ghi chú",
           key: "remarks",
-          width: 200,
+          width: 90,
           fixed: "right",
           render: (_, record) => (
             <Input
@@ -364,6 +407,26 @@ const GradesPage: React.FC = () => {
               }
             />
           ),
+        },
+        {
+          title: "Trạng thái",
+          key: "status",
+          width: 20,
+          fixed: "right",
+          align: "center",
+          render: (_, record) => {
+            const status = record.finalGrade?.status;
+            return (
+              <span
+                style={{
+                  color: status === "PASSED" ? "#52c41a" : "#ff4d4f",
+                  fontWeight: "bold",
+                }}
+              >
+                {status}
+              </span>
+            );
+          },
         },
       );
     }

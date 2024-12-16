@@ -17,6 +17,7 @@ import { CreateScheduleData, ScheduleData } from "../../models/schedules.model";
 import classService from "../../services/class-service/class.service";
 import { scheduleService } from "../../services/schedule-service/schedule.service";
 import StudentInClassPage from "../student/StudentInClass";
+import EvaluationPage from "../evaluation";
 
 dayjs.extend(weekday);
 dayjs.extend(isoWeek);
@@ -230,8 +231,10 @@ const ScheduleList: React.FC = () => {
             />
           )}
         </Layout>
-      ) : (
+      ) : activeTab === "2" ? (
         <StudentInClassPage />
+      ) : (
+        <EvaluationPage />
       )}
       <UpdateScheduleForm
         initialValues={selectedSchedule}

@@ -100,8 +100,8 @@ const EditModuleForm = ({
       setLoading(true);
       const values = await form.validateFields();
 
-      const updatedGradeCategories = values.gradeCategories.map(
-        (category: any) => {
+      const updatedGradeCategories =
+        values.gradeCategories?.map((category: any) => {
           const categoryId = category.id || undefined;
 
           const gradeComponents = (category.gradeComponents || []).map(
@@ -111,7 +111,6 @@ const EditModuleForm = ({
               weight: component.weight
                 ? Math.round(parseFloat(component.weight) * 10) / 10
                 : null,
-              gradeCategory: categoryId ? { id: categoryId } : undefined,
             }),
           );
 
@@ -119,10 +118,8 @@ const EditModuleForm = ({
             id: categoryId,
             name: category.name,
             gradeComponents: gradeComponents,
-            module: categoryId ? undefined : { module_id: module?.module_id },
           };
-        },
-      );
+        }) || [];
 
       const updatedModule = {
         ...module,

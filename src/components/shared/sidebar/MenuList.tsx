@@ -9,7 +9,7 @@ import { FaChalkboardTeacher, FaRegBuilding } from "react-icons/fa";
 import { GoPeople } from "react-icons/go";
 import { HiAcademicCap } from "react-icons/hi2";
 import { LuBookCopy, LuBookMarked } from "react-icons/lu";
-import { MdGrade } from "react-icons/md";
+import { MdGrade, MdOutlineStarRate } from "react-icons/md";
 import { PiStudent } from "react-icons/pi";
 import { SiGoogleclassroom } from "react-icons/si";
 import { VscGitStashApply } from "react-icons/vsc";
@@ -100,6 +100,11 @@ const DashBoardMenuList = () => {
       ],
     },
     { key: "markreport", icon: <MdGrade />, label: "Báo cáo điểm" },
+    {
+      key: "evaluation",
+      icon: <MdOutlineStarRate />,
+      label: "Đánh giá cá nhân",
+    },
   ];
 
   const getAllParentKeys = () => {

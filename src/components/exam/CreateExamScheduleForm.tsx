@@ -16,6 +16,7 @@ import { ExamScheduleMaster } from "../../models/exam.model";
 import examScheduleMasterService from "../../services/exam-service/exam.schedule.master.service";
 import { moduleService } from "../../services/module-serice/module.service";
 import { ExamType, Module } from "../../models/courses.model";
+import moment from "moment";
 
 interface Props {
   visible: boolean;
@@ -156,6 +157,9 @@ const CreateExamScheduleForm: React.FC<Props> = ({
                 format="DD/MM/YYYY"
                 placeholder="Chọn ngày thi (DD/MM/YYYY)"
                 suffixIcon={<CalendarOutlined />}
+                disabledDate={(current) => {
+                  return current && current < moment().startOf("day");
+                }}
               />
             </Form.Item>
           </Col>
@@ -193,6 +197,9 @@ const CreateExamScheduleForm: React.FC<Props> = ({
                 format="DD/MM/YYYY"
                 placeholder="Chọn ngày thi lại (DD/MM/YYYY)"
                 suffixIcon={<CalendarOutlined />}
+                disabledDate={(current) => {
+                  return current && current < moment().startOf("day");
+                }}
               />
             </Form.Item>
           </Col>

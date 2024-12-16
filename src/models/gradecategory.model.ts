@@ -41,4 +41,5 @@ export interface GradeInput {
   score?: number;
   average_grade?: number;
   remarks?: string;
+  status?: string;
 }

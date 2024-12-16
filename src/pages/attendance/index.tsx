@@ -122,6 +122,7 @@ const AttendancePage = () => {
       title: "Mã Sinh Viên",
       dataIndex: ["student", "studentId"],
       key: "studentId",
+      render: (studentId: number | null) => (studentId ? studentId : "N/A"),
     },
     {
       title: "Tên",

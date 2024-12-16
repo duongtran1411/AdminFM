@@ -22,7 +22,7 @@ class GradecategoryService {
   async getGradeByModuleAndStudent(
     studentId: number,
     moduleId: number,
-  ): Promise<Response<GradeData[]>> {
+  ): Promise<Response<GradeData>> {
     const response = await axiosInstance.get(
       `/gradecategory/student/${studentId}/module/${moduleId}`,
     );

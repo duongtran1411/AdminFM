@@ -4,6 +4,7 @@ import { Class } from "./classes.model";
 import { Cohort } from "./cohort.model";
 import { CoursesFamily } from "./courses.model";
 import { StudentStatus } from "./enum/student.status.enum";
+import { Evaluation } from "./evaluation.model";
 import { Parent } from "./parent.model";
 import { Shifts } from "./shifts";
 
@@ -39,4 +40,5 @@ export interface Student {
   parent?: Parent[];
   cardId?: string;
   avatar?: string;
+  evaluation?: Evaluation[];
 }
