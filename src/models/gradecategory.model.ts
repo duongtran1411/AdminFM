@@ -15,10 +15,12 @@ export interface GradeData {
   module: Module | null;
   grades: {
     id: number | null;
-    score: number | null;
+    original_score: number | null;
+    resit_score: number | null;
     gradeComponent: {
       id: number;
       name: string;
+      isResit: boolean;
       gradeCategory: {
         id: number;
         name: string;
@@ -29,8 +31,10 @@ export interface GradeData {
   finalGrade: {
     id: number;
     average_grade: string;
+    first_attempt_grade: string | null;
     status: string;
     remarks: string;
+    attempt: number;
   } | null;
 }
 
@@ -42,4 +46,5 @@ export interface GradeInput {
   average_grade?: number;
   remarks?: string;
   status?: string;
+  isResit?: boolean;
 }

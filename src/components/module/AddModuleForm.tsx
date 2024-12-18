@@ -1,4 +1,12 @@
-import { Button, Form, Input, Modal, notification, Select } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  notification,
+  Select,
+  Checkbox,
+} from "antd";
 import {
   DeleteOutlined,
   MinusCircleOutlined,
@@ -59,6 +67,7 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
             weight: component.weight
               ? Math.round(parseFloat(component.weight))
               : null,
+            isResit: !!component.isResit,
           })),
         })),
       };
@@ -256,6 +265,14 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
                               style={{ flex: 1, marginRight: 8 }}
                             >
                               <Input type="number" placeholder="Trọng số" />
+                            </Form.Item>
+                            <Form.Item
+                              {...componentField}
+                              name={[componentField.name, "isResit"]}
+                              valuePropName="checked"
+                              style={{ marginRight: 8 }}
+                            >
+                              <Checkbox>Resit</Checkbox>
                             </Form.Item>
                             <Button
                               type="text"

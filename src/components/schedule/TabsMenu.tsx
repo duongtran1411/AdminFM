@@ -9,7 +9,6 @@ const ScheduleTabsMenu: React.FC<ScheduleTabsMenuProps> = ({ onTabChange }) => {
   const tabItems = [
     { label: "Schedule", key: "1" },
     { label: "Students", key: "2" },
-    { label: "Evaluation", key: "3" },
   ];
 
   return <Tabs defaultActiveKey="1" onChange={onTabChange} items={tabItems} />;

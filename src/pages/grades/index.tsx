@@ -120,7 +120,6 @@ const GradesPage: React.FC = () => {
           );
           const gradeResponses = await Promise.all(gradePromises);
           setGradeData(gradeResponses.map((response) => response.data));
-
           // Khởi tạo manualFinalGrades từ dữ liệu DB
           const initialFinalGrades = {};
           gradeResponses.forEach((response) => {
@@ -143,8 +142,11 @@ const GradesPage: React.FC = () => {
     fetchGrades();
   }, [selectedModule, students]);
 
-  const calculateFinalGrade = (studentData: any): number | null => {
-    if (!isAllComponentGradesEntered(studentData)) {
+  const calculateFinalGrade = (
+    studentData: any,
+    isResit: boolean = false,
+  ): number | null => {
+    if (!isAllComponentGradesEntered(studentData, isResit)) {
       return null;
     }
 
@@ -153,7 +155,10 @@ const GradesPage: React.FC = () => {
 
     studentData.grades.forEach((grade: any) => {
       const weight = parseFloat(grade.gradeComponent.gradeCategory.weight);
-      const score = grade.score;
+      const score =
+        isResit && grade.gradeComponent.isResit
+          ? grade.resit_score ?? grade.original_score
+          : grade.original_score;
 
       if (score !== null && score !== undefined && !isNaN(weight)) {
         totalWeightedScore += score * weight;
@@ -171,27 +176,49 @@ const GradesPage: React.FC = () => {
     studentId: number,
     gradeComponentId: number,
     newScore: number | null,
+    isResit: boolean,
   ) => {
     setGradeData((prevData) =>
       prevData.map((studentData) => {
-        if (studentData.student.id === studentId) {
+        if (studentData.student?.id === studentId) {
           const updatedStudentData = {
             ...studentData,
             grades: studentData.grades.map((g: any) =>
               g.gradeComponent.id === gradeComponentId
-                ? { ...g, score: newScore }
+                ? {
+                    ...g,
+                    original_score: isResit ? g.original_score : newScore,
+                    resit_score: isResit ? newScore : g.resit_score,
+                  }
                 : g,
             ),
           };
 
           // Tự động cập nhật điểm tổng kết
-          const calculatedFinalGrade = calculateFinalGrade(updatedStudentData);
-          if (calculatedFinalGrade !== null) {
-            setManualFinalGrades((prev) => ({
-              ...prev,
-              [studentId]: calculatedFinalGrade,
-            }));
-          }
+          const calculatedFinalGrade = calculateFinalGrade(
+            updatedStudentData,
+            false, // Chỉ tính điểm gốc
+          );
+          const status =
+            calculatedFinalGrade && calculatedFinalGrade >= 5
+              ? "PASSED"
+              : "NOT PASSED";
+
+          // Cập nhật final grade và trạng thái
+          setManualFinalGrades((prev) => ({
+            ...prev,
+            [studentId]: calculatedFinalGrade,
+          }));
+
+          // Cập nhật trạng thái trượt hay đậu
+          updatedStudentData.finalGrade = {
+            ...updatedStudentData.finalGrade,
+            status,
+            attempt:
+              status === "NOT PASSED"
+                ? 1
+                : updatedStudentData.finalGrade?.attempt,
+          };
 
           return updatedStudentData;
         }
@@ -221,21 +248,49 @@ const GradesPage: React.FC = () => {
       const gradesToSubmit: GradeInput[] = [];
 
       gradeData.forEach((studentData) => {
+        // Xử lý từng điểm thành phần
         studentData.grades.forEach((grade) => {
+          // Nếu có điểm gốc
+          if (
+            grade.original_score !== null &&
+            grade.original_score !== undefined
+          ) {
+            gradesToSubmit.push({
+              studentId: studentData.student.id,
+              moduleId: selectedModule,
+              gradeComponentId: grade.gradeComponent.id,
+              score: grade.original_score,
+              isResit: false,
+            });
+          }
+
+          // Nếu có điểm thi lại và thành phần này cho phép thi lại
+          if (
+            grade.gradeComponent.isResit &&
+            grade.resit_score !== null &&
+            grade.resit_score !== undefined
+          ) {
+            gradesToSubmit.push({
+              studentId: studentData.student.id,
+              moduleId: selectedModule,
+              gradeComponentId: grade.gradeComponent.id,
+              score: grade.resit_score,
+              isResit: true,
+            });
+          }
+        });
+
+        // Xử lý điểm tổng kết
+        const finalGrade = manualFinalGrades[studentData.student.id];
+        if (finalGrade !== undefined) {
           gradesToSubmit.push({
             studentId: studentData.student.id,
             moduleId: selectedModule,
-            gradeComponentId: grade.gradeComponent.id,
-            score: grade.score,
+            average_grade: finalGrade || undefined,
+            remarks: remarks[studentData.student.id] ?? "",
+            isResit: studentData.finalGrade?.attempt === 2 || false,
           });
-        });
-
-        gradesToSubmit.push({
-          studentId: studentData.student.id,
-          moduleId: selectedModule,
-          average_grade: manualFinalGrades[studentData.student.id] ?? undefined,
-          remarks: remarks[studentData.student.id] ?? "",
-        });
+        }
       });
 
       if (gradesToSubmit.length === 0) {
@@ -247,29 +302,31 @@ const GradesPage: React.FC = () => {
       notification.success({ message: "Lưu điểm thành công" });
 
       // Fetch lại dữ liệu sau khi lưu thành công
-      const gradePromises = students.map((student) =>
-        gradeCategoryService.getGradeByModuleAndStudent(
-          student.id,
-          selectedModule,
-        ),
-      );
-      const gradeResponses = await Promise.all(gradePromises);
-      setGradeData(gradeResponses.map((response) => response.data));
+      if (selectedModule && students.length > 0) {
+        const gradePromises = students.map((student) =>
+          gradeCategoryService.getGradeByModuleAndStudent(
+            student.id,
+            selectedModule,
+          ),
+        );
+        const gradeResponses = await Promise.all(gradePromises);
+        setGradeData(gradeResponses.map((response) => response.data));
 
-      // Cập nhật lại manualFinalGrades
-      const initialFinalGrades = {};
-      gradeResponses.forEach((response) => {
-        const studentData = response.data;
-        if (
-          studentData?.student?.id &&
-          studentData?.finalGrade?.average_grade
-        ) {
-          initialFinalGrades[studentData.student.id] = parseFloat(
-            studentData.finalGrade.average_grade,
-          );
-        }
-      });
-      setManualFinalGrades(initialFinalGrades);
+        // Cập nhật lại manualFinalGrades
+        const initialFinalGrades = {};
+        gradeResponses.forEach((response) => {
+          const studentData = response.data;
+          if (
+            studentData?.student?.id &&
+            studentData?.finalGrade?.average_grade
+          ) {
+            initialFinalGrades[studentData.student.id] = parseFloat(
+              studentData.finalGrade.average_grade,
+            );
+          }
+        });
+        setManualFinalGrades(initialFinalGrades);
+      }
     } catch (error) {
       notification.error({ message: "Lỗi khi lưu điểm" });
     } finally {
@@ -277,11 +334,24 @@ const GradesPage: React.FC = () => {
     }
   };
 
-  const isAllComponentGradesEntered = (studentData: any) => {
+  const isAllComponentGradesEntered = (
+    studentData: any,
+    isResit: boolean = false,
+  ): boolean => {
     if (!studentData.grades || studentData.grades.length === 0) return false;
-    return studentData.grades.every(
-      (grade: any) => grade.score !== null && grade.score !== undefined,
-    );
+
+    return studentData.grades.every((grade: any) => {
+      if (isResit && grade.gradeComponent.isResit) {
+        return (
+          (grade.resit_score !== null && grade.resit_score !== undefined) ||
+          (grade.original_score !== null && grade.original_score !== undefined)
+        );
+      } else {
+        return (
+          grade.original_score !== null && grade.original_score !== undefined
+        );
+      }
+    });
   };
 
   const getGradeColumns = () => {
@@ -304,50 +374,110 @@ const GradesPage: React.FC = () => {
     ];
 
     if (selectedModule && gradeData.length > 0 && gradeData[0].grades) {
-      const gradeComponentColumns = gradeData[0].grades.map((grade) => {
-        const weight = parseFloat(grade.gradeComponent.gradeCategory.weight);
-        const formattedWeight = Number.isInteger(weight)
-          ? `${weight}%`
-          : `${weight.toFixed(1)}%`;
+      const gradeComponentColumns = gradeData[0].grades
+        .map((grade) => {
+          const isResitComponent = grade.gradeComponent.isResit;
+          const weight = parseFloat(grade.gradeComponent.gradeCategory.weight);
+          const formattedWeight = Number.isInteger(weight)
+            ? `${weight}%`
+            : `${weight.toFixed(1)}%`;
 
-        return {
-          title: (
-            <div style={{ textAlign: "center" }}>
-              <div>{grade.gradeComponent.name}</div>
-              <div style={{ color: "#666", fontSize: "12px" }}>
-                ({formattedWeight})
+          // Column cho điểm gốc
+          const originalColumn = {
+            title: (
+              <div style={{ textAlign: "center" }}>
+                <div>{grade.gradeComponent.name}</div>
+                <div style={{ color: "#666", fontSize: "12px" }}>
+                  ({formattedWeight})
+                </div>
               </div>
-            </div>
-          ),
-          key: `grade-${grade.gradeComponent.id}`,
-          width: 70,
-          align: "center" as const,
-          render: (_, record) => {
-            const gradeItem = record.grades.find(
-              (g: any) => g.gradeComponent.id === grade.gradeComponent.id,
-            );
-            return (
-              <InputNumber
-                value={gradeItem?.score || null}
-                onChange={(value) =>
-                  handleScoreChange(
-                    record.student.id,
-                    grade.gradeComponent.id,
-                    value,
-                  )
-                }
-                style={{ width: "90%" }}
-                min={0}
-                max={10}
-                step={0.1}
-                placeholder="Nhập điểm"
-                size="middle"
-                className="grade-input"
-              />
-            );
-          },
-        };
-      });
+            ),
+            key: `grade-${grade.gradeComponent.id}`,
+            width: 70,
+            align: "center" as const,
+            render: (_, record) => {
+              const gradeItem = record.grades.find(
+                (g: any) => g.gradeComponent.id === grade.gradeComponent.id,
+              );
+              return (
+                <InputNumber
+                  value={gradeItem?.original_score || null}
+                  onChange={(value) =>
+                    handleScoreChange(
+                      record.student.id,
+                      grade.gradeComponent.id,
+                      value,
+                      false,
+                    )
+                  }
+                  style={{ width: "90%" }}
+                  min={0}
+                  max={10}
+                  step={0.1}
+                  placeholder="Nhập điểm"
+                  size="middle"
+                  className="grade-input"
+                />
+              );
+            },
+          };
+
+          // Column cho điểm thi lại (nếu có)
+          if (isResitComponent) {
+            const resitColumn = {
+              title: (
+                <div style={{ textAlign: "center" }}>
+                  <div>{grade.gradeComponent.name} (Thi lại)</div>
+                  <div style={{ color: "#666", fontSize: "12px" }}>
+                    ({formattedWeight})
+                  </div>
+                </div>
+              ),
+              key: `grade-resit-${grade.gradeComponent.id}`,
+              width: 70,
+              align: "center" as const,
+              render: (_, record) => {
+                const gradeItem = record.grades.find(
+                  (g: any) => g.gradeComponent.id === grade.gradeComponent.id,
+                );
+                const finalGrade = record.finalGrade;
+                const canInputResit =
+                  finalGrade?.status === "NOT PASSED" &&
+                  finalGrade?.attempt === 1;
+                const resitValue =
+                  finalGrade?.status === "PASSED" && finalGrade?.attempt === 1
+                    ? gradeItem?.original_score
+                    : gradeItem?.resit_score;
+
+                return (
+                  <InputNumber
+                    value={resitValue || null}
+                    onChange={(value) =>
+                      handleScoreChange(
+                        record.student.id,
+                        grade.gradeComponent.id,
+                        value,
+                        true,
+                      )
+                    }
+                    style={{ width: "90%" }}
+                    min={0}
+                    max={10}
+                    step={0.1}
+                    placeholder="Điểm thi lại"
+                    size="middle"
+                    className="grade-input"
+                    disabled={!canInputResit}
+                  />
+                );
+              },
+            };
+            return [originalColumn, resitColumn];
+          }
+
+          return originalColumn;
+        })
+        .flat(); // Dùng flat() để xử lý mảng 2 chiều khi có cột thi lại
 
       columns.push(...gradeComponentColumns);
 
@@ -411,7 +541,7 @@ const GradesPage: React.FC = () => {
         {
           title: "Trạng thái",
           key: "status",
-          width: 20,
+          width: 40,
           fixed: "right",
           align: "center",
           render: (_, record) => {

@@ -11,6 +11,7 @@ import {
   Modal,
   notification,
   Select,
+  Checkbox,
 } from "antd";
 import { useEffect, useState } from "react";
 import { ExamType, Module } from "../../models/courses.model";
@@ -70,6 +71,7 @@ const EditModuleForm = ({
               id: comp.id,
               name: comp.name,
               weight: comp.weight,
+              isResit: comp.isResit,
             })) || [],
         })) || [];
 
@@ -111,6 +113,7 @@ const EditModuleForm = ({
               weight: component.weight
                 ? Math.round(parseFloat(component.weight) * 10) / 10
                 : null,
+              isResit: !!component.isResit,
             }),
           );
 
@@ -315,6 +318,14 @@ const EditModuleForm = ({
                               style={{ flex: 1, marginRight: 8 }}
                             >
                               <Input type="number" placeholder="Trọng số" />
+                            </Form.Item>
+                            <Form.Item
+                              {...componentField}
+                              name={[componentField.name, "isResit"]}
+                              valuePropName="checked"
+                              style={{ marginRight: 8 }}
+                            >
+                              <Checkbox>Có thể thi lại</Checkbox>
                             </Form.Item>
                             <Button
                               type="text"
