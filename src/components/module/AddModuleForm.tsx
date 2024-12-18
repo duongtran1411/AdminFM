@@ -1,21 +1,14 @@
 import {
-  Button,
-  Form,
-  Input,
-  Modal,
-  notification,
-  Select,
-  Checkbox,
-} from "antd";
-import {
   DeleteOutlined,
   MinusCircleOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { moduleService } from "../../services/module-serice/module.service";
+import { Button, Form, Input, Modal, notification, Select } from "antd";
+import { useEffect, useState } from "react";
 import { ExamType } from "../../models/courses.model";
-import { useState, useEffect } from "react";
+import { GradeComponentStatus } from "../../models/enum/gradecomponent.enum";
 import { Semester } from "../../models/semester.model";
+import { moduleService } from "../../services/module-serice/module.service";
 import semesterService from "../../services/semester-service/semester.service";
 
 interface AddModuleFormProps {
@@ -67,13 +60,12 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
             weight: component.weight
               ? Math.round(parseFloat(component.weight))
               : null,
-            isResit: !!component.isResit,
+            status: component.status || GradeComponentStatus.REGULAR,
           })),
         })),
       };
 
       await moduleService.add(updatedValues);
-      console.log(updatedValues);
       notification.success({ message: "Tạo môn học thành công!" });
       form.resetFields();
       hideModal();
@@ -268,11 +260,27 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
                             </Form.Item>
                             <Form.Item
                               {...componentField}
-                              name={[componentField.name, "isResit"]}
-                              valuePropName="checked"
-                              style={{ marginRight: 8 }}
+                              name={[componentField.name, "status"]}
+                              initialValue={GradeComponentStatus.REGULAR}
+                              style={{ flex: 1, marginRight: 8 }}
                             >
-                              <Checkbox>Resit</Checkbox>
+                              <Select
+                                placeholder="Chọn loại đầu điểm"
+                                options={[
+                                  {
+                                    label: "Điểm thường",
+                                    value: GradeComponentStatus.REGULAR,
+                                  },
+                                  {
+                                    label: "Thi chính thức",
+                                    value: GradeComponentStatus.MAIN_EXAM,
+                                  },
+                                  {
+                                    label: "Thi lại",
+                                    value: GradeComponentStatus.RESIT,
+                                  },
+                                ]}
+                              />
                             </Form.Item>
                             <Button
                               type="text"

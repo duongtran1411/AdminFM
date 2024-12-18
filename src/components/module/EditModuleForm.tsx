@@ -11,10 +11,10 @@ import {
   Modal,
   notification,
   Select,
-  Checkbox,
 } from "antd";
 import { useEffect, useState } from "react";
 import { ExamType, Module } from "../../models/courses.model";
+import { GradeComponentStatus } from "../../models/enum/gradecomponent.enum";
 import { Semester } from "../../models/semester.model";
 import { moduleService } from "../../services/module-serice/module.service";
 import semesterService from "../../services/semester-service/semester.service";
@@ -71,7 +71,7 @@ const EditModuleForm = ({
               id: comp.id,
               name: comp.name,
               weight: comp.weight,
-              isResit: comp.isResit,
+              status: comp.status || GradeComponentStatus.REGULAR,
             })) || [],
         })) || [];
 
@@ -113,7 +113,7 @@ const EditModuleForm = ({
               weight: component.weight
                 ? Math.round(parseFloat(component.weight) * 10) / 10
                 : null,
-              isResit: !!component.isResit,
+              status: component.status || GradeComponentStatus.REGULAR,
             }),
           );
 
@@ -130,7 +130,7 @@ const EditModuleForm = ({
         exam_type: values.exam_type || [],
         gradeCategories: updatedGradeCategories,
       };
-
+      console.log(updatedModule);
       await moduleService.update(updatedModule.module_id, updatedModule);
 
       form.resetFields();
@@ -321,11 +321,27 @@ const EditModuleForm = ({
                             </Form.Item>
                             <Form.Item
                               {...componentField}
-                              name={[componentField.name, "isResit"]}
-                              valuePropName="checked"
-                              style={{ marginRight: 8 }}
+                              name={[componentField.name, "status"]}
+                              initialValue={GradeComponentStatus.REGULAR}
+                              style={{ flex: 1, marginRight: 8 }}
                             >
-                              <Checkbox>Có thể thi lại</Checkbox>
+                              <Select
+                                placeholder="Chọn loại đầu điểm"
+                                options={[
+                                  {
+                                    label: "Điểm thường",
+                                    value: GradeComponentStatus.REGULAR,
+                                  },
+                                  {
+                                    label: "Thi chính thức",
+                                    value: GradeComponentStatus.MAIN_EXAM,
+                                  },
+                                  {
+                                    label: "Thi lại",
+                                    value: GradeComponentStatus.RESIT,
+                                  },
+                                ]}
+                              />
                             </Form.Item>
                             <Button
                               type="text"
