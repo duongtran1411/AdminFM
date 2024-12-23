@@ -73,6 +73,9 @@ const ApplicationList = lazy(
   () => import("../pages/application/ApplicationList"),
 );
 const EvaluationPage = lazy(() => import("../pages/evaluation"));
+const RegisterModule = lazy(
+  () => import("../pages/re-register/RegisterModule"),
+);
 const getTitleFromLocation = (pathname: string) => {
   if (
     matchPath({ path: "/student-list/class/:classId", end: false }, pathname)
@@ -436,6 +439,16 @@ function MainRoutes() {
             <PageWithTitle title={title}>
               <Suspense fallback={<LoadingSkeleton />}>
                 <EvaluationPage />
+              </Suspense>
+            </PageWithTitle>
+          ),
+        },
+        {
+          path: "re-register-module",
+          element: (
+            <PageWithTitle title={title}>
+              <Suspense fallback={<LoadingSkeleton />}>
+                <RegisterModule />
               </Suspense>
             </PageWithTitle>
           ),

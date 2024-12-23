@@ -97,6 +97,22 @@ class StudentService {
       await axiosInstance.get(`/students/module/${moduleId}`);
     return response.data;
   }
+
+  async checkPass(
+    moduleCode: string,
+    studentId: number,
+  ): Promise<Response<{ message: string; data: string }>> {
+    const response: AxiosResponse<Response<{ message: string; data: string }>> =
+      await axiosInstance.get(
+        `/students/check-pass/${moduleCode}/${studentId}`,
+      );
+    return response.data;
+  }
+
+  async findStudentByUserId(userId: number): Promise<Student> {
+    const response = await axiosInstance.get(`/students/user/${userId}`);
+    return response.data.data;
+  }
 }
 
 export const studentService = new StudentService();

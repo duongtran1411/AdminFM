@@ -105,6 +105,7 @@ const DashBoardMenuList = () => {
       icon: <MdOutlineStarRate />,
       label: "Đánh giá cá nhân",
     },
+    { key: "re-register-module", icon: <MdGrade />, label: "Đăng ký học lại" },
   ];
 
   const getAllParentKeys = () => {
