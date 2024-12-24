@@ -3,6 +3,11 @@ import { Response } from "../../models/response.model";
 import { Student } from "../../models/student.model";
 import axiosInstance from "../../utils/axiosInstance";
 
+interface CheckPassResponse {
+  classId: number;
+  className: string;
+}
+
 class StudentService {
   async findAll(): Promise<Response<Student[]>> {
     const response: AxiosResponse<Response<Student[]>> =
@@ -101,8 +106,8 @@ class StudentService {
   async checkPass(
     moduleCode: string,
     studentId: number,
-  ): Promise<Response<{ message: string; data: string }>> {
-    const response: AxiosResponse<Response<{ message: string; data: string }>> =
+  ): Promise<Response<CheckPassResponse[]>> {
+    const response: AxiosResponse<Response<CheckPassResponse[]>> =
       await axiosInstance.get(
         `/students/check-pass/${moduleCode}/${studentId}`,
       );

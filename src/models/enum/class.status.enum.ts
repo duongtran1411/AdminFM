@@ -1,6 +1,6 @@
 export enum ClassStatus {
   SCHEDULED = "Đã lập lịch",
   STUDYING = "Đang học",
-  FINISHED = "Đã tốt nghiệp",
+  FINISHED = "Đã hoàn thành",
   CANCELLED = "Đã huỷ",
 }

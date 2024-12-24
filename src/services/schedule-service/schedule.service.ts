@@ -159,8 +159,8 @@ class ScheduleService {
 
   async getModule(): Promise<any[]> {
     try {
-      const response = await axiosInstance.get<any[]>("/module");
-      return response.data;
+      const { data } = await axiosInstance.get<any[]>("/module");
+      return data;
     } catch (error) {
       console.error("Error fetching modules:", error);
       throw error;

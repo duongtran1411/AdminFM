@@ -89,5 +89,17 @@ class ModuleService {
       throw error;
     }
   }
+
+  async getModulesByCode(code: string): Promise<Response<Module>> {
+    try {
+      const response = await axiosInstance.get<Response<Module>>(
+        `/module/code/${code}`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching modules by code:", error);
+      throw error;
+    }
+  }
 }
 export const moduleService = new ModuleService();

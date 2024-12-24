@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { CreateScheduleData } from "../../models/schedules.model";
 import { scheduleService } from "../../services/schedule-service/schedule.service";
+import { moduleService } from "../../services/module-serice/module.service";
 
 const CreateScheduleForm: React.FC<{
   isModalVisible: boolean;
@@ -16,34 +17,40 @@ const CreateScheduleForm: React.FC<{
   const [teachers, setTeachers] = useState<any[]>([]);
   const [modules, setModules] = useState<any[]>([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [shiftsData, classroomsData, teacherData, subjectsData] =
-          await Promise.all([
-            scheduleService.getShifts(),
-            scheduleService.getClassrooms(),
-            scheduleService.getTeachers(),
-            scheduleService.getModule(),
-          ]);
-        setShifts(shiftsData);
-        setClassrooms(classroomsData);
-        setTeachers(teacherData);
-        setModules(subjectsData);
-      } catch (error) {
-        console.error("Error fetching data for CreateScheduleForm:", error);
-      }
-    };
+  const fetchData = async () => {
+    try {
+      const [shiftsData, classroomsData, teacherData, modulesResponse] =
+        await Promise.all([
+          scheduleService.getShifts(),
+          scheduleService.getClassrooms(),
+          scheduleService.getTeachers(),
+          moduleService.getAllModules(),
+        ]);
+      setShifts(shiftsData);
+      setClassrooms(classroomsData);
+      setTeachers(teacherData);
+      setModules(modulesResponse.data);
+    } catch (error) {
+      console.error("Error fetching data for CreateScheduleForm:", error);
+    }
+  };
 
-    fetchData();
+  useEffect(() => {
+    fetchData(); // Gọi hàm fetchData khi component được mount
   }, []);
 
-  const onFinish = (values: CreateScheduleData) => {
+  const onFinish = async (values: CreateScheduleData) => {
     const updatedValues = {
       ...values,
       classId,
     };
-    onSubmit(updatedValues);
+
+    // Gọi onSubmit và chờ đợi kết quả
+    await onSubmit(updatedValues);
+
+    // Gọi lại hàm fetch để cập nhật dữ liệu
+    await fetchData(); // Gọi lại hàm fetchData để lấy dữ liệu mới
+
     form.resetFields();
     hideModal();
   };
@@ -112,12 +119,11 @@ const CreateScheduleForm: React.FC<{
           rules={[{ required: true, message: "Vui lòng chọn môn học!" }]}
         >
           <Select>
-            {Array.isArray(modules) &&
-              modules.map((module) => (
-                <Select.Option key={module.module_id} value={module.module_id}>
-                  {module.module_name}
-                </Select.Option>
-              ))}
+            {modules.map((module) => (
+              <Select.Option key={module.module_id} value={module.module_id}>
+                {module.code}
+              </Select.Option>
+            ))}
           </Select>
         </Form.Item>
 
