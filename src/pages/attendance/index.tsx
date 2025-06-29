@@ -39,16 +39,6 @@ const AttendancePage = () => {
       ) {
         attendanceArray = (data as any).data.students;
       }
-
-      if (Array.isArray(attendanceArray)) {
-        setAttendanceData(attendanceArray);
-      } else {
-        setAttendanceData([]);
-        let errorMsg = "Dữ liệu không đúng định dạng";
-        if (data && typeof data === "object" && "message" in data) {
-          errorMsg = (data as any).message;
-        }
-      }
     } catch (error: any) {
       console.error("Lỗi khi lấy trạng thái điểm danh", error);
       setAttendanceData([]);
