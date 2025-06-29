@@ -1,7 +1,7 @@
 import { Form, Input, Modal, notification, Select } from "antd";
 import { useEffect, useState } from "react";
 import { roleService } from "../../services/role-service/role.service";
-import { Users } from "../../models/users.model";
+import { CreateUser } from "../../models/users.model";
 import { userService } from "../../services/user-service/user.service";
 
 interface Props {
@@ -23,6 +23,7 @@ const AddUserForm = ({ isModalVisible, hideModal, onUserCreated }: Props) => {
     try {
       const roleData = await roleService.getRoles();
       setRoles(roleData);
+      console.log(roleData);
     } catch (error) {
       console.error("Error fetching roles:", error);
     }
@@ -34,8 +35,11 @@ const AddUserForm = ({ isModalVisible, hideModal, onUserCreated }: Props) => {
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-      const newUser: Users = {
-        ...values,
+      const newUser: CreateUser = {
+        username: values.username,
+        password: values.password,
+        email: values.email,
+        roleId: values.roleId,
       };
       await userService.create(newUser);
       await onUserCreated();
@@ -45,6 +49,7 @@ const AddUserForm = ({ isModalVisible, hideModal, onUserCreated }: Props) => {
     } catch (error: any) {
       notification.error({
         message: "User Creation Failed!",
+        description: error.message,
       });
     }
   };
@@ -86,6 +91,10 @@ const AddUserForm = ({ isModalVisible, hideModal, onUserCreated }: Props) => {
               required: true,
               message: "Please input the password!",
             },
+            {
+              min: 6,
+              message: "Password must be at least 6 characters!",
+            },
           ]}
         >
           <Input.Password placeholder="Enter Password" />
@@ -107,7 +116,7 @@ const AddUserForm = ({ isModalVisible, hideModal, onUserCreated }: Props) => {
           <Input placeholder="Enter Email" />
         </Form.Item>
         <Form.Item
-          name="role"
+          name="roleId"
           label="Role"
           rules={[
             {
