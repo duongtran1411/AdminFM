@@ -28,6 +28,21 @@ const AttendancePage = () => {
       const data = await getAttendanceStatus(scheduleId);
       console.log("Fetched attendance data:", data);
 
+      let attendanceArray: any[] = [];
+      if (
+        data &&
+        typeof data === "object" &&
+        "data" in data &&
+        data.data &&
+        typeof (data as any).data === "object" &&
+        Array.isArray((data as any).data.students)
+      ) {
+        attendanceArray = (data as any).data.students;
+      }
+
+      if (Array.isArray(attendanceArray)) {
+        setAttendanceData(attendanceArray);
+      }
     } catch (error: any) {
       console.error("Lỗi khi lấy trạng thái điểm danh", error);
       setAttendanceData([]);
