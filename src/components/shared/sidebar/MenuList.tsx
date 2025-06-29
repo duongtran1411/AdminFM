@@ -1,18 +1,9 @@
 import { Menu } from "antd";
 import { ItemType, MenuItemType } from "antd/es/menu/interface";
 import {
-  AiFillBank,
-  AiOutlineFolder,
-  AiOutlineNotification,
+  AiFillBank
 } from "react-icons/ai";
-import { FaChalkboardTeacher, FaRegBuilding } from "react-icons/fa";
-import { GoPeople } from "react-icons/go";
-import { HiAcademicCap } from "react-icons/hi2";
-import { LuBookCopy, LuBookMarked } from "react-icons/lu";
-import { MdGrade, MdOutlineStarRate } from "react-icons/md";
 import { PiStudent } from "react-icons/pi";
-import { SiGoogleclassroom } from "react-icons/si";
-import { VscGitStashApply } from "react-icons/vsc";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "../../../contexts/ThemeContext";
 import { useState } from "react";
