@@ -5,13 +5,15 @@ import {
   Layout,
   Modal,
   notification,
-  Table
+  Table,
 } from "antd";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Loading from "../../components/common/loading";
 import NavigateBack from "../../components/shared/NavigateBack";
 import { Attendance } from "../../models/attendance.model";
+import { Class } from "../../models/classes.model";
+import { Teachers } from "../../models/teacher.model";
 import {
   getAttendanceStatus,
   markMultipleAttendance,
@@ -21,12 +23,14 @@ const AttendancePage = () => {
   const [attendanceData, setAttendanceData] = useState<Attendance[]>([]);
   const [loading, setLoading] = useState(true);
   const { scheduleId } = useParams();
+  const [teacher, setTeacher] = useState<Teachers | null>(null);
+  const [classInfo, setClassInfo] = useState<Class | null>(null);
+  const [scheduleIdState, setScheduleIdState] = useState<number | null>(null);
 
   const fetchAttendanceStatus = async (scheduleId: string) => {
     try {
       setLoading(true);
       const data = await getAttendanceStatus(scheduleId);
-      console.log("Fetched attendance data:", data);
 
       let attendanceArray: any[] = [];
       if (
@@ -37,7 +41,11 @@ const AttendancePage = () => {
         typeof (data as any).data === "object" &&
         Array.isArray((data as any).data.students)
       ) {
-        attendanceArray = (data as any).data.students;
+        const d = (data as any).data;
+        attendanceArray = d.students;
+        setTeacher(d.teacher || null);
+        setClassInfo(d.class || null);
+        setScheduleIdState(Number(d.scheduleId) || null);
       }
 
       if (Array.isArray(attendanceArray)) {
@@ -96,17 +104,16 @@ const AttendancePage = () => {
       title: "Xác nhận lưu điểm danh",
       content: "Bạn có chắc chắn muốn lưu trạng thái điểm danh này?",
       onOk: async () => {
-        if (!attendanceData) return;
-
-        setLoading(true); // Bắt đầu loading
-
+        if (!attendanceData || !teacher || !classInfo || !scheduleIdState)
+          return;
+        setLoading(true);
         try {
           const attendanceDataToSubmit = attendanceData.map((attendance) => ({
             status: attendance.status,
             note: attendance.note,
-            teacherId: attendance.teacher.id,
-            classId: attendance.class.id,
-            scheduleId: Number(scheduleId),
+            teacherId: teacher.id,
+            classId: classInfo.id,
+            scheduleId: scheduleIdState,
             studentId: attendance.student.id,
           }));
           await markMultipleAttendance(attendanceDataToSubmit);
@@ -175,27 +182,14 @@ const AttendancePage = () => {
       ),
     },
     {
-      title: "Nghỉ CP",
+      title: "Vắng mặt",
       dataIndex: "status",
-      key: "nghiCP",
+      key: "nghiKP",
       render: (status: number, record: any) => (
         <Checkbox
           checked={status === 3}
           onChange={() => {
             handleCheckboxChange(record.student.id, 3);
-          }}
-        />
-      ),
-    },
-    {
-      title: "Nghỉ KP",
-      dataIndex: "status",
-      key: "nghiKP",
-      render: (status: number, record: any) => (
-        <Checkbox
-          checked={status === 4}
-          onChange={() => {
-            handleCheckboxChange(record.student.id, 4);
           }}
         />
       ),
