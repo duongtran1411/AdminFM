@@ -6,6 +6,7 @@ import {
   Modal,
   notification,
   Table,
+  Alert,
 } from "antd";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -18,7 +19,6 @@ import {
 } from "../../services/attendence-service/attendence.service";
 
 const AttendancePage = () => {
-  const [error, setError] = useState("");
   const [attendanceData, setAttendanceData] = useState<Attendance[]>([]);
   const [loading, setLoading] = useState(true);
   const { scheduleId } = useParams();
@@ -27,17 +27,43 @@ const AttendancePage = () => {
     try {
       setLoading(true);
       const data = await getAttendanceStatus(scheduleId);
-      setAttendanceData(data);
-    } catch (error) {
+      console.log("Fetched attendance data:", data);
+
+      let attendanceArray: any[] = [];
+      if (
+        data &&
+        typeof data === "object" &&
+        "data" in data &&
+        data.data &&
+        typeof (data as any).data === "object" &&
+        Array.isArray((data as any).data.students)
+      ) {
+        attendanceArray = (data as any).data.students;
+      }
+
+      if (Array.isArray(attendanceArray)) {
+        setAttendanceData(attendanceArray);
+      } else {
+        setAttendanceData([]);
+        let errorMsg = "Dữ liệu không đúng định dạng";
+        if (data && typeof data === "object" && "message" in data) {
+          errorMsg = (data as any).message;
+        }
+      }
+    } catch (error: any) {
       console.error("Lỗi khi lấy trạng thái điểm danh", error);
-      setError("Failed to load attendance status.");
+      setAttendanceData([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchAttendanceStatus(scheduleId!);
+    if (scheduleId) {
+      fetchAttendanceStatus(scheduleId);
+    } else {
+      setLoading(false);
+    }
   }, [scheduleId]);
 
   const handleCheckboxChange = (studentId: number, statusType: number) => {
@@ -198,10 +224,6 @@ const AttendancePage = () => {
     return <Loading />;
   }
 
-  if (error) {
-    return <p>{error}</p>;
-  }
-
   return (
     <Layout
       className="rounded-lg flex justify-center items-center"
@@ -218,6 +240,12 @@ const AttendancePage = () => {
           columns={columns}
           dataSource={attendanceData}
           pagination={false}
+          locale={{
+            emptyText:
+              attendanceData.length === 0 && !loading
+                ? "Không có dữ liệu điểm danh"
+                : "Đang tải...",
+          }}
         />
         <div className="flex justify-end mt-4">
           <Button
