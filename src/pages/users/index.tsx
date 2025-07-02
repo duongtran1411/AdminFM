@@ -43,7 +43,7 @@ const UserPage = () => {
     {
       title: "STT",
       key: "STT",
-      render: (index: number) => index + 1,
+      render: (_text: any, _record: Users, index: number) => index + 1,
     },
     {
       title: "Tên người dùng",
