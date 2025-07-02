@@ -41,12 +41,12 @@ const UserPage = () => {
 
   const columns = [
     {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
+      title: "STT",
+      key: "STT",
+      render: (text: string, record: Users, index: number) => index + 1,
     },
     {
-      title: "Name",
+      title: "Tên người dùng",
       dataIndex: "username",
       key: "username",
     },
