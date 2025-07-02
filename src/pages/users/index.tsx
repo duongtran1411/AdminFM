@@ -42,8 +42,9 @@ const UserPage = () => {
   const columns = [
     {
       title: "STT",
-      key: "STT",
-      render: (value: any, record: Users, index: number) => index + 1,
+      dataIndex: "id",
+      key: "id",
+      render: (text: string, record: Users, index: number) => index + 1,
     },
     {
       title: "Name",
