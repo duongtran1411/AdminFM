@@ -44,7 +44,7 @@ const UserPage = () => {
       title: "STT",
       dataIndex: "id",
       key: "id",
-      render: (text: string, record: Users, index: number) => index + 1,
+      render: ( index: number) => index + 1,
     },
     {
       title: "Name",
